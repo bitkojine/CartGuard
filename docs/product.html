@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#fff7fb" />
     <title>CartGuard Product | How It Works</title>
-    <meta name="description" content="How CartGuard checks AI cosmetics claims in CI with clear rules." />
+    <meta name="description" content="How CartGuard flags missing evidence/documents for AI product claims in CI." />
     <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
     <link rel="manifest" href="./site.webmanifest?v=4" />
@@ -30,8 +30,8 @@
         </div>
       </nav>
       <p class="eyebrow">Product</p>
-      <h1>How CartGuard checks AI-generated cosmetics claims.</h1>
-      <p class="lead">Rules are clear. Results are clear. No hidden logic.</p>
+      <h1>How CartGuard flags missing evidence for AI-generated claims.</h1>
+      <p class="lead">Rules are clear. Missing items are clear. No hidden logic.</p>
     </header>
 
     <main>
@@ -39,7 +39,7 @@
         <article class="card">
           <h2>The Problem</h2>
           <ul>
-            <li>AI claims can be wrong or unsupported.</li>
+            <li>AI claims often ship without the right supporting evidence.</li>
             <li>Manual review is slow and hard to scale.</li>
             <li>Many checks happen too late, right before launch.</li>
           </ul>
@@ -48,8 +48,8 @@
           <h2>The CartGuard Approach</h2>
           <ul>
             <li>Store claims in a strict, typed format.</li>
-            <li>Require links to sources where needed.</li>
-            <li>Run rule checks in CI and return pass/fail JSON.</li>
+            <li>Define required evidence/documents by policy.</li>
+            <li>Run checks in CI and return machine-readable missing-item results.</li>
           </ul>
         </article>
       </section>
@@ -63,12 +63,13 @@
           <div class="flow-arrow">→</div>
           <div class="flow-box">Policy Engine</div>
           <div class="flow-arrow">→</div>
-          <div class="flow-box">CI Gate</div>
+          <div class="flow-box">Missing Docs Report</div>
         </div>
         <pre><code>/packages/spec   -> claim + rule shapes
 /packages/engine -> rule checks
 /packages/ai     -> generator interfaces
 /packages/cli    -> CLI commands for CI</code></pre>
+        <p><strong>Important:</strong> CartGuard flags missing evidence. It does not make legal determinations.</p>
       </section>
     </main>
 

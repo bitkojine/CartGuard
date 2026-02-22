@@ -1,15 +1,15 @@
 # CartGuard
 
-**Ship compliant AI product claims.**
+**Flag missing evidence before AI product claims go live.**
 
-CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into source-verified, policy-validated claims and blocks potentially non-compliant products at build time.
+CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into source-linked, policy-checked claims and flags missing required evidence/documents at build time.
 
 [Live Site](https://bitkojine.github.io/CartGuard/) • [Sales Backlog](./BACKLOG.md)
 
 ## Build Battle Script (Use This Live)
 
-1. "We are building developer-first compliance infrastructure for AI-generated cosmetics content."
-2. "CartGuard validates source-linked claims in CI and blocks potentially non-compliant listings before release."
+1. "We are building developer-first compliance infrastructure for AI-generated ecommerce content."
+2. "CartGuard checks source-linked claims in CI and flags missing required evidence before release."
 3. "We enter through engineering teams first, then expand to compliance and operations. This is a Stripe-style go-to-market path."
 4. "If cosmetics does not validate fast, we pivot into adjacent regulated claim workflows."
 5. "Tonight we can show a working CLI and policy engine, not slides-only vapor."
@@ -66,9 +66,10 @@ Primary converting visitors:
 
 ## Why Teams Use CartGuard
 
-- Prevent potentially non-compliant products from reaching production
-- Enforce policy in CI, not after legal escalation
+- Flag missing required evidence before products reach production
+- Enforce documentation checks in CI, not after legal escalation
 - Keep claim decisions traceable to sources and policy configuration
+- Do not provide legal advice or legal determinations
 - Produce deterministic pass/fail outputs for internal and external audit trails
 
 ## What CartGuard Includes
