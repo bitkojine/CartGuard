@@ -1,6 +1,7 @@
 # CartGuard
 
-## Current Pitch-Readiness Score: `5.8/10` (Brutal)
+## Current Pitch-Readiness Score: `5.6/10` (Brutal)
+## Current Repo Execution Score: `7.1/10` (Strong foundation, still early)
 ## Current Direction: EU cosmetics ecommerce compliance infrastructure (build-time claim gating)
 ## If This Wedge Fails: Pivot Options
 - EU supplements / nutraceutical claim compliance
@@ -34,29 +35,38 @@ CartGuard gives teams:
 - Policy-based controls that map to country/category requirements
 - A shared contract between legal/compliance and engineering
 
-## Brutal Business Case Review
+## Brutal Pitch + Repo Review
 
 No optimism fluff. Current viability depends on execution speed, proof of enforcement quality, and distribution.
 
-Scores (0-10):
+Pitch/business scores (0-10):
 - Problem severity: `9/10`  
   EU ecommerce compliance pressure is real and increasing.
-- Urgency to buy: `7/10`  
+- Urgency to buy: `6.5/10`  
   Pain is high, but many teams still delay until legal/commercial pressure becomes acute.
-- Product differentiation today: `6/10`  
-  Strong spec-first angle, but buyers can still see this as \"yet another AI tooling layer\" unless outcomes are proven.
-- Technical defensibility (near-term): `7/10`  
+- Product differentiation today: `5.5/10`  
+  Spec-first angle is good, but still easy to misclassify as another AI layer without customer proof.
+- Technical defensibility (near-term): `6.5/10`  
   Typed claims + policy engine + CI gating is a solid foundation; moats are weak until real regulatory adapters and integrations exist.
-- Go-to-market difficulty: `4/10`  
+- Go-to-market difficulty: `3.5/10`  
   Selling infra + compliance into mid-market ecommerce is slow, multi-stakeholder, and trust-heavy.
 - Adoption friction: `5/10`  
   Requires policy setup, claim discipline, and workflow changes across engineering/content/compliance.
 - Revenue potential (if executed): `8/10`  
   Clear expansion path: API, enterprise policy packs, marketplace enforcement, audits.
-- Current investability (MVP stage): `5/10`  
-  Good thesis, but needs proof: pilot logos, measurable risk reduction, and integration velocity.
+- Current investability (MVP stage): `4.5/10`  
+  Good thesis, but still missing pilot logos, measurable risk reduction, and integration velocity.
 
-Overall viability score: `6.4/10` (promising but not yet de-risked)
+Overall pitch/business viability score: `5.6/10` (credible idea, not de-risked)
+
+Repo/product execution scores (0-10):
+- Codebase structure and clarity: `8/10`
+- Spec-first design integrity: `8/10`
+- Test coverage for MVP scope: `7/10`
+- Production readiness today: `5/10`
+- Demo quality for technical audiences: `7/10`
+
+Overall repo execution score: `7.1/10` (strong technical base, needs real-world proof)
 
 Hard truth:
 - Without concrete proof that CartGuard prevents costly compliance incidents better than internal tooling, this stays a \"nice-to-have.\"
