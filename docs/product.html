@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#fff7fb" />
-    <title>CartGuard Product | Spec-Driven Compliance Engine</title>
-    <meta name="description" content="How CartGuard works: schema-first claims, policy engine, and CI gating for EU cosmetics content." />
+    <title>CartGuard Product | How It Works</title>
+    <meta name="description" content="How CartGuard checks AI cosmetics claims in CI with clear rules." />
     <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
     <link rel="manifest" href="./site.webmanifest?v=4" />
@@ -25,8 +25,8 @@
         </div>
       </nav>
       <p class="eyebrow">Product</p>
-      <h1>Spec-first validation for AI-generated cosmetics claims.</h1>
-      <p class="lead">No hidden rules. Claims, policies, and outcomes are explicit and auditable.</p>
+      <h1>How CartGuard checks AI-generated cosmetics claims.</h1>
+      <p class="lead">Rules are clear. Results are clear. No hidden logic.</p>
     </header>
 
     <main>
@@ -34,17 +34,17 @@
         <article class="card">
           <h2>The Problem</h2>
           <ul>
-            <li>AI-generated claims are often unverifiable.</li>
-            <li>Manual review does not scale with listing volume.</li>
-            <li>Compliance checks happen too late in release cycles.</li>
+            <li>AI claims can be wrong or unsupported.</li>
+            <li>Manual review is slow and hard to scale.</li>
+            <li>Many checks happen too late, right before launch.</li>
           </ul>
         </article>
         <article class="card">
           <h2>The CartGuard Approach</h2>
           <ul>
-            <li>Model claims as typed, source-linked objects.</li>
-            <li>Enforce explicit policy rules, not implicit heuristics.</li>
-            <li>Gate listings in CI using machine-readable results.</li>
+            <li>Store claims in a strict, typed format.</li>
+            <li>Require links to sources where needed.</li>
+            <li>Run rule checks in CI and return pass/fail JSON.</li>
           </ul>
         </article>
       </section>
@@ -60,15 +60,15 @@
           <div class="flow-arrow">→</div>
           <div class="flow-box">CI Gate</div>
         </div>
-        <pre><code>/packages/spec   -> schemas + policy contracts
-/packages/engine -> enforcement runtime
+        <pre><code>/packages/spec   -> claim + rule shapes
+/packages/engine -> rule checks
 /packages/ai     -> generator interfaces
-/packages/cli    -> build-time command layer</code></pre>
+/packages/cli    -> CLI commands for CI</code></pre>
       </section>
     </main>
 
     <footer>
-      <p>CartGuard • Product Overview</p>
+      <p>CartGuard • Product</p>
     </footer>
   </body>
 </html>
