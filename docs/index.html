@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CartGuard | Trust Infrastructure For AI Commerce</title>
+    <meta
+      name="description"
+      content="CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into source-verified, policy-validated claims and blocks non-compliant products at build time."
+    />
+    <meta property="og:title" content="CartGuard" />
+    <meta
+      property="og:description"
+      content="Infrastructure for trustworthy AI commerce, not another copy generator."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="background-glow background-glow-a"></div>
+    <div class="background-glow background-glow-b"></div>
+
+    <header class="hero">
+      <p class="eyebrow">CartGuard</p>
+      <h1>
+        Turn AI-generated ecommerce content into source-verified, policy-validated
+        claims.
+      </h1>
+      <p class="lead">
+        Block non-compliant products at build time. Infrastructure for trustworthy
+        AI commerce, not another copy generator.
+      </p>
+      <div class="actions">
+        <a href="#problem" class="btn btn-primary">Why CartGuard</a>
+        <a href="#architecture" class="btn btn-secondary">View Architecture</a>
+      </div>
+      <p class="small-note">TypeScript SDK • CI Enforcement • Source-linked Claims</p>
+    </header>
+
+    <main>
+      <section class="grid" aria-label="Problem and solution" id="problem">
+        <article class="card">
+          <h2>The Problem</h2>
+          <p>
+            AI-generated listings are becoming default in ecommerce, but claim quality is
+            inconsistent and legal exposure is rising across EU markets.
+          </p>
+          <ul>
+            <li>Anti-greenwashing enforcement pressure</li>
+            <li>Cross-border policy fragmentation</li>
+            <li>Unverifiable AI claims in production catalogs</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>The CartGuard Approach</h2>
+          <p>
+            Encode trust as code. Claims are typed objects with sources. Policies are explicit.
+            Validation is deterministic and CI-native.
+          </p>
+          <ul>
+            <li>Spec-first domain model</li>
+            <li>Policy-driven engine (no hidden constants)</li>
+            <li>Machine-readable pass/fail outputs</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="architecture" aria-label="Architecture" id="architecture">
+        <h2>Architecture</h2>
+        <div class="flow">
+          <div class="flow-box">AI Output</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">Spec Validation</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">Policy Engine</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">CI Gate</div>
+        </div>
+        <pre><code>/packages/spec   -> schemas + policy contracts
+/packages/engine -> enforcement runtime
+/packages/ai     -> generator interfaces
+/packages/cli    -> build-time command layer</code></pre>
+      </section>
+
+      <section class="pricing" aria-label="Positioning">
+        <h2>Positioning</h2>
+        <p>
+          CartGuard is the compliance and trust layer for AI-powered ecommerce teams,
+          especially in EU-regulated contexts.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Mid-sized EU commerce platforms</span>
+          <span class="pill">Headless TypeScript teams</span>
+          <span class="pill">Multi-country marketplaces</span>
+          <span class="pill">Supplements / cosmetics / sustainability brands</span>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>CartGuard • Spec-driven AI compliance infrastructure for ecommerce</p>
+    </footer>
+  </body>
+</html>

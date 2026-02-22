@@ -1,0 +1,265 @@
+:root {
+  --bg: #091019;
+  --bg-soft: #111a25;
+  --panel: rgba(12, 22, 34, 0.78);
+  --text: #ebf4ff;
+  --muted: #a8bed6;
+  --line: rgba(161, 194, 228, 0.28);
+  --accent: #2de2a5;
+  --accent-2: #55c3ff;
+  --max: 1120px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at 20% -10%, #1e334f 0%, transparent 50%),
+    radial-gradient(circle at 90% 10%, #15454b 0%, transparent 45%),
+    linear-gradient(145deg, #060b14, #0d1828 45%, #111f2f);
+  min-height: 100vh;
+}
+
+.background-glow {
+  position: fixed;
+  width: 360px;
+  height: 360px;
+  border-radius: 999px;
+  filter: blur(60px);
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+  animation: float 10s ease-in-out infinite;
+}
+
+.background-glow-a {
+  background: var(--accent-2);
+  top: -120px;
+  right: -80px;
+}
+
+.background-glow-b {
+  background: var(--accent);
+  bottom: -100px;
+  left: -80px;
+  animation-delay: -4s;
+}
+
+.hero,
+main,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 6.5rem 1.25rem 2.5rem;
+  animation: rise 0.8s ease-out;
+}
+
+.eyebrow {
+  margin: 0;
+  font: 500 0.82rem/1 "IBM Plex Mono", "SFMono-Regular", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+h1 {
+  margin: 0.8rem 0 1rem;
+  font-size: clamp(2rem, 5vw, 4.1rem);
+  line-height: 1.02;
+  max-width: 17ch;
+}
+
+.lead {
+  margin: 0;
+  color: var(--muted);
+  max-width: 63ch;
+  line-height: 1.5;
+}
+
+.actions {
+  margin-top: 1.6rem;
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  border-radius: 999px;
+  text-decoration: none;
+  padding: 0.66rem 1rem;
+  font: 500 0.92rem/1 "IBM Plex Mono", monospace;
+  transition: transform 150ms ease, opacity 150ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: linear-gradient(100deg, var(--accent), #37ffc0);
+  color: #092218;
+}
+
+.btn-secondary {
+  background: rgba(21, 37, 57, 0.85);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.small-note {
+  margin: 1rem 0 0;
+  color: #86a9cb;
+  font: 400 0.82rem/1.4 "IBM Plex Mono", monospace;
+}
+
+main {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.2rem 1.25rem 4rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.95rem;
+}
+
+.card,
+.architecture,
+.pricing {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  backdrop-filter: blur(6px);
+}
+
+.card {
+  padding: 1.1rem;
+  animation: rise 0.8s ease-out;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+p {
+  line-height: 1.5;
+}
+
+ul {
+  margin: 0.6rem 0 0;
+  padding-left: 1rem;
+  color: var(--muted);
+}
+
+li + li {
+  margin-top: 0.35rem;
+}
+
+.architecture,
+.pricing {
+  margin-top: 0.95rem;
+  padding: 1.1rem;
+  animation: rise 0.95s ease-out;
+}
+
+.flow {
+  margin: 0.8rem 0 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.flow-box {
+  padding: 0.58rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(19, 36, 58, 0.95);
+  border: 1px solid var(--line);
+  font: 500 0.84rem/1 "IBM Plex Mono", monospace;
+}
+
+.flow-arrow {
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
+pre {
+  margin: 0;
+  overflow-x: auto;
+  border-radius: 12px;
+  padding: 0.8rem;
+  background: rgba(5, 12, 20, 0.92);
+  border: 1px solid rgba(119, 159, 197, 0.2);
+}
+
+code {
+  font: 400 0.82rem/1.45 "IBM Plex Mono", monospace;
+  color: #b9d6f3;
+}
+
+.pill-row {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pill {
+  padding: 0.4rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(17, 31, 47, 0.95);
+  font: 500 0.74rem/1.2 "IBM Plex Mono", monospace;
+  color: #c9e0f8;
+}
+
+footer {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem 2rem;
+  color: #86a9cb;
+  font: 400 0.75rem/1.4 "IBM Plex Mono", monospace;
+}
+
+@media (max-width: 680px) {
+  .hero {
+    padding-top: 4.6rem;
+  }
+
+  .flow-arrow {
+    display: none;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-18px) scale(1.05);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}

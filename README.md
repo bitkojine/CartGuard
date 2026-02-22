@@ -2,9 +2,27 @@
 
 Five seconds. No poetry.
 
-> "CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into source-verified, policy-validated claims and blocks non-compliant products at build time."
+> "CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into source-verified, policy-validated claims and blocks products that could be non-compliant at build time."
 
 That’s it. Infrastructure for trustworthy AI commerce, not another copy generator.
+
+## Who It Is For (Primary User)
+
+CartGuard is built for engineering teams that ship ecommerce content through code, especially:
+- Mid-sized EU ecommerce platforms
+- Headless commerce teams using Next.js / Node / TypeScript
+- Multi-country marketplaces with cross-border listing risk
+- Regulated categories (supplements, cosmetics, sustainability claims)
+
+## Where Users Get The Most Value
+
+The highest-value outcome is preventing potentially non-compliant products from reaching production.
+
+CartGuard gives teams:
+- Build-time CI enforcement instead of post-publication legal cleanup
+- Source-linked, auditable claims for every product assertion
+- Policy-based controls that map to country/category requirements
+- A shared contract between legal/compliance and engineering
 
 ## Problem Statement
 
@@ -43,6 +61,17 @@ Design principles:
 - Strict TypeScript + runtime schema validation
 - Policy-driven enforcement (no hidden constants)
 - Clean separation of spec from execution
+
+## GitHub Pages
+
+This repository includes a static marketing site in `/docs` and a deploy workflow in `/.github/workflows/pages.yml`.
+
+Publishing flow:
+1. Push to `main`.
+2. GitHub Actions runs `Deploy GitHub Pages`.
+3. The `docs/` artifact is deployed to GitHub Pages.
+
+If this is a new repository, set Pages source to `GitHub Actions` in repository settings.
 
 ## Spec-Driven Philosophy
 
