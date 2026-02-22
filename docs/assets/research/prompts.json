@@ -2,6 +2,21 @@
   "updated_at": "2026-02-23",
   "prompts": [
     {
+      "id": "prompt-paid-pilot-benchmarks-v1",
+      "title": "Paid Pilot Benchmarks",
+      "text": "You are my research analyst for CartGuard. Find benchmark ranges for paid B2B pilots in compliance workflow software. I need typical pilot length, paid pilot pricing ranges, pilot-to-annual conversion rates, and strongest predictors of conversion. For each metric include value/range, date, geography, source URL, and confidence level. Use primary or highly credible sources and explicitly mark missing direct data."
+    },
+    {
+      "id": "prompt-paid-pilot-metrics-v1",
+      "title": "Pilot Metrics That Actually Matter",
+      "text": "You are my startup diligence researcher. Define the most credible pilot outcome metrics for a tool that flags missing documentation for APAC sellers entering EU marketplaces. We do recommendations only and no legal determinations. Output: metric definitions, formulas, baseline capture method, realistic 30-60 day target ranges, and anti-gaming checks. Include source-backed support with confidence scores."
+    },
+    {
+      "id": "prompt-paid-pilot-objections-v1",
+      "title": "Paid Pilot Objection Intelligence",
+      "text": "You are my sales intelligence researcher. Identify top objections to paid pilots from China-based marketplace sellers entering Germany and from their agencies. Focus on objections around legal liability, false positives, integration effort, ROI uncertainty, and budget ownership. Output rebuttals, proof requirements, and confidence score for each objection pattern."
+    },
+    {
       "id": "prompt-market-size-v1",
       "title": "Market Size Reality Check",
       "text": "You are my fact-check analyst for CartGuard. We target China-based Amazon.de consumer electronics sellers entering Germany. Build a source-backed market size memo with no hype. Required output: 1) direct datasets that exist, 2) direct datasets that do not exist, 3) proxy stack with assumptions, 4) TAM/SAM/SOM ranges with confidence levels, 5) stage-safe claims vs non-stage-safe claims. For every number include value, unit, date, geography, source URL, and confidence. Prefer primary sources first (EU Commission, Eurostat, customs authorities, OECD, WTO, regulator docs)."

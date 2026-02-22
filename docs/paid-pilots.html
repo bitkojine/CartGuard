@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff7fb" />
+    <title>CartGuard Paid Pilots | Team Playbook</title>
+    <meta name="description" content="CartGuard paid pilots playbook: what pilots are, day-to-day execution, success metrics, and research prompts for agents." />
+    <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="./site.webmanifest?v=4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero page-hero">
+      <nav class="top-nav" aria-label="Primary">
+        <a href="./index.html" class="nav-brand">CartGuard</a>
+        <div class="nav-links">
+          <a href="./beachhead.html">Beachhead</a>
+          <a href="./paid-pilots.html" aria-current="page">Paid Pilots</a>
+          <a href="./research.html">Research</a>
+          <a href="./technical.html">Technical</a>
+        </div>
+      </nav>
+      <p class="eyebrow">Paid Pilots</p>
+      <h1>How we prove value before full contracts.</h1>
+      <p class="lead">A paid pilot is a short paid project that proves business results with real workflow data. It is not a demo and not free trial theater.</p>
+      <p class="small-note">CartGuard provides recommendations on missing documentation and evidence only. No legal advice.</p>
+    </header>
+
+    <main>
+      <section class="pricing" aria-label="What a paid pilot is">
+        <h2>What A Paid Pilot Is</h2>
+        <ul>
+          <li>Short, paid engagement (usually 2-8 weeks).</li>
+          <li>Runs on real customer data and workflow.</li>
+          <li>Has baseline metrics before start and target outcomes.</li>
+          <li>Ends with decision: expand, revise, or stop.</li>
+        </ul>
+      </section>
+
+      <section class="pricing" aria-label="Pilot outcomes">
+        <h2>Outcomes We Must Prove</h2>
+        <ul>
+          <li>Lower missing-document rate before publish.</li>
+          <li>Faster review cycle from draft to listing live.</li>
+          <li>Less rework between ops, compliance, and engineering.</li>
+          <li>Clear conversion case for annual paid contract.</li>
+        </ul>
+      </section>
+
+      <section class="architecture" aria-label="Day to day operations">
+        <h2>Day-To-Day Operating Rhythm</h2>
+        <div class="table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Cadence</th>
+                <th>What Happens</th>
+                <th>Owner</th>
+                <th>Output</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Daily</td><td>Review blocked/flagged items and false positives.</td><td>Pilot lead + engineer</td><td>Issue list and fixes</td></tr>
+              <tr><td>Daily</td><td>Update pilot dashboard with key metrics.</td><td>Engineer</td><td>Metric snapshot</td></tr>
+              <tr><td>2x weekly</td><td>Customer sync on findings and decisions.</td><td>Pilot lead</td><td>Decision log</td></tr>
+              <tr><td>Weekly</td><td>Rulepack adjustments with traceable rationale.</td><td>Engineer + domain owner</td><td>Rule changelog</td></tr>
+              <tr><td>End of pilot</td><td>Baseline vs outcome review and expansion proposal.</td><td>Founder + sales</td><td>Convert or stop memo</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="pricing" aria-label="Role clarity">
+        <h2>Team Tasks By Role</h2>
+        <ul>
+          <li>Engineer: integrate checks, instrument metrics, reduce false positives.</li>
+          <li>Pilot lead: run cadence, unblock decisions, track commitments.</li>
+          <li>Sales: map outcome to budget owner and drive conversion.</li>
+          <li>Research agents: validate claims, source evidence, flag uncertainty.</li>
+        </ul>
+      </section>
+
+      <section class="pricing" aria-label="Pilot scorecard">
+        <h2>Pilot Scorecard (Go / No-Go)</h2>
+        <ul>
+          <li>Go: measurable improvement in at least 2 core metrics and clear buyer intent to expand.</li>
+          <li>No-Go: no measurable improvement, unclear owner, or only free-feature demand.</li>
+          <li>Kill if repeated integration friction prevents production workflow usage.</li>
+        </ul>
+      </section>
+
+      <section class="architecture" aria-label="Research prompts">
+        <h2>Research Agent Prompts (Perplexity)</h2>
+        <p class="small-note">Copy prompts exactly. Keep outputs source-backed with confidence levels.</p>
+
+        <article class="card">
+          <h3>Prompt 1: Pilot Benchmarks</h3>
+          <pre><code>You are my research analyst for CartGuard. Find benchmark ranges for paid B2B pilots in compliance workflow software. I need typical pilot length, paid pilot pricing ranges, conversion rates from pilot to annual contract, and the strongest predictors of conversion. Output must include: metric name, value/range, date, geography, source URL, and confidence level. Use primary or highly credible sources only and clearly mark where direct data is missing.</code></pre>
+        </article>
+
+        <article class="card">
+          <h3>Prompt 2: Buyer Decision Mapping</h3>
+          <pre><code>You are my go-to-market researcher for CartGuard. For China-based marketplace sellers entering Germany, map who signs budget for compliance tooling and who blocks deals. Output: buyer roles, decision criteria, legal/compliance concerns, procurement blockers, and what proof is required to approve paid pilots. Include source-backed evidence and explicit confidence scores.</code></pre>
+        </article>
+
+        <article class="card">
+          <h3>Prompt 3: Pilot Outcome Metrics</h3>
+          <pre><code>You are my startup diligence researcher. Define the most credible pilot outcome metrics for EU market-entry compliance workflow tools that only flag missing documents (no legal determinations). Include baseline capture methods, metric formulas, realistic improvement targets over 30-60 days, and anti-gaming safeguards. Provide references and confidence levels for each recommendation.</code></pre>
+        </article>
+
+        <article class="card">
+          <h3>Prompt 4: Objection Intelligence</h3>
+          <pre><code>You are my sales intelligence researcher. Identify top objections from APAC sellers evaluating EU compliance tooling and how top vendors handle them. Focus on objections around legal liability, false positives, integration effort, and ROI uncertainty. Output should include objection frequency if known, rebuttal strategy, supporting evidence, and confidence score.</code></pre>
+        </article>
+
+        <article class="card">
+          <h3>Prompt 5: Expansion Triggers</h3>
+          <pre><code>You are my market strategy researcher. After a successful Germany pilot, what is the highest-ROI expansion path: more German categories, more EU countries, or channel expansion beyond Amazon.de? Build a ranked expansion model with assumptions, source-backed signals, risk factors, and 90-day execution suggestions. Mark every modeled estimate clearly.</code></pre>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <p>CartGuard • Paid pilot execution page</p>
+    </footer>
+  </body>
+</html>

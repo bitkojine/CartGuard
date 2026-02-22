@@ -2,6 +2,27 @@
   "updated_at": "2026-02-23",
   "entries": [
     {
+      "id": "paid-pilots-b2b-playbook-2026-02-23",
+      "title": "Paid Pilots Playbook for APAC to EU Compliance Workflow",
+      "summary": "Operational playbook for running paid pilots that prove measurable outcomes before annual contracts.",
+      "owner": "cartguard-core",
+      "status": "reviewed",
+      "confidence": "medium",
+      "created_at": "2026-02-23",
+      "last_verified_at": "2026-02-23",
+      "geography": ["APAC", "EU", "China", "Germany"],
+      "industry_scope": ["b2b saas", "ecommerce compliance", "go-to-market"],
+      "source_count": 4,
+      "repo_doc": "research/entries/2026-02-23-paid-pilots-b2b-playbook.md",
+      "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-paid-pilots-b2b-playbook.md",
+      "sources": [
+        "https://newsroom.fedex.com/newsroom/europe-english/fedex-survey-reveals-85-of-apac-smes-confident-in-europe-trade-growth",
+        "https://commission.europa.eu/news-and-media/news/tackling-challenges-e-commerce-imports-2025-02-05_en",
+        "https://taxation-customs.ec.europa.eu/customs/eu-customs-union-facts-and-figures/e-commerce-product-compliance-and-safety_en",
+        "https://www.europarl.europa.eu/doceo/document/A-10-2025-0133_EN.html"
+      ]
+    },
+    {
       "id": "beachhead-china-germany-electronics-2026-02-23",
       "title": "Beachhead Recommendation - China to Germany Electronics",
       "summary": "Recommended first beachhead is China-based Amazon.de consumer electronics sellers with a Conditional Go verdict and explicit kill criteria.",
