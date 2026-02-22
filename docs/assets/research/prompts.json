@@ -1,0 +1,30 @@
+{
+  "updated_at": "2026-02-23",
+  "prompts": [
+    {
+      "id": "prompt-market-size-v1",
+      "title": "Market Size Reality Check",
+      "text": "You are my fact-check analyst for CartGuard. We target China-based Amazon.de consumer electronics sellers entering Germany. Build a source-backed market size memo with no hype. Required output: 1) direct datasets that exist, 2) direct datasets that do not exist, 3) proxy stack with assumptions, 4) TAM/SAM/SOM ranges with confidence levels, 5) stage-safe claims vs non-stage-safe claims. For every number include value, unit, date, geography, source URL, and confidence. Prefer primary sources first (EU Commission, Eurostat, customs authorities, OECD, WTO, regulator docs)."
+    },
+    {
+      "id": "prompt-buyer-budget-v1",
+      "title": "Buyer And Budget Validation",
+      "text": "You are my go-to-market research analyst for CartGuard. Determine who buys first in our wedge: ops, compliance/legal, or engineering. Output: 1) buyer map by role, 2) trigger events for purchase, 3) current spend substitutes (agencies, legal, VAT/EPR tools, in-house), 4) realistic ACV ranges for pilot and annual contracts, 5) objections that block closing. Use source-backed evidence and explicit confidence scores. Mark assumptions clearly."
+    },
+    {
+      "id": "prompt-competition-v1",
+      "title": "Competition And Category Pressure",
+      "text": "You are my competitive intelligence analyst for CartGuard. Analyze top competitors and alternatives for China->Germany Amazon.de electronics compliance workflows. Include VAT tools, EPR tools, PIM/PXM, AI governance tools, agencies, and in-house workflows. Required output: 1) competitor comparison table, 2) category leaders by segment, 3) where they can copy us fast, 4) where we can defend, 5) recommendation whether we are a new category or a feature in an existing category. Include only source-backed claims with confidence levels."
+    },
+    {
+      "id": "prompt-icp-list-v1",
+      "title": "First 100 Target Accounts",
+      "text": "You are my research ops analyst. Build a practical target-account strategy for CartGuard in our first wedge: China-based Amazon.de consumer electronics sellers (10-100 staff, 500-5,000 SKUs). Output: 1) where to find these companies, 2) ranking criteria, 3) qualification checklist, 4) red flags for disqualification, 5) expected partner channels that can accelerate intros (agencies, VAT/EPR firms, integrators). Keep it execution-focused and avoid generic advice."
+    },
+    {
+      "id": "prompt-proof-v1",
+      "title": "Pilot Proof And ROI Questions",
+      "text": "You are my startup diligence analyst. Define exactly what proof we need from 2-3 pilots to validate CartGuard viability. Output: 1) mandatory pilot metrics, 2) baseline data required before start, 3) success thresholds for go/no-go, 4) what claims become stage-safe after successful pilots, 5) kill criteria if pilots fail. Keep recommendations strict and measurable."
+    }
+  ]
+}

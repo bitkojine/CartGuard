@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#fff7fb" />
     <title>CartGuard Research | Fact-Checked Database</title>
-    <meta name="description" content="CartGuard research database with confidence scores, sources, and next questions for research agents." />
+    <meta name="description" content="CartGuard research database with confidence scores, sources, and copy-ready Perplexity prompts." />
     <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
     <link rel="manifest" href="./site.webmanifest?v=4" />
@@ -40,10 +40,10 @@
         </ul>
       </section>
 
-      <section class="architecture" aria-label="Next questions">
-        <h2>Next Questions For Research Agents</h2>
-        <p class="small-note" id="q-updated">Loading question backlog...</p>
-        <div id="question-list" class="grid" aria-live="polite"></div>
+      <section class="architecture" aria-label="Perplexity prompts">
+        <h2>Perplexity Prompt Pack (Copy As-Is)</h2>
+        <p class="small-note" id="prompts-updated">Loading prompt pack...</p>
+        <div id="prompt-list" class="grid" aria-live="polite"></div>
       </section>
 
       <section class="architecture" aria-label="Research entries">
@@ -60,8 +60,8 @@
     <script>
       const listEl = document.getElementById('research-list');
       const updatedEl = document.getElementById('research-updated');
-      const qListEl = document.getElementById('question-list');
-      const qUpdatedEl = document.getElementById('q-updated');
+      const promptListEl = document.getElementById('prompt-list');
+      const promptsUpdatedEl = document.getElementById('prompts-updated');
 
       const badgeClass = (confidence) => {
         const c = String(confidence || '').toLowerCase();
@@ -97,38 +97,38 @@
         return card;
       };
 
-      const renderQuestion = (q) => {
+      const renderPrompt = (p) => {
         const card = document.createElement('article');
         card.className = 'card';
+        const escaped = String(p.text || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
         card.innerHTML = `
-          <h3>${q.priority} - ${q.id}</h3>
-          <p><strong>Question:</strong> ${q.question}</p>
-          <p><strong>Why it matters:</strong> ${q.why_it_matters}</p>
-          <div class="pill-row">
-            <span class="pill">Owner: ${q.owner || 'n/a'}</span>
-            <span class="pill">Status: ${q.status || 'open'}</span>
-          </div>
+          <h3>${p.title}</h3>
+          <p><strong>ID:</strong> ${p.id}</p>
+          <pre><code>${escaped}</code></pre>
         `;
         return card;
       };
 
-      fetch('./assets/research/questions.json')
+      fetch('./assets/research/prompts.json')
         .then((r) => {
-          if (!r.ok) throw new Error('Failed to load question backlog');
+          if (!r.ok) throw new Error('Failed to load prompt pack');
           return r.json();
         })
         .then((data) => {
-          qUpdatedEl.textContent = `Question backlog updated: ${data.updated_at || 'unknown'}`;
-          const questions = Array.isArray(data.questions) ? data.questions : [];
-          if (questions.length === 0) {
-            qListEl.innerHTML = '<article class="card"><h3>No open questions</h3></article>';
+          promptsUpdatedEl.textContent = `Prompt pack updated: ${data.updated_at || 'unknown'}`;
+          const prompts = Array.isArray(data.prompts) ? data.prompts : [];
+          if (prompts.length === 0) {
+            promptListEl.innerHTML = '<article class="card"><h3>No prompts yet</h3></article>';
             return;
           }
-          questions.forEach((q) => qListEl.appendChild(renderQuestion(q)));
+          prompts.forEach((p) => promptListEl.appendChild(renderPrompt(p)));
         })
         .catch((err) => {
-          qUpdatedEl.textContent = 'Failed to load question backlog.';
-          qListEl.innerHTML = `<article class="card"><h3>Load error</h3><p>${err.message}</p></article>`;
+          promptsUpdatedEl.textContent = 'Failed to load prompt pack.';
+          promptListEl.innerHTML = `<article class="card"><h3>Load error</h3><p>${err.message}</p></article>`;
         });
 
       fetch('./assets/research/index.json')
