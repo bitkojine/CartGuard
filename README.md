@@ -24,6 +24,34 @@ CartGuard gives teams:
 - Policy-based controls that map to country/category requirements
 - A shared contract between legal/compliance and engineering
 
+## Brutal Business Case Review
+
+No optimism fluff. Current viability depends on execution speed, proof of enforcement quality, and distribution.
+
+Scores (0-10):
+- Problem severity: `9/10`  
+  EU ecommerce compliance pressure is real and increasing.
+- Urgency to buy: `7/10`  
+  Pain is high, but many teams still delay until legal/commercial pressure becomes acute.
+- Product differentiation today: `6/10`  
+  Strong spec-first angle, but buyers can still see this as \"yet another AI tooling layer\" unless outcomes are proven.
+- Technical defensibility (near-term): `7/10`  
+  Typed claims + policy engine + CI gating is a solid foundation; moats are weak until real regulatory adapters and integrations exist.
+- Go-to-market difficulty: `4/10`  
+  Selling infra + compliance into mid-market ecommerce is slow, multi-stakeholder, and trust-heavy.
+- Adoption friction: `5/10`  
+  Requires policy setup, claim discipline, and workflow changes across engineering/content/compliance.
+- Revenue potential (if executed): `8/10`  
+  Clear expansion path: API, enterprise policy packs, marketplace enforcement, audits.
+- Current investability (MVP stage): `5/10`  
+  Good thesis, but needs proof: pilot logos, measurable risk reduction, and integration velocity.
+
+Overall viability score: `6.4/10` (promising but not yet de-risked)
+
+Hard truth:
+- Without concrete proof that CartGuard prevents costly compliance incidents better than internal tooling, this stays a \"nice-to-have.\"
+- To become a must-have, CartGuard must show direct business impact: fewer blocked launches, fewer legal escalations, faster compliant publishing, and clear auditability for regulators/partners.
+
 ## Problem Statement
 
 AI-generated ecommerce content is scaling quickly, but claims are often unsourced, unverifiable, and non-compliant. In the EU, that creates direct regulatory risk across anti-greenwashing rules, consumer protection, and cross-border listing obligations.
