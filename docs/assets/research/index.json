@@ -22,6 +22,38 @@
         "https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20250227-2",
         "https://commission.europa.eu/live-work-travel-eu/consumer-rights-and-complaints/enforcement-consumer-protection/coordinated-actions/market-places-and-digital-services_en"
       ]
+    },
+    {
+      "id": "apac-eu-entry-20260223",
+      "title": "APAC to EU Ecommerce Market Entry Research",
+      "summary": "Draft synthesis of APAC->EU entry signals, documentation gaps, and alternatives; requires additional primary-source validation.",
+      "owner": "Perplexity Analyst",
+      "status": "draft",
+      "confidence": "medium",
+      "created_at": "2026-02-23",
+      "last_verified_at": "2026-02-23",
+      "geography": ["APAC", "EU"],
+      "industry_scope": ["ecommerce", "cross-border trade"],
+      "source_count": 19,
+      "repo_doc": "research/entries/2026-02-23-apac-eu-ecommerce-entry.md",
+      "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-apac-eu-ecommerce-entry.md",
+      "sources": [
+        "https://rutair.com/news/fedex-76-percent-of-apac-smes-boost-exports-to-europe/",
+        "https://fulfilio.com/en/from-market-entry-to-scalable-growthhow-asian-brands-can-build-eu-ready-e-commerce-operations/",
+        "https://ecommercenews.eu/25-european-amazon-marketplace-sellers-based-china/",
+        "https://ecommerce-europe.eu/wp-content/uploads/2025/10/CMI2025_LIGHT_CORRIGENDUM.pdf",
+        "https://euverify.com/resource/how-to-sell-products-in-eu-non-eu-sellers/",
+        "https://www.europarl.europa.eu/doceo/document/A-10-2025-0133_EN.html",
+        "https://www.symanty.com/blog/our-blog-1/how-much-does-it-cost-to-be-a-compliant-seller-in-europe-in-2025-12",
+        "https://eumarketready.com/eu-vat-ioss-checker",
+        "https://www.grcreport.com/post/eu-customs-report-flags-compliance-gaps-as-e-commerce-imports-surge",
+        "https://earpcorp.com/helpful-articles/why-us-businesses-are-struggling-with-eu-market-entry-and-how-to-fix-it/",
+        "https://www.calashock.com/ecommerce-blog/how-to-prepare-for-selling-in-the-eu-as-a-non-eu-merchant",
+        "https://e2eaccounting.co.uk/blog/oss-ioss-vat-for-ecommerce/",
+        "https://eldris.ai/eu-compliance-software-for-e-commerce-in-europe/",
+        "https://epr.eldris.ai/affordable-eu-compliance-automation-epr-streamlined-for-sellers/",
+        "https://www.marketplacepulse.com/articles/china-reaches-global-majority-on-amazon"
+      ]
     }
   ]
 }
