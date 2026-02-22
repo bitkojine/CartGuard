@@ -64,10 +64,10 @@ footer {
 }
 
 .hero-logo {
-  width: 58px;
-  height: 58px;
+  width: clamp(30px, 3.2vw, 40px);
+  height: clamp(30px, 3.2vw, 40px);
   display: block;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.55rem;
 }
 
 .eyebrow {
