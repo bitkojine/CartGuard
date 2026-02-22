@@ -20,15 +20,16 @@ That’s it. Infrastructure for trustworthy AI commerce, not another copy genera
 
 ## Who It Is For (Primary User)
 
-CartGuard is built for engineering teams that ship ecommerce content through code, especially:
-- Mid-sized EU ecommerce platforms
-- Headless commerce teams using Next.js / Node / TypeScript
-- Multi-country marketplaces with cross-border listing risk
-- Regulated categories (supplements, cosmetics, sustainability claims)
+CartGuard is built for EU cosmetics ecommerce teams that ship product content through code.
+
+Primary buyer group:
+- Head of Engineering
+- Compliance/Legal lead
+- Platform/marketplace operations lead
 
 ## Where Users Get The Most Value
 
-The highest-value outcome is preventing potentially non-compliant products from reaching production.
+The highest-value outcome is preventing potentially non-compliant cosmetics products from reaching production.
 
 CartGuard gives teams:
 - Build-time CI enforcement instead of post-publication legal cleanup
@@ -36,7 +37,7 @@ CartGuard gives teams:
 - Policy-based controls that map to country/category requirements
 - A shared contract between legal/compliance and engineering
 
-## Brutal Pitch + Repo Review
+## Brutal Review
 
 No optimism fluff. Current viability depends on execution speed, proof of enforcement quality, and distribution.
 
@@ -73,25 +74,6 @@ Hard truth:
 - Without concrete proof that CartGuard prevents costly compliance incidents better than internal tooling, this stays a \"nice-to-have.\"
 - To become a must-have, CartGuard must show direct business impact: fewer blocked launches, fewer legal escalations, faster compliant publishing, and clear auditability for regulators/partners.
 
-## Problem Statement
-
-AI-generated ecommerce content is scaling quickly, but claims are often unsourced, unverifiable, and non-compliant. In the EU, that creates direct regulatory risk across anti-greenwashing rules, consumer protection, and cross-border listing obligations.
-
-CartGuard treats compliance as code:
-- Claims are typed and source-linked.
-- Validation is policy-driven and auditable.
-- Enforcement happens in developer workflows and CI.
-
-## Market Positioning
-
-CartGuard is developer-first AI infrastructure for ecommerce teams that need trust, auditability, and policy enforcement at build time.
-
-Primary users:
-- Mid-sized EU ecommerce platforms
-- Headless commerce teams (Next.js / Node / TypeScript)
-- Multi-country marketplaces
-- Regulated verticals (supplements, cosmetics, sustainability-led products)
-
 ## Architecture Overview
 
 Monorepo structure:
@@ -113,13 +95,7 @@ Design principles:
 
 ## GitHub Pages
 
-This repository includes a static marketing site in `/docs` and a deploy workflow in `/.github/workflows/pages.yml`.
-
-Publishing flow:
-1. Push to `main`.
-2. GitHub Actions runs `Deploy GitHub Pages`.
-3. The `docs/` artifact is deployed to GitHub Pages.
-
+This repository includes a static marketing site in `/docs` and deploys it from `main` via `/.github/workflows/pages.yml`.
 If this is a new repository, set Pages source to `GitHub Actions` in repository settings.
 
 ## Spec-Driven Philosophy
@@ -231,6 +207,6 @@ Coverage focus:
 ## Roadmap
 
 - LLM and RAG adapters implementing `ContentGenerator`
-- EU regulatory policy adapters (per jurisdiction/domain)
+- EU cosmetics regulatory policy adapters (per jurisdiction/domain)
 - SaaS validation API and hosted policy engine
 - Marketplace-native integration layer
