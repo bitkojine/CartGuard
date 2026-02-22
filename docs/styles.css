@@ -270,16 +270,22 @@ li + li {
 
 pre {
   margin: 0;
-  overflow-x: auto;
+  overflow: hidden;
   border-radius: 12px;
   padding: 0.8rem;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(205, 151, 178, 0.32);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 code {
   font: 400 0.82rem/1.45 "IBM Plex Mono", monospace;
   color: #4a2538;
+  white-space: inherit;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .pill-row {
