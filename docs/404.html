@@ -9,11 +9,21 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
     <link rel="manifest" href="./site.webmanifest?v=4" />
     <link rel="stylesheet" href="./styles.css" />
-    <script src="./assets/shared-nav.js" defer></script>
   </head>
   <body>
     <main style="max-width:720px;margin:10vh auto;padding:1.25rem;position:relative;z-index:1;">
-      <nav data-shared-nav data-current="404"></nav>
+      <nav class="top-nav" aria-label="Primary">
+        <a href="./index.html" class="nav-brand">CartGuard</a>
+        <div class="nav-links">
+          <a href="./index.html">Home</a>
+          <a href="./beachhead.html">Beachhead</a>
+          <a href="./paid-pilots.html">Paid Pilots</a>
+          <a href="./crm-setup.html">CRM Setup</a>
+          <a href="./roadmap.html">Roadmap</a>
+          <a href="./research.html">Research</a>
+          <a href="./technical.html">Technical</a>
+        </div>
+      </nav>
       <section class="architecture">
         <h1 style="font-size:2rem;margin:0 0 .8rem;">404</h1>
         <p>This page does not exist. Return to the CartGuard operating pages.</p>

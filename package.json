@@ -11,10 +11,14 @@
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test",
-    "clean": "pnpm -r clean"
+    "clean": "pnpm -r clean",
+    "guard:no-js": "tsx scripts/guard-no-js-files.mts",
+    "guard:no-any": "tsx scripts/guard-no-explicit-any.mts",
+    "guard": "pnpm guard:no-js && pnpm guard:no-any"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "tsx": "^4.20.5",
     "typescript": "^5.8.2"
   }
 }

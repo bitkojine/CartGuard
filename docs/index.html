@@ -13,11 +13,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
-    <script src="./assets/shared-nav.js" defer></script>
   </head>
   <body>
     <header class="hero page-hero">
-      <nav data-shared-nav data-current="index"></nav>
+      <nav class="top-nav" aria-label="Primary">
+        <a href="./index.html" class="nav-brand">CartGuard</a>
+        <div class="nav-links">
+          <a href="./index.html" aria-current="page">Home</a>
+          <a href="./beachhead.html">Beachhead</a>
+          <a href="./paid-pilots.html">Paid Pilots</a>
+          <a href="./crm-setup.html">CRM Setup</a>
+          <a href="./roadmap.html">Roadmap</a>
+          <a href="./research.html">Research</a>
+          <a href="./technical.html">Technical</a>
+        </div>
+      </nav>
       <p class="eyebrow">CartGuard Manual</p>
       <h1>Compliance workflow for APAC sellers entering EU marketplaces.</h1>
       <p class="lead">We help teams catch missing launch documents before listings go live, reduce review delays, and convert pilots into paid contracts with measurable proof.</p>

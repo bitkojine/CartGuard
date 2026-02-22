@@ -13,11 +13,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
-    <script src="./assets/shared-nav.js" defer></script>
   </head>
   <body>
     <header class="hero page-hero">
-      <nav data-shared-nav data-current="paid-pilots"></nav>
+      <nav class="top-nav" aria-label="Primary">
+        <a href="./index.html" class="nav-brand">CartGuard</a>
+        <div class="nav-links">
+          <a href="./index.html">Home</a>
+          <a href="./beachhead.html">Beachhead</a>
+          <a href="./paid-pilots.html" aria-current="page">Paid Pilots</a>
+          <a href="./crm-setup.html">CRM Setup</a>
+          <a href="./roadmap.html">Roadmap</a>
+          <a href="./research.html">Research</a>
+          <a href="./technical.html">Technical</a>
+        </div>
+      </nav>
       <p class="eyebrow">Paid Pilots</p>
       <h1>How we prove value before full contracts.</h1>
       <p class="lead">A paid pilot is a short paid project that proves business results with real workflow data. It is not a demo and not free trial theater.</p>

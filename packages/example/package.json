@@ -7,9 +7,9 @@
   "license": "MIT",
   "scripts": {
     "build": "echo 'No build step for example package'",
-    "test": "node --test test/*.test.js",
+    "test": "tsx --test test/*.test.mts",
     "clean": "rm -f generated-product.json",
-    "demo": "node ./src/demo-ci.js"
+    "demo": "tsx ./src/demo-ci.mts"
   },
   "dependencies": {
     "@cartguard/cli": "workspace:*"
