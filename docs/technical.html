@@ -13,18 +13,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
+    <script src="./assets/shared-nav.js" defer></script>
   </head>
   <body>
     <header class="hero page-hero">
-      <nav class="top-nav" aria-label="Primary">
-        <a href="./index.html" class="nav-brand">CartGuard</a>
-        <div class="nav-links">
-          <a href="./beachhead.html">Beachhead</a>
-          <a href="./paid-pilots.html">Paid Pilots</a>
-          <a href="./research.html">Research</a>
-          <a href="./technical.html" aria-current="page">Technical</a>
-        </div>
-      </nav>
+      <nav data-shared-nav data-current="technical"></nav>
       <p class="eyebrow">Technical Challenges</p>
       <h1>Hardcore engineering problems we must solve.</h1>
       <p class="lead">No product theater. Every technical task here must improve a business metric.</p>

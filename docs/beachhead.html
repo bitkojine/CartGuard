@@ -13,18 +13,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
+    <script src="./assets/shared-nav.js" defer></script>
   </head>
   <body>
     <header class="hero page-hero">
-      <nav class="top-nav" aria-label="Primary">
-        <a href="./index.html" class="nav-brand">CartGuard</a>
-        <div class="nav-links">
-          <a href="./beachhead.html" aria-current="page">Beachhead</a>
-          <a href="./paid-pilots.html">Paid Pilots</a>
-          <a href="./research.html">Research</a>
-          <a href="./technical.html">Technical</a>
-        </div>
-      </nav>
+      <nav data-shared-nav data-current="beachhead"></nav>
       <p class="eyebrow">Beachhead</p>
       <h1>First market to win: China -> Germany, Amazon.de electronics.</h1>
       <p class="lead">Business result target: reduce listing delays and convert pilots into paid contracts quickly.</p>
