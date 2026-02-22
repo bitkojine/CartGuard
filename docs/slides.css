@@ -136,6 +136,21 @@ code {
   border: 1px solid var(--line);
 }
 
+.deck-disclaimer {
+  position: fixed;
+  left: 16px;
+  bottom: 14px;
+  z-index: 4;
+  margin: 0;
+  max-width: min(70vw, 860px);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #6b4f5f;
+  padding: 0.42rem 0.7rem;
+  font: 500 0.72rem/1.35 "IBM Plex Mono", monospace;
+}
+
 .controls button {
   border: 1px solid var(--line);
   background: #fff;
@@ -158,4 +173,11 @@ code {
 @media (max-width: 720px) {
   .slide { padding: 5.4rem 1rem 6.5rem; }
   p, ul, ol { font-size: 1rem; }
+  .deck-disclaimer {
+    left: 10px;
+    right: 10px;
+    max-width: none;
+    bottom: 64px;
+    border-radius: 12px;
+  }
 }

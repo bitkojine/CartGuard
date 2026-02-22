@@ -7,7 +7,7 @@
     <title>CartGuard Slides | Pitch Deck</title>
     <meta
       name="description"
-      content="CartGuard pitch slides focused on real compliance failures and why developer-first claim checks matter."
+      content="CartGuard pitch slides focused on missing-evidence checks for APAC teams entering EU markets."
     />
     <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
@@ -34,7 +34,7 @@
         <p class="kicker">Why Now</p>
         <h2>4.6B imports. 91% from China. This is the EU entry bottleneck.</h2>
         <ul>
-          <li>Cross-border volume is exploding faster than manual compliance teams can scale.</li>
+          <li>Cross-border volume is exploding faster than manual review teams can scale.</li>
           <li>EU enforcement is getting stricter and more visible every quarter.</li>
           <li>Every new country launch multiplies legal, language, and claim risk.</li>
           <li>The winner will be the team that catches missing evidence before go-live.</li>
@@ -110,9 +110,9 @@
         <p class="kicker">Definition</p>
         <h2>What is a claim?</h2>
         <ul>
-          <li>A claim is any statement that influences trust or legal risk on a product page.</li>
+          <li>A claim is any product statement that can affect trust and regulatory review.</li>
           <li>Examples: "clinically proven", "eco-friendly", "non-toxic", "dermatologist tested".</li>
-          <li>If required support is missing, it becomes a compliance risk.</li>
+          <li>If required support is missing, the claim should be reviewed before launch.</li>
           <li>CartGuard treats each claim as a typed, checkable object.</li>
         </ul>
       </section>
@@ -124,7 +124,7 @@
           <li>Step 1: Parse product content into claim objects.</li>
           <li>Step 2: Validate against country policy pack (EU first).</li>
           <li>Step 3: Flag missing required evidence/documents by rule.</li>
-          <li>Step 4: Return JSON report for engineering and legal review.</li>
+          <li>Step 4: Return recommendation report for engineering and legal review.</li>
         </ul>
       </section>
 
@@ -149,9 +149,11 @@
           <li>Metrics: fewer missing documents at release, faster review cycles, clean audit output.</li>
           <li>Goal: turn pilot data into repeatable launch package for all EU markets.</li>
         </ul>
-        <p class="small">CartGuard flags missing evidence and policy gaps. It does not provide legal advice.</p>
+        <p class="small">CartGuard provides recommendations on missing evidence. It does not provide legal advice or legal determinations.</p>
       </section>
     </main>
+
+    <p class="deck-disclaimer">Recommendations only. CartGuard flags missing evidence and policy gaps. Final legal decisions stay with your legal/compliance team.</p>
 
     <div class="controls">
       <button id="prev" type="button">Prev</button>
