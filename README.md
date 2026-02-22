@@ -6,6 +6,14 @@ CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into sou
 
 [Live Site](https://bitkojine.github.io/CartGuard/) • [Sales Backlog](./BACKLOG.md)
 
+## Build Battle Script (Use This Live)
+
+1. "We are building developer-first compliance infrastructure for AI-generated cosmetics content."
+2. "CartGuard validates source-linked claims in CI and blocks potentially non-compliant listings before release."
+3. "We enter through engineering teams first, then expand to compliance and operations."
+4. "If cosmetics does not validate fast, we pivot into adjacent regulated claim workflows."
+5. "Tonight we can show a working CLI and policy engine, not slides-only vapor."
+
 ## Current Status
 
 - Pitch-readiness score (brutal): `5.4/10`

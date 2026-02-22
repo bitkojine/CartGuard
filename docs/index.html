@@ -50,6 +50,20 @@
     </header>
 
     <main>
+      <section class="pricing" aria-label="Pitch mode">
+        <h2>Pitch Battle Mode (90 Seconds)</h2>
+        <p>
+          Problem: AI cosmetics claims are risky and hard to verify. Solution: CartGuard
+          validates source-linked claims in CI and blocks risky listings before release.
+          Why now: EU scrutiny is rising and AI content volume is exploding.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Clear pain</span>
+          <span class="pill">Working technical proof</span>
+          <span class="pill">Developer wedge + expansion path</span>
+        </div>
+      </section>
+
       <section class="pricing" aria-label="Who this is for" id="fit">
         <h2>Who Converts Right Now</h2>
         <p>
@@ -82,7 +96,8 @@
         <h2>If Cosmetics Does Not Validate, We Pivot Fast</h2>
         <p>
           We are serious about execution and honest about uncertainty. Current wedge is EU cosmetics.
-          If this does not validate, we pivot quickly instead of pretending.
+          If this does not validate, we pivot quickly instead of pretending. Yes, we can laugh
+          about it and still execute hard.
         </p>
         <div class="pill-row">
           <span class="pill">Supplements / nutraceutical claims</span>
@@ -136,6 +151,15 @@
 /packages/engine -> enforcement runtime
 /packages/ai     -> generator interfaces
 /packages/cli    -> build-time command layer</code></pre>
+      </section>
+
+      <section class="architecture" aria-label="Live demo">
+        <h2>Live Demo In Under 60 Seconds</h2>
+        <pre><code>pnpm install
+pnpm build
+node packages/cli/dist/src/bin/cartguard.js validate \
+  packages/example/sample-product.json \
+  --policy packages/example/sample-policy.json --json</code></pre>
       </section>
 
       <section class="pricing" aria-label="Positioning">
