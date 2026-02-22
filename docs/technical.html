@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#fff7fb" />
-    <title>CartGuard Technical | Implementation Defense</title>
+    <title>CartGuard Technical | Top Technical Challenges</title>
     <meta
       name="description"
-      content="How CartGuard plans legal context storage, rollout scope, and key technical risks."
+      content="Top technical challenges for CartGuard and what is solved vs still unknown."
     />
     <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
@@ -30,115 +30,93 @@
           <a href="./strategy.html">Strategy</a>
           <a href="./competition.html">Competition</a>
           <a href="./technical.html" aria-current="page">Technical</a>
+          <a href="./pricing.html">Pricing</a>
         </div>
       </nav>
-      <p class="eyebrow">Technical Defense</p>
-      <h1>How we plan to build this without hand-wavy claims.</h1>
-      <p class="lead">
-        This page answers the hard implementation questions investors and technical judges ask.
-      </p>
+      <p class="eyebrow">Technical Challenges</p>
+      <h1>The hard engineering problems in this product.</h1>
+      <p class="lead">This page is only about technical challenges and current status.</p>
     </header>
 
     <main>
-      <section class="pricing" aria-label="Legal context storage">
-        <h2>Where We Store Legal Context</h2>
-        <p>Short answer: versioned policy packs, not hardcoded rules.</p>
-        <ul>
-          <li>Store legal rules as machine-readable policy files in a policy pack repo.</li>
-          <li>Each rule has metadata: jurisdiction, source law URL, version, effective date, risk level.</li>
-          <li>Keep extracted guidance snippets and mapping notes with citations.</li>
-          <li>Use semantic versioning so every validation run references a rule version.</li>
-          <li>Output evidence artifacts with rule IDs + source references for audit replay.</li>
-        </ul>
+      <section class="pricing" aria-label="Top 5 technical challenges">
+        <h2>Top 5 Technical Challenges</h2>
+        <ol>
+          <li>
+            <strong>Legal text to code rules.</strong>
+            We must convert legal language into clear, testable rules without losing legal meaning.
+          </li>
+          <li>
+            <strong>Evidence quality, not just citations.</strong>
+            A random link is not enough. We need a source quality model compliance teams can trust.
+          </li>
+          <li>
+            <strong>Deterministic outputs for audits.</strong>
+            Same input + same policy version must always return the same result.
+          </li>
+          <li>
+            <strong>Low-friction integration.</strong>
+            If setup is hard or slows CI too much, teams will bypass the tool.
+          </li>
+          <li>
+            <strong>Policy version control across regions.</strong>
+            Country-specific overrides must stay consistent and traceable.
+          </li>
+        </ol>
       </section>
 
-      <section class="pricing" aria-label="Country rollout strategy">
-        <h2>Do We Start With One Country?</h2>
+      <section class="grid" aria-label="Solved vs not solved">
+        <article class="card">
+          <h2>What Is Working Today</h2>
+          <ul>
+            <li>Typed schema layer for claims and policies.</li>
+            <li>Policy-driven validation engine.</li>
+            <li>CLI flow for generate/validate and JSON outputs.</li>
+            <li>CI-style pass/fail exit behavior.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>What Is Not Solved Yet</h2>
+          <ul>
+            <li>Mature evidence quality scoring model.</li>
+            <li>Complete rule mapping by jurisdiction.</li>
+            <li>Compliance reviewer UX for sign-off workflows.</li>
+            <li>Pilot-proven reduction in legal incidents.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="pricing" aria-label="Where legal context lives">
+        <h2>Where Legal Context Should Live</h2>
         <p>
-          Yes. Start narrow: one jurisdiction profile first, then expand. For this wedge, begin with
-          EU cosmetics common criteria and one priority market profile before adding more country layers.
+          In versioned policy packs. Each rule should include jurisdiction, source URL,
+          effective date, rule ID, and risk level. Every validation output should reference
+          those IDs for replay and audits.
         </p>
-        <div class="pill-row">
-          <span class="pill">Step 1: EU cosmetics baseline rules</span>
-          <span class="pill">Step 2: Country-specific overrides</span>
-          <span class="pill">Step 3: Multi-country policy packs</span>
-        </div>
       </section>
 
-      <section class="pricing" aria-label="Major technical challenges">
-        <h2>Major Technical Challenges (Most Important)</h2>
+      <section class="pricing" aria-label="Country rollout">
+        <h2>Country Rollout Approach</h2>
+        <p>
+          Start with one baseline rule pack first, then add country-level overrides.
+          Do not launch multi-country logic before one rule pack is stable and tested.
+        </p>
+      </section>
+
+      <section class="pricing" aria-label="Pitch-critical technical answers">
+        <h2>Most Important Technical Questions For The Pitch</h2>
         <ol>
-          <li>
-            <strong>Legal-to-rule translation:</strong> turning legal text into clear, testable,
-            machine rules without losing legal meaning.
-          </li>
-          <li>
-            <strong>Evidence quality:</strong> proving that sources are strong enough for compliance
-            teams, not just \"a link exists\".
-          </li>
-          <li>
-            <strong>Deterministic outputs:</strong> same input + same policy must always return the
-            same result for audit trust.
-          </li>
-          <li>
-            <strong>Low-friction integration:</strong> fitting into real CI/CMS/PIM workflows without
-            slowing release teams down.
-          </li>
-          <li>
-            <strong>Versioned policy management:</strong> handling rule updates across countries and
-            customer overrides without breaking consistency.
-          </li>
+          <li>What legal baseline pack is v1?</li>
+          <li>How do we prove source quality in outputs?</li>
+          <li>How do we guarantee deterministic reruns?</li>
+          <li>How fast can a dev team integrate in CI?</li>
+          <li>What metric proves technical value in a pilot?</li>
         </ol>
-      </section>
-
-      <section class="grid" aria-label="Major technical challenges details">
-        <article class="card">
-          <h2>Why These Are Hard</h2>
-          <ul>
-            <li>Law and marketing language are ambiguous, code is not.</li>
-            <li>Compliance trust depends on evidence quality, not model confidence.</li>
-            <li>Audit use cases need replayable, version-locked results.</li>
-            <li>Teams reject tools that add release friction.</li>
-            <li>Policy drift creates inconsistent enforcement across markets.</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h2>Failure Modes To Avoid</h2>
-          <ul>
-            <li>False confidence: saying \"compliant\" instead of \"risk reduced\".</li>
-            <li>Weak evidence packs that legal teams do not trust.</li>
-            <li>Too many warnings and too few actionable blocks.</li>
-            <li>Manual policy maintenance that does not scale.</li>
-            <li>Slow pipelines that developers bypass.</li>
-          </ul>
-        </article>
-      </section>
-
-      <section class="pricing" aria-label="Most important questions for pitch">
-        <h2>Most Important Questions To Answer Right Now (Pitch-Critical)</h2>
-        <ol>
-          <li>What exact legal baseline are we implementing first?</li>
-          <li>Who signs off that our rule mapping is acceptable?</li>
-          <li>What makes our evidence output trusted by compliance teams?</li>
-          <li>How quickly can a dev team integrate this in CI?</li>
-          <li>What pilot metric proves value in 2-4 weeks?</li>
-        </ol>
-      </section>
-
-      <section class="pricing" aria-label="Current answers status">
-        <h2>Current Answer Status (Brutal)</h2>
-        <ul>
-          <li>Legal baseline scope: <strong>partially defined</strong></li>
-          <li>Rule-to-law mapping process: <strong>in progress</strong></li>
-          <li>Evidence quality model: <strong>not mature yet</strong></li>
-          <li>CI integration experience: <strong>working MVP</strong></li>
-          <li>Pilot proof metrics: <strong>not captured yet</strong></li>
-        </ul>
       </section>
     </main>
 
     <footer>
-      <p>CartGuard • Technical Implementation Defense</p>
+      <p>CartGuard • Technical Challenges</p>
     </footer>
   </body>
 </html>
