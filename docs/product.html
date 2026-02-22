@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CartGuard Product | Spec-Driven Compliance Engine</title>
+    <meta name="description" content="How CartGuard works: schema-first claims, policy engine, and CI gating for EU cosmetics content." />
+    <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="./site.webmanifest?v=3" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero page-hero">
+      <nav class="top-nav" aria-label="Primary">
+        <a href="./index.html" class="nav-brand">CartGuard</a>
+        <div class="nav-links">
+          <a href="./product.html" aria-current="page">Product</a>
+          <a href="./developers.html">Developers</a>
+          <a href="./strategy.html">Strategy</a>
+        </div>
+      </nav>
+      <p class="eyebrow">Product</p>
+      <h1>Spec-first validation for AI-generated cosmetics claims.</h1>
+      <p class="lead">No hidden rules. Claims, policies, and outcomes are explicit and auditable.</p>
+    </header>
+
+    <main>
+      <section class="grid" aria-label="Problem and approach">
+        <article class="card">
+          <h2>The Problem</h2>
+          <ul>
+            <li>AI-generated claims are often unverifiable.</li>
+            <li>Manual review does not scale with listing volume.</li>
+            <li>Compliance checks happen too late in release cycles.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>The CartGuard Approach</h2>
+          <ul>
+            <li>Model claims as typed, source-linked objects.</li>
+            <li>Enforce explicit policy rules, not implicit heuristics.</li>
+            <li>Gate listings in CI using machine-readable results.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="architecture" aria-label="Architecture">
+        <h2>Architecture</h2>
+        <div class="flow">
+          <div class="flow-box">AI Output</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">Spec Validation</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">Policy Engine</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">CI Gate</div>
+        </div>
+        <pre><code>/packages/spec   -> schemas + policy contracts
+/packages/engine -> enforcement runtime
+/packages/ai     -> generator interfaces
+/packages/cli    -> build-time command layer</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <p>CartGuard • Product Overview</p>
+    </footer>
+  </body>
+</html>

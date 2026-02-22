@@ -56,11 +56,51 @@ footer {
   z-index: 1;
 }
 
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.nav-brand {
+  color: var(--text);
+  text-decoration: none;
+  font: 700 0.95rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.04em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font: 500 0.8rem/1 "IBM Plex Mono", monospace;
+  border: 1px solid var(--line);
+  padding: 0.38rem 0.54rem;
+  border-radius: 999px;
+}
+
+.nav-links a[aria-current="page"] {
+  color: #3b1224;
+  background: linear-gradient(100deg, var(--accent), #ffc2d8);
+  border-color: transparent;
+}
+
 .hero {
   max-width: var(--max);
   margin: 0 auto;
   padding: 6.5rem 1.25rem 2.5rem;
   animation: rise 0.8s ease-out;
+}
+
+.page-hero {
+  padding-top: 2.2rem;
 }
 
 .hero-logo {
@@ -139,6 +179,32 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 0.95rem;
+}
+
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.95rem;
+}
+
+.link-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  padding: 1.05rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.link-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.link-card p {
+  color: var(--muted);
+  margin: 0.55rem 0 0;
 }
 
 .card,
@@ -243,6 +309,14 @@ footer {
 @media (max-width: 680px) {
   .hero {
     padding-top: 4.6rem;
+  }
+
+  .page-hero {
+    padding-top: 1.3rem;
+  }
+
+  .top-nav {
+    margin-bottom: 0.9rem;
   }
 
   .flow-arrow {

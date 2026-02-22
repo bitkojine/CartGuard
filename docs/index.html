@@ -35,145 +35,51 @@
     <div class="background-glow background-glow-b"></div>
 
     <header class="hero">
+      <nav class="top-nav" aria-label="Primary">
+        <a href="./index.html" class="nav-brand">CartGuard</a>
+        <div class="nav-links">
+          <a href="./product.html">Product</a>
+          <a href="./developers.html">Developers</a>
+          <a href="./strategy.html">Strategy</a>
+        </div>
+      </nav>
+
       <img src="./assets/logo.svg" alt="CartGuard logo" class="hero-logo" />
-      <p class="eyebrow">CartGuard</p>
-      <h1>Developer-first compliance for EU cosmetics ecommerce.</h1>
+      <p class="eyebrow">Developer-First Compliance Infrastructure</p>
+      <h1>Ship compliant AI product claims for EU cosmetics.</h1>
       <p class="lead">
         CartGuard helps engineering and compliance teams block potentially non-compliant
         claims before listings go live.
       </p>
       <div class="actions">
-        <a href="#fit" class="btn btn-primary">Is This For You?</a>
-        <a href="#pivots" class="btn btn-secondary">Pivot Plan</a>
+        <a href="./developers.html" class="btn btn-primary">Run The Demo</a>
+        <a href="./strategy.html" class="btn btn-secondary">See GTM + Pivots</a>
       </div>
-      <p class="small-note">Developer-first entry: engineering teams adopt first, then expand org-wide.</p>
+      <p class="small-note">Developer-first entry: adopt in CI, then expand across teams.</p>
     </header>
 
     <main>
-      <section class="pricing" aria-label="Pitch mode">
-        <h2>Pitch Battle Mode (90 Seconds)</h2>
+      <section class="link-grid" aria-label="Site map">
+        <a class="link-card" href="./product.html">
+          <h2>Product</h2>
+          <p>Problem, architecture, policy engine, and validation model.</p>
+        </a>
+        <a class="link-card" href="./developers.html">
+          <h2>Developers</h2>
+          <p>Quickstart, CLI commands, and a 60-second live demo flow.</p>
+        </a>
+        <a class="link-card" href="./strategy.html">
+          <h2>Strategy</h2>
+          <p>Target buyer, commercial wedge, and explicit pivot options.</p>
+        </a>
+      </section>
+
+      <section class="pricing" aria-label="Fast pitch">
+        <h2>Fast Pitch</h2>
         <p>
-          Problem: AI cosmetics claims are risky and hard to verify. Solution: CartGuard
-          validates source-linked claims in CI and blocks risky listings before release.
-          Why now: EU scrutiny is rising and AI content volume is exploding.
+          AI-generated cosmetics claims create real compliance risk. CartGuard turns claims into
+          source-linked, policy-validated objects and gates releases in CI.
         </p>
-        <div class="pill-row">
-          <span class="pill">Clear pain</span>
-          <span class="pill">Working technical proof</span>
-          <span class="pill">Developer wedge + expansion path</span>
-        </div>
-      </section>
-
-      <section class="pricing" aria-label="Who this is for" id="fit">
-        <h2>Who Converts Right Now</h2>
-        <p>
-          You should use CartGuard now if your team owns EU cosmetics listings and needs
-          build-time controls for AI-generated claims.
-        </p>
-        <div class="pill-row">
-          <span class="pill">Head of Engineering</span>
-          <span class="pill">Compliance / Legal Lead</span>
-          <span class="pill">Headless TypeScript stack</span>
-          <span class="pill">Multi-country EU listings</span>
-        </div>
-      </section>
-
-      <section class="pricing" aria-label="Developer-first model">
-        <h2>Developer-First GTM</h2>
-        <p>
-          CartGuard is sold as developer infrastructure first. Engineers are the fastest
-          path inside a company because they control CI, release gates, and implementation.
-          After technical adoption, compliance and business teams can standardize policy on top.
-        </p>
-        <div class="pill-row">
-          <span class="pill">Step 1: Engineering adoption</span>
-          <span class="pill">Step 2: Compliance standardization</span>
-          <span class="pill">Step 3: Org-wide policy rollout</span>
-        </div>
-      </section>
-
-      <section class="pricing" aria-label="Pivot options" id="pivots">
-        <h2>If Cosmetics Does Not Validate, We Pivot Fast</h2>
-        <p>
-          We are serious about execution and honest about uncertainty. Current wedge is EU cosmetics.
-          If this does not validate, we pivot quickly instead of pretending. Yes, we can laugh
-          about it and still execute hard.
-        </p>
-        <div class="pill-row">
-          <span class="pill">Supplements / nutraceutical claims</span>
-          <span class="pill">Sustainability claim enforcement</span>
-          <span class="pill">Marketplace seller-listing gate</span>
-          <span class="pill">Pricing & promo compliance</span>
-          <span class="pill">Cross-border localization checks</span>
-          <span class="pill">Enterprise policy engine API</span>
-        </div>
-      </section>
-
-      <section class="grid" aria-label="Problem and solution" id="problem">
-        <article class="card">
-          <h2>The Problem</h2>
-          <p>
-            AI-generated cosmetics listings are scaling, but claim quality is inconsistent
-            and legal exposure is rising across EU markets.
-          </p>
-          <ul>
-            <li>Anti-greenwashing enforcement pressure</li>
-            <li>Cross-border policy fragmentation</li>
-            <li>Unverifiable AI claims in production catalogs</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h2>The CartGuard Approach</h2>
-          <p>
-            Encode trust as code. Claims are typed objects with sources. Policies are explicit.
-            Validation is deterministic and CI-native.
-          </p>
-          <ul>
-            <li>Spec-first domain model</li>
-            <li>Policy-driven engine (no hidden constants)</li>
-            <li>Machine-readable pass/fail outputs</li>
-          </ul>
-        </article>
-      </section>
-
-      <section class="architecture" aria-label="Architecture" id="architecture">
-        <h2>Architecture</h2>
-        <div class="flow">
-          <div class="flow-box">AI Output</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-box">Spec Validation</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-box">Policy Engine</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-box">CI Gate</div>
-        </div>
-        <pre><code>/packages/spec   -> schemas + policy contracts
-/packages/engine -> enforcement runtime
-/packages/ai     -> generator interfaces
-/packages/cli    -> build-time command layer</code></pre>
-      </section>
-
-      <section class="architecture" aria-label="Live demo">
-        <h2>Live Demo In Under 60 Seconds</h2>
-        <pre><code>pnpm install
-pnpm build
-node packages/cli/dist/src/bin/cartguard.js validate \
-  packages/example/sample-product.json \
-  --policy packages/example/sample-policy.json --json</code></pre>
-      </section>
-
-      <section class="pricing" aria-label="Positioning">
-        <h2>Current Commercial Focus</h2>
-        <p>
-          We are selling to EU cosmetics ecommerce teams first, starting with CI claim
-          gating for AI-generated product content.
-        </p>
-        <div class="pill-row">
-          <span class="pill">First wedge: cosmetics</span>
-          <span class="pill">Primary outcome: risk reduction</span>
-          <span class="pill">Secondary outcome: faster approvals</span>
-          <span class="pill">Evidence: machine-readable CI output</span>
-        </div>
       </section>
     </main>
 
