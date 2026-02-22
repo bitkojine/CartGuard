@@ -1,0 +1,48 @@
+{
+  "baseName": "CartGuard CRM",
+  "tables": [
+    {
+      "name": "Accounts",
+      "description": "Target customer accounts for APAC to EU expansion",
+      "fields": [
+        { "name": "Account Name", "type": "singleLineText" },
+        { "name": "Country Origin", "type": "singleSelect", "options": { "choices": ["China", "Hong Kong", "India", "Other"] } },
+        { "name": "Target EU Market", "type": "singleSelect", "options": { "choices": ["Germany", "France", "Netherlands", "Poland", "Other"] } },
+        { "name": "Vertical", "type": "singleSelect", "options": { "choices": ["Consumer Electronics", "Accessories", "Home Goods", "Other"] } },
+        { "name": "ICP Fit", "type": "number" },
+        { "name": "Website", "type": "url" },
+        { "name": "Status", "type": "singleSelect", "options": { "choices": ["Target", "Contacted", "Qualified", "Disqualified"] } },
+        { "name": "Owner", "type": "singleLineText" },
+        { "name": "Notes", "type": "multilineText" }
+      ]
+    },
+    {
+      "name": "Deals",
+      "description": "Pipeline and pilot deal tracking",
+      "fields": [
+        { "name": "Deal Name", "type": "singleLineText" },
+        { "name": "Stage", "type": "singleSelect", "options": { "choices": ["Lead", "Qualified", "Discovery Done", "Pilot Proposed", "Pilot Active", "Won", "Lost"] } },
+        { "name": "Value EUR", "type": "currency" },
+        { "name": "Budget Owner", "type": "singleLineText" },
+        { "name": "Main Pain", "type": "multilineText" },
+        { "name": "Current Workaround", "type": "multilineText" },
+        { "name": "Next Step", "type": "multilineText" },
+        { "name": "Next Step Due", "type": "date" },
+        { "name": "Risk Level", "type": "singleSelect", "options": { "choices": ["Low", "Medium", "High"] } },
+        { "name": "Outcome Score", "type": "number" }
+      ]
+    },
+    {
+      "name": "Activities",
+      "description": "Outreach, calls, and pilot reviews",
+      "fields": [
+        { "name": "Activity Name", "type": "singleLineText" },
+        { "name": "Type", "type": "singleSelect", "options": { "choices": ["Outreach", "Call", "Follow-up", "Pilot Review"] } },
+        { "name": "Date", "type": "dateTime" },
+        { "name": "Summary", "type": "multilineText" },
+        { "name": "Decision", "type": "multilineText" },
+        { "name": "Owner", "type": "singleLineText" }
+      ]
+    }
+  ]
+}

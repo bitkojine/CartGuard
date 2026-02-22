@@ -49,10 +49,25 @@
         <pre><code>crm/
   schema.json
 scripts/
-  check-airtable-schema.ts
-  bootstrap-airtable.ts
-.github/workflows/
-  crm-schema-check.yml</code></pre>
+  crm-types.mts
+  check-airtable-crm-schema.mts
+  bootstrap-airtable-crm.mts</code></pre>
+      </section>
+
+      <section class="architecture" aria-label="Run now">
+        <h2>Run It Now (No Manual Columns)</h2>
+        <pre><code># 1) set Airtable credentials
+export AIRTABLE_TOKEN=your_personal_access_token
+export AIRTABLE_BASE_ID=appXXXXXXXXXXXXXX
+
+# 2) dry-run bootstrap (shows what will be created)
+pnpm crm:bootstrap
+
+# 3) apply schema changes (create missing tables/fields)
+pnpm crm:bootstrap -- --apply
+
+# 4) verify base matches schema
+pnpm crm:check</code></pre>
       </section>
 
       <section class="architecture" aria-label="Schema example">
@@ -82,27 +97,13 @@ scripts/
 }</code></pre>
       </section>
 
-      <section class="architecture" aria-label="Script example">
-        <h2>Drift Check Script Skeleton (`scripts/check-airtable-schema.ts`)</h2>
-        <pre><code>import fs from "node:fs";
-
-type Schema = {
-  tables: Array&lt;{ name: string; fields: Array&lt;{ name: string; type: string }&gt; }&gt;;
-};
-
-const schema: Schema = JSON.parse(fs.readFileSync("crm/schema.json", "utf8"));
-
-async function main(): Promise&lt;void&gt; {
-  // 1) Load Airtable metadata via API
-  // 2) Compare table/field names and types with schema.json
-  // 3) Print human-readable diff
-  // 4) Exit non-zero if drift detected
-}
-
-main().catch((err) =&gt; {
-  console.error(err);
-  process.exit(1);
-});</code></pre>
+      <section class="pricing" aria-label="Current implementation status">
+        <h2>Current Implementation Status</h2>
+        <ul>
+          <li>`crm/schema.json` is the source of truth for table/field structure.</li>
+          <li>`crm:bootstrap` creates missing tables/fields from schema.</li>
+          <li>`crm:check` fails when Airtable drifts from schema.</li>
+        </ul>
       </section>
 
       <section class="architecture" aria-label="CI example">
