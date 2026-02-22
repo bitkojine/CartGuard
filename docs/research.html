@@ -62,6 +62,7 @@
       const updatedEl = document.getElementById('research-updated');
       const promptListEl = document.getElementById('prompt-list');
       const promptsUpdatedEl = document.getElementById('prompts-updated');
+      const docsById = new Map();
 
       const badgeClass = (confidence) => {
         const c = String(confidence || '').toLowerCase();
@@ -75,9 +76,14 @@
         card.className = 'card';
         const geo = (entry.geography || []).join(', ');
         const scope = (entry.industry_scope || []).join(', ');
+        const inlineDoc = docsById.get(entry.id) || 'No inline document text found for this entry.';
         const sources = Array.isArray(entry.sources)
           ? entry.sources.map((url) => `<li><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></li>`).join('')
           : '';
+        const escapedDoc = String(inlineDoc)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
         card.innerHTML = `
           <h3>${entry.title}</h3>
           <p>${entry.summary || ''}</p>
@@ -91,7 +97,9 @@
             <span class="pill">Scope: ${scope || 'n/a'}</span>
             <span class="pill">Confidence: <span class="${badgeClass(entry.confidence)}">${entry.confidence || 'low'}</span></span>
           </div>
-          <p><a class="btn btn-secondary" href="${entry.repo_url}" target="_blank" rel="noopener noreferrer">Open Research Doc</a></p>
+          <h4 style="margin:.7rem 0 .45rem;">Research Note (Inline)</h4>
+          <pre><code>${escapedDoc}</code></pre>
+          <p><a class="btn btn-secondary" href="${entry.repo_url}" target="_blank" rel="noopener noreferrer">Open On GitHub (Optional)</a></p>
           <details><summary>Sources</summary><ul>${sources}</ul></details>
         `;
         return card;
@@ -112,6 +120,21 @@
         return card;
       };
 
+      const loadDocs = fetch('./assets/research/docs.json')
+        .then((r) => {
+          if (!r.ok) throw new Error('Failed to load inline research docs');
+          return r.json();
+        })
+        .then((data) => {
+          const docs = Array.isArray(data.docs) ? data.docs : [];
+          docs.forEach((d) => {
+            if (d && d.id) docsById.set(d.id, d.content || '');
+          });
+        })
+        .catch(() => {
+          // Keep page usable even if inline docs fail; cards will show fallback text.
+        });
+
       fetch('./assets/research/prompts.json')
         .then((r) => {
           if (!r.ok) throw new Error('Failed to load prompt pack');
@@ -131,7 +154,7 @@
           promptListEl.innerHTML = `<article class="card"><h3>Load error</h3><p>${err.message}</p></article>`;
         });
 
-      fetch('./assets/research/index.json')
+      loadDocs.then(() => fetch('./assets/research/index.json'))
         .then((r) => {
           if (!r.ok) throw new Error('Failed to load research index');
           return r.json();
