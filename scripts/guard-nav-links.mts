@@ -41,6 +41,23 @@ if (!existsSync(stylesPath)) {
       violations.push(`${stylesPath}: .top-nav must not be hidden`);
     }
   }
+
+  const mobileMarker = "@media (max-width: 680px)";
+  const mobileStart = styles.indexOf(mobileMarker);
+  if (mobileStart === -1) {
+    violations.push(`${stylesPath}: missing @media (max-width: 680px) block for mobile nav behavior`);
+  } else {
+    const nextMediaStart = styles.indexOf("@media", mobileStart + mobileMarker.length);
+    const mobileBlock =
+      nextMediaStart === -1 ? styles.slice(mobileStart) : styles.slice(mobileStart, nextMediaStart);
+    if (!mobileBlock.includes(".top-nav {")) {
+      violations.push(`${stylesPath}: missing .top-nav override inside mobile media block`);
+    } else {
+      if (!mobileBlock.includes("position: static;")) {
+        violations.push(`${stylesPath}: mobile .top-nav must use position: static`);
+      }
+    }
+  }
 }
 
 for (const file of htmlFiles) {
