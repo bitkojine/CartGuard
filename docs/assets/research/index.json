@@ -2,6 +2,28 @@
   "updated_at": "2026-02-23",
   "entries": [
     {
+      "id": "business-weaknesses-register-2026-02-23",
+      "title": "Business Weaknesses and Falsification Questions Register",
+      "summary": "Live register of assumptions, weaknesses, and falsification questions to pressure-test startup viability.",
+      "owner": "cartguard-core",
+      "status": "reviewed",
+      "confidence": "medium",
+      "created_at": "2026-02-23",
+      "last_verified_at": "2026-02-23",
+      "geography": ["APAC", "EU", "China", "Germany"],
+      "industry_scope": ["startup strategy", "b2b saas", "go-to-market"],
+      "source_count": 5,
+      "repo_doc": "research/entries/2026-02-23-business-weaknesses-register.md",
+      "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-business-weaknesses-register.md",
+      "sources": [
+        "https://newsroom.fedex.com/newsroom/europe-english/fedex-survey-reveals-85-of-apac-smes-confident-in-europe-trade-growth",
+        "https://commission.europa.eu/news-and-media/news/tackling-challenges-e-commerce-imports-2025-02-05_en",
+        "https://taxation-customs.ec.europa.eu/customs/eu-customs-union-facts-and-figures/e-commerce-product-compliance-and-safety_en",
+        "https://www.europarl.europa.eu/doceo/document/A-10-2025-0133_EN.html",
+        "https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20250227-2"
+      ]
+    },
+    {
       "id": "paid-pilots-b2b-playbook-2026-02-23",
       "title": "Paid Pilots Playbook for APAC to EU Compliance Workflow",
       "summary": "Operational playbook for running paid pilots that prove measurable outcomes before annual contracts.",

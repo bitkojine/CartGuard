@@ -2,6 +2,21 @@
   "updated_at": "2026-02-23",
   "prompts": [
     {
+      "id": "prompt-falsification-v1",
+      "title": "Falsification Audit",
+      "text": "You are my startup falsification analyst for CartGuard. Try to disprove our current strategy: China-based Amazon.de electronics sellers, paid pilots, recommendation-only missing-document checks. Output: top 10 assumptions that could be false, what evidence would falsify each, current confidence level, and what experiment we can run in 14 days. Prioritize primary sources and direct operator data over opinion."
+    },
+    {
+      "id": "prompt-budget-owner-proof-v1",
+      "title": "Budget Owner Proof",
+      "text": "You are my B2B buying-process analyst. For APAC sellers entering EU, determine who actually controls spending for compliance workflow tools and how this changes by company size. Output: buying committee map, signature authority patterns, time-to-decision ranges, and minimum proof needed to get paid pilot approval. Include source URL, date, geography, and confidence for every claim."
+    },
+    {
+      "id": "prompt-feature-vs-company-v1",
+      "title": "Feature vs Company Pressure Test",
+      "text": "You are my venture viability analyst. Evaluate whether CartGuard is likely to become a standalone company or be absorbed as a feature by existing categories (PIM, agency services, VAT/EPR tools, AI governance platforms). Output: evidence-backed argument for each side, leader capabilities, switching costs, defensibility options, and what must be true for standalone viability."
+    },
+    {
       "id": "prompt-paid-pilot-benchmarks-v1",
       "title": "Paid Pilot Benchmarks",
       "text": "You are my research analyst for CartGuard. Find benchmark ranges for paid B2B pilots in compliance workflow software. I need typical pilot length, paid pilot pricing ranges, pilot-to-annual conversion rates, and strongest predictors of conversion. For each metric include value/range, date, geography, source URL, and confidence level. Use primary or highly credible sources and explicitly mark missing direct data."
