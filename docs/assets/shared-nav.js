@@ -6,6 +6,7 @@
     { href: './index.html', label: 'Home', key: 'index' },
     { href: './beachhead.html', label: 'Beachhead', key: 'beachhead' },
     { href: './paid-pilots.html', label: 'Paid Pilots', key: 'paid-pilots' },
+    { href: './crm-setup.html', label: 'CRM Setup', key: 'crm-setup' },
     { href: './roadmap.html', label: 'Roadmap', key: 'roadmap' },
     { href: './research.html', label: 'Research', key: 'research' },
     { href: './technical.html', label: 'Technical', key: 'technical' }

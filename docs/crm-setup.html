@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff7fb" />
+    <title>CartGuard CRM Setup | Code-First, Private Data</title>
+    <meta name="description" content="Public CRM technical setup for CartGuard: schema in Git, data private in Airtable, and drift checks from code." />
+    <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="./site.webmanifest?v=4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./assets/shared-nav.js" defer></script>
+  </head>
+  <body>
+    <header class="hero page-hero">
+      <nav data-shared-nav data-current="crm-setup"></nav>
+      <p class="eyebrow">CRM Setup</p>
+      <h1>CRM from code, data private.</h1>
+      <p class="lead">We keep CRM structure in GitHub and keep customer data private in Airtable. Public repo shows system design, not private records.</p>
+    </header>
+
+    <main>
+      <section class="pricing" aria-label="Architecture summary">
+        <h2>Architecture</h2>
+        <ul>
+          <li>Schema spec in Git: versioned and reviewable.</li>
+          <li>Customer data in Airtable: private workspace only.</li>
+          <li>CI drift checks: fail if base diverges from schema spec.</li>
+          <li>Secrets in GitHub Actions: never in repo files.</li>
+        </ul>
+      </section>
+
+      <section class="architecture" aria-label="Repo structure">
+        <h2>Suggested Repo Structure</h2>
+        <pre><code>crm/
+  schema.json
+scripts/
+  check-airtable-schema.ts
+  bootstrap-airtable.ts
+.github/workflows/
+  crm-schema-check.yml</code></pre>
+      </section>
+
+      <section class="architecture" aria-label="Schema example">
+        <h2>Schema Spec Example (`crm/schema.json`)</h2>
+        <pre><code>{
+  "baseName": "CartGuard CRM",
+  "tables": [
+    {
+      "name": "Accounts",
+      "fields": [
+        { "name": "Account Name", "type": "singleLineText" },
+        { "name": "ICP Fit", "type": "number" },
+        { "name": "Status", "type": "singleSelect", "options": ["Target", "Contacted", "Qualified", "Disqualified"] }
+      ]
+    },
+    {
+      "name": "Deals",
+      "fields": [
+        { "name": "Account", "type": "linkToRecord", "table": "Accounts" },
+        { "name": "Stage", "type": "singleSelect", "options": ["Lead", "Qualified", "Discovery Done", "Pilot Proposed", "Pilot Active", "Won", "Lost"] },
+        { "name": "Value EUR", "type": "currency", "precision": 2 },
+        { "name": "Next Step", "type": "multilineText" },
+        { "name": "Next Step Due", "type": "date" }
+      ]
+    }
+  ]
+}</code></pre>
+      </section>
+
+      <section class="architecture" aria-label="Script example">
+        <h2>Drift Check Script Skeleton (`scripts/check-airtable-schema.ts`)</h2>
+        <pre><code>import fs from "node:fs";
+
+type Schema = {
+  tables: Array&lt;{ name: string; fields: Array&lt;{ name: string; type: string }&gt; }&gt;;
+};
+
+const schema: Schema = JSON.parse(fs.readFileSync("crm/schema.json", "utf8"));
+
+async function main(): Promise&lt;void&gt; {
+  // 1) Load Airtable metadata via API
+  // 2) Compare table/field names and types with schema.json
+  // 3) Print human-readable diff
+  // 4) Exit non-zero if drift detected
+}
+
+main().catch((err) =&gt; {
+  console.error(err);
+  process.exit(1);
+});</code></pre>
+      </section>
+
+      <section class="architecture" aria-label="CI example">
+        <h2>CI Check Example (`.github/workflows/crm-schema-check.yml`)</h2>
+        <pre><code>name: CRM Schema Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tsx scripts/check-airtable-schema.ts
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}</code></pre>
+      </section>
+
+      <section class="pricing" aria-label="Privacy rules">
+        <h2>Privacy Rules (Non-Negotiable)</h2>
+        <ul>
+          <li>No customer rows in GitHub.</li>
+          <li>No API keys in files or commits.</li>
+          <li>Use least-privilege Airtable token scope.</li>
+          <li>Rotate secrets after team/member changes.</li>
+        </ul>
+      </section>
+
+      <section class="pricing" aria-label="Current status">
+        <h2>Current Status</h2>
+        <p>This page is public technical documentation. Production Airtable base remains private.</p>
+      </section>
+    </main>
+
+    <footer>
+      <p>CartGuard • CRM setup by code</p>
+    </footer>
+  </body>
+</html>
