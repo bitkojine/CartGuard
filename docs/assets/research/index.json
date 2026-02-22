@@ -2,6 +2,34 @@
   "updated_at": "2026-02-23",
   "entries": [
     {
+      "id": "beachhead-china-germany-electronics-2026-02-23",
+      "title": "Beachhead Recommendation - China to Germany Electronics",
+      "summary": "Recommended first beachhead is China-based Amazon.de consumer electronics sellers with a Conditional Go verdict and explicit kill criteria.",
+      "owner": "cartguard-core",
+      "status": "reviewed",
+      "confidence": "medium",
+      "created_at": "2026-02-23",
+      "last_verified_at": "2026-02-23",
+      "geography": ["China", "Germany", "EU"],
+      "industry_scope": ["ecommerce", "marketplace", "consumer electronics"],
+      "source_count": 17,
+      "repo_doc": "research/entries/2026-02-23-beachhead-china-germany-electronics.md",
+      "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-beachhead-china-germany-electronics.md",
+      "sources": [
+        "https://www.europarl.europa.eu/doceo/document/A-10-2025-0133_EN.html",
+        "https://commission.europa.eu/news-and-media/news/tackling-challenges-e-commerce-imports-2025-02-05_en",
+        "https://taxation-customs.ec.europa.eu/customs/eu-customs-union-facts-and-figures/e-commerce-product-compliance-and-safety_en",
+        "https://ecommercenews.eu/ecommerce-in-europe/",
+        "https://gel500.worldef.com/2025/04/17/cross-border-e-commerce-in-europe/",
+        "https://packnode.org/en/e-commerce/germany-ecommerce-packaging-law-2025",
+        "https://ecommercenews.eu/25-european-amazon-marketplace-sellers-based-china/",
+        "https://symanty.com/blog/our-blog-1/how-much-does-it-cost-to-be-a-compliant-seller-in-europe-in-2025-12",
+        "https://marketplacepulse.com/articles/china-reaches-global-majority-on-amazon",
+        "https://starconcord.com.sg/fedex-76-percent-of-apac-smes-boost-exports-to-europe/",
+        "https://newsroom.fedex.com/newsroom/europe-english/fedex-survey-reveals-85-of-apac-smes-confident-in-europe-trade-growth"
+      ]
+    },
+    {
       "id": "apac-eu-entry-signals-2026-02-23",
       "title": "APAC to EU entry signals and enforcement pressure",
       "summary": "Strong growth in EU low-value imports and active enforcement support the APAC->EU wedge.",
