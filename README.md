@@ -1,6 +1,14 @@
 # CartGuard
 
 ## Current Pitch-Readiness Score: `5.8/10` (Brutal)
+## Current Direction: EU cosmetics ecommerce compliance infrastructure (build-time claim gating)
+## If This Wedge Fails: Pivot Options
+- EU supplements / nutraceutical claim compliance
+- Sustainability-claim enforcement across DTC ecommerce
+- Marketplace seller-listing compliance gate
+- Pricing and promotion claim compliance engine
+- Cross-border localization compliance validation
+- Enterprise validation API (policy engine as infrastructure)
 
 Five seconds. No poetry.
 
