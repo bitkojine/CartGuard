@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff7fb" />
+    <title>CartGuard Slides | Pitch Deck</title>
+    <meta
+      name="description"
+      content="CartGuard pitch slides focused on real compliance failures and why developer-first claim checks matter."
+    />
+    <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="./site.webmanifest?v=4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./slides.css" />
+  </head>
+  <body>
+    <a class="back-link" href="./index.html">← Back to site</a>
+
+    <main id="deck" class="deck" aria-live="polite">
+      <section class="slide">
+        <p class="kicker">CartGuard</p>
+        <h1>Stop risky cosmetics claims before they go live.</h1>
+        <p class="subtitle">Developer-first claim checks in CI with source-linked evidence.</p>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Problem</p>
+        <h2>AI content is scaling faster than compliance review.</h2>
+        <ul>
+          <li>More AI-written product copy every week</li>
+          <li>Manual review is slow and inconsistent</li>
+          <li>Weak claims can reach production</li>
+          <li>Teams struggle to prove claim origin quickly</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Real Company Case</p>
+        <h2>L'Oréal: reported €189.5M French antitrust fine (appeal dismissed in 2023).</h2>
+        <p>
+          Signal for our market: compliance failures in consumer/beauty categories can create
+          very large financial downside.
+        </p>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Real Company Case</p>
+        <h2>L'Oréal + peers: reported ~€10M Turkish settlement (collective).</h2>
+        <ul>
+          <li>Theme: resale pricing and sales restrictions allegations</li>
+          <li>Also reported: €90K French penalty for payment delay compliance issue</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Real Company Case</p>
+        <h2>L'Oréal (US): FTC challenged anti-aging "clinically proven" claims.</h2>
+        <p>
+          Key lesson: unsupported marketing claims trigger regulatory action even without a giant fine.
+          Trust and substantiation matter.
+        </p>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Why This Keeps Happening</p>
+        <ul>
+          <li>Compliance sits too late in content workflow</li>
+          <li>Evidence quality is not machine-checked</li>
+          <li>Cross-border policy differences create rule drift</li>
+          <li>No deterministic pre-publish gate for claims</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Solution</p>
+        <h2>CartGuard = CI for claims.</h2>
+        <ul>
+          <li>Typed claim schema</li>
+          <li>Policy-as-code validation</li>
+          <li>Source-linked evidence output</li>
+          <li>Pass/fail gate before publish</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Demo Flow (60 seconds)</p>
+        <pre><code>pnpm install
+pnpm build
+
+node packages/cli/dist/src/bin/cartguard.js validate \
+  packages/example/sample-product.json \
+  --policy packages/example/sample-policy.json --json</code></pre>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Business Model</p>
+        <ul>
+          <li>Pilot: €1K-€3K / month</li>
+          <li>Growth: €3K-€8K / month</li>
+          <li>Enterprise: €10K+ / month</li>
+          <li>Model: subscription first, usage tiers later</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Ask</p>
+        <h2>We need 2 design-partner pilots in EU cosmetics.</h2>
+        <ul>
+          <li>2-week pilot</li>
+          <li>Measure blocked risky claims + review speed</li>
+          <li>Turn results into proof for scale</li>
+        </ul>
+        <p class="small">Note: case numbers shown are based on reported public sources and should be re-verified before legal use.</p>
+      </section>
+    </main>
+
+    <div class="controls">
+      <button id="prev" type="button">Prev</button>
+      <span id="counter">1 / 10</span>
+      <button id="next" type="button">Next</button>
+      <button id="full" type="button">Full Screen</button>
+    </div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const counter = document.getElementById('counter');
+      const prev = document.getElementById('prev');
+      const next = document.getElementById('next');
+      const full = document.getElementById('full');
+      let i = 0;
+
+      const render = () => {
+        slides.forEach((s, idx) => {
+          s.style.display = idx === i ? 'flex' : 'none';
+        });
+        counter.textContent = `${i + 1} / ${slides.length}`;
+      };
+
+      const move = (delta) => {
+        i = Math.max(0, Math.min(slides.length - 1, i + delta));
+        render();
+      };
+
+      prev.addEventListener('click', () => move(-1));
+      next.addEventListener('click', () => move(1));
+      full.addEventListener('click', async () => {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') move(1);
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') move(-1);
+        if (e.key.toLowerCase() === 'f') full.click();
+      });
+
+      render();
+    </script>
+  </body>
+</html>
