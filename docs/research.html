@@ -4,20 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#fff7fb" />
-    <title>CartGuard Research | Fact-Checked Source Library</title>
-    <meta
-      name="description"
-      content="Fact-checked CartGuard research with confidence scores, verification dates, and source links."
-    />
+    <title>CartGuard Research | Fact-Checked Database</title>
+    <meta name="description" content="CartGuard research database with confidence scores, sources, and next questions for research agents." />
     <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
     <link rel="manifest" href="./site.webmanifest?v=4" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -25,45 +19,49 @@
       <nav class="top-nav" aria-label="Primary">
         <a href="./index.html" class="nav-brand">CartGuard</a>
         <div class="nav-links">
-          <a href="./index.html">Home</a>
-          <a href="./product.html">Product</a>
-          <a href="./developers.html">Developers</a>
+          <a href="./beachhead.html">Beachhead</a>
           <a href="./research.html" aria-current="page">Research</a>
-          <a href="./slides.html">Slides</a>
+          <a href="./technical.html">Technical</a>
         </div>
       </nav>
-      <p class="eyebrow">Research</p>
-      <h1>Fact-checked research library for APAC to EU market entry.</h1>
-      <p class="lead">
-        Every entry includes confidence score, verification date, and source links. Use this page to keep website claims grounded in reality.
-      </p>
+      <p class="eyebrow">Research Database</p>
+      <h1>Brutal facts, source links, confidence scores.</h1>
+      <p class="lead">Everything we claim should map to these entries. If we cannot source it, we do not say it.</p>
     </header>
 
     <main>
       <section class="pricing" aria-label="Research standards">
         <h2>Research Standards</h2>
         <ul>
-          <li>Primary sources first: regulators, official statistics, and institutional publications.</li>
-          <li>Each entry must include confidence level and last verification date.</li>
-          <li>Modeled estimates must be labeled clearly as modeled.</li>
-          <li>CartGuard provides recommendations only and does not provide legal advice.</li>
+          <li>Primary sources first (EU institutions, regulators, official statistics).</li>
+          <li>Each entry must include date, geography, confidence, and source links.</li>
+          <li>Modeled estimates must be labeled as modeled.</li>
+          <li>Recommendations only. No legal determinations.</li>
         </ul>
+      </section>
+
+      <section class="architecture" aria-label="Next questions">
+        <h2>Next Questions For Research Agents</h2>
+        <p class="small-note" id="q-updated">Loading question backlog...</p>
+        <div id="question-list" class="grid" aria-live="polite"></div>
       </section>
 
       <section class="architecture" aria-label="Research entries">
         <h2>Research Entries</h2>
-        <p class="small-note" id="research-updated">Loading index...</p>
+        <p class="small-note" id="research-updated">Loading research index...</p>
         <div id="research-list" class="grid" aria-live="polite"></div>
       </section>
     </main>
 
     <footer>
-      <p>CartGuard • Fact-Checked Research</p>
+      <p>CartGuard • Fact-checked research database</p>
     </footer>
 
     <script>
       const listEl = document.getElementById('research-list');
       const updatedEl = document.getElementById('research-updated');
+      const qListEl = document.getElementById('question-list');
+      const qUpdatedEl = document.getElementById('q-updated');
 
       const badgeClass = (confidence) => {
         const c = String(confidence || '').toLowerCase();
@@ -75,15 +73,11 @@
       const renderEntry = (entry) => {
         const card = document.createElement('article');
         card.className = 'card';
-
         const geo = (entry.geography || []).join(', ');
         const scope = (entry.industry_scope || []).join(', ');
         const sources = Array.isArray(entry.sources)
-          ? entry.sources
-              .map((url) => `<li><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></li>`)
-              .join('')
+          ? entry.sources.map((url) => `<li><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></li>`).join('')
           : '';
-
         card.innerHTML = `
           <h3>${entry.title}</h3>
           <p>${entry.summary || ''}</p>
@@ -97,17 +91,45 @@
             <span class="pill">Scope: ${scope || 'n/a'}</span>
             <span class="pill">Confidence: <span class="${badgeClass(entry.confidence)}">${entry.confidence || 'low'}</span></span>
           </div>
-          <p>
-            <a class="btn btn-secondary" href="${entry.repo_url}" target="_blank" rel="noopener noreferrer">Open Research Doc</a>
-          </p>
-          <details>
-            <summary>Sources</summary>
-            <ul>${sources}</ul>
-          </details>
+          <p><a class="btn btn-secondary" href="${entry.repo_url}" target="_blank" rel="noopener noreferrer">Open Research Doc</a></p>
+          <details><summary>Sources</summary><ul>${sources}</ul></details>
         `;
-
         return card;
       };
+
+      const renderQuestion = (q) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${q.priority} - ${q.id}</h3>
+          <p><strong>Question:</strong> ${q.question}</p>
+          <p><strong>Why it matters:</strong> ${q.why_it_matters}</p>
+          <div class="pill-row">
+            <span class="pill">Owner: ${q.owner || 'n/a'}</span>
+            <span class="pill">Status: ${q.status || 'open'}</span>
+          </div>
+        `;
+        return card;
+      };
+
+      fetch('./assets/research/questions.json')
+        .then((r) => {
+          if (!r.ok) throw new Error('Failed to load question backlog');
+          return r.json();
+        })
+        .then((data) => {
+          qUpdatedEl.textContent = `Question backlog updated: ${data.updated_at || 'unknown'}`;
+          const questions = Array.isArray(data.questions) ? data.questions : [];
+          if (questions.length === 0) {
+            qListEl.innerHTML = '<article class="card"><h3>No open questions</h3></article>';
+            return;
+          }
+          questions.forEach((q) => qListEl.appendChild(renderQuestion(q)));
+        })
+        .catch((err) => {
+          qUpdatedEl.textContent = 'Failed to load question backlog.';
+          qListEl.innerHTML = `<article class="card"><h3>Load error</h3><p>${err.message}</p></article>`;
+        });
 
       fetch('./assets/research/index.json')
         .then((r) => {
@@ -115,10 +137,10 @@
           return r.json();
         })
         .then((data) => {
-          updatedEl.textContent = `Last updated: ${data.updated_at || 'unknown'}`;
+          updatedEl.textContent = `Research index updated: ${data.updated_at || 'unknown'}`;
           const entries = Array.isArray(data.entries) ? data.entries : [];
           if (entries.length === 0) {
-            listEl.innerHTML = '<article class="card"><h3>No entries yet</h3><p>Add docs in /research/entries and index them in /docs/assets/research/index.json.</p></article>';
+            listEl.innerHTML = '<article class="card"><h3>No entries yet</h3></article>';
             return;
           }
           entries.forEach((entry) => listEl.appendChild(renderEntry(entry)));

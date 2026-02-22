@@ -1,0 +1,45 @@
+{
+  "updated_at": "2026-02-23",
+  "questions": [
+    {
+      "id": "q-001",
+      "priority": "P0",
+      "question": "How many China-based mid-sized Amazon.de sellers in consumer electronics fit our ICP size band (10-100 staff, 500-5,000 SKUs)?",
+      "why_it_matters": "Sets realistic TAM/SAM and sales target volume for the first wedge.",
+      "owner": "research-agent",
+      "status": "open"
+    },
+    {
+      "id": "q-002",
+      "priority": "P0",
+      "question": "Who signs the budget first in this wedge: operations, compliance/legal, or marketplace team?",
+      "why_it_matters": "Determines outbound motion and sales messaging.",
+      "owner": "research-agent",
+      "status": "open"
+    },
+    {
+      "id": "q-003",
+      "priority": "P0",
+      "question": "What is the measurable cost of missing-document delays (days lost, revenue impact, rework) for target accounts?",
+      "why_it_matters": "Defines ROI proof needed for pilot conversion.",
+      "owner": "research-agent",
+      "status": "open"
+    },
+    {
+      "id": "q-004",
+      "priority": "P1",
+      "question": "Which partner channel converts fastest for this wedge: Amazon agencies, VAT/EPR consultancies, or direct seller outbound?",
+      "why_it_matters": "Sets efficient route to first 10 paid customers.",
+      "owner": "go-to-market",
+      "status": "open"
+    },
+    {
+      "id": "q-005",
+      "priority": "P1",
+      "question": "What should Germany electronics rulepack v1 include to maximize signal and minimize false positives?",
+      "why_it_matters": "Controls trust, adoption, and engineering scope.",
+      "owner": "technical-lead",
+      "status": "open"
+    }
+  ]
+}
