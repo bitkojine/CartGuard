@@ -65,15 +65,41 @@
         </div>
       </section>
 
-      <section class="grid" aria-label="Major technical challenges">
+      <section class="pricing" aria-label="Major technical challenges">
+        <h2>Major Technical Challenges (Most Important)</h2>
+        <ol>
+          <li>
+            <strong>Legal-to-rule translation:</strong> turning legal text into clear, testable,
+            machine rules without losing legal meaning.
+          </li>
+          <li>
+            <strong>Evidence quality:</strong> proving that sources are strong enough for compliance
+            teams, not just \"a link exists\".
+          </li>
+          <li>
+            <strong>Deterministic outputs:</strong> same input + same policy must always return the
+            same result for audit trust.
+          </li>
+          <li>
+            <strong>Low-friction integration:</strong> fitting into real CI/CMS/PIM workflows without
+            slowing release teams down.
+          </li>
+          <li>
+            <strong>Versioned policy management:</strong> handling rule updates across countries and
+            customer overrides without breaking consistency.
+          </li>
+        </ol>
+      </section>
+
+      <section class="grid" aria-label="Major technical challenges details">
         <article class="card">
-          <h2>Major Technical Challenges</h2>
+          <h2>Why These Are Hard</h2>
           <ul>
-            <li>Turning legal text into precise, testable rules without over-simplifying.</li>
-            <li>Scoring source quality so \"citation\" means real evidence, not random links.</li>
-            <li>Keeping rule outputs deterministic so the same input gives the same result.</li>
-            <li>Integrating into CMS/PIM/CI flows with low setup friction.</li>
-            <li>Managing policy/version drift across jurisdictions and customer overrides.</li>
+            <li>Law and marketing language are ambiguous, code is not.</li>
+            <li>Compliance trust depends on evidence quality, not model confidence.</li>
+            <li>Audit use cases need replayable, version-locked results.</li>
+            <li>Teams reject tools that add release friction.</li>
+            <li>Policy drift creates inconsistent enforcement across markets.</li>
           </ul>
         </article>
         <article class="card">
