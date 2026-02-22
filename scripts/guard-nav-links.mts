@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 const docsDir = "docs";
+const stylesPath = join(docsDir, "styles.css");
 const requiredPages = [
   "./index.html",
   "./beachhead.html",
@@ -24,6 +25,24 @@ for (const page of requiredPages) {
 const htmlFiles = readdirSync(docsDir).filter((file) => file.endsWith(".html"));
 const violations: string[] = [];
 
+if (!existsSync(stylesPath)) {
+  violations.push(`${stylesPath}: missing styles.css`);
+} else {
+  const styles = readFileSync(stylesPath, "utf8");
+  const topNavRule = styles.match(/\.top-nav\s*\{[\s\S]*?\}/);
+  if (!topNavRule) {
+    violations.push(`${stylesPath}: missing .top-nav CSS rule`);
+  } else {
+    const rule = topNavRule[0];
+    if (!/position:\s*fixed\s*;/.test(rule)) {
+      violations.push(`${stylesPath}: .top-nav must use position: fixed`);
+    }
+    if (/display:\s*none\s*;/.test(rule)) {
+      violations.push(`${stylesPath}: .top-nav must not be hidden`);
+    }
+  }
+}
+
 for (const file of htmlFiles) {
   const fullPath = join(docsDir, file);
   const content = readFileSync(fullPath, "utf8");
@@ -35,6 +54,10 @@ for (const file of htmlFiles) {
   }
 
   const navContent = navMatch[0];
+  if (!/href="\.\/index\.html"[^>]*>\s*Home\s*</.test(navContent)) {
+    violations.push(`${fullPath}: nav must include explicit Home link`);
+  }
+
   for (const page of requiredPages) {
     const linkPattern = new RegExp(`href="${page.replace(".", "\\.")}"`);
     if (!linkPattern.test(navContent)) {
