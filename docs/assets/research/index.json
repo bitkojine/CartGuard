@@ -1,0 +1,27 @@
+{
+  "updated_at": "2026-02-23",
+  "entries": [
+    {
+      "id": "apac-eu-entry-signals-2026-02-23",
+      "title": "APAC to EU entry signals and enforcement pressure",
+      "summary": "Strong growth in EU low-value imports and active enforcement support the APAC->EU wedge.",
+      "owner": "cartguard-core",
+      "status": "reviewed",
+      "confidence": "high",
+      "created_at": "2026-02-23",
+      "last_verified_at": "2026-02-23",
+      "geography": ["EU", "APAC", "China"],
+      "industry_scope": ["ecommerce", "cross-border", "consumer"],
+      "source_count": 5,
+      "repo_doc": "research/entries/2026-02-23-apac-eu-entry-signals.md",
+      "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-apac-eu-entry-signals.md",
+      "sources": [
+        "https://commission.europa.eu/news-and-media/news/tackling-challenges-e-commerce-imports-2025-02-05_en",
+        "https://taxation-customs.ec.europa.eu/customs/eu-customs-union-facts-and-figures/goods-bought-online_en",
+        "https://www.europarl.europa.eu/topics/en/article/20250708STO29516/eu-targets-low-value-imports-via-e-commerce-platforms",
+        "https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20250227-2",
+        "https://commission.europa.eu/live-work-travel-eu/consumer-rights-and-complaints/enforcement-consumer-protection/coordinated-actions/market-places-and-digital-services_en"
+      ]
+    }
+  ]
+}

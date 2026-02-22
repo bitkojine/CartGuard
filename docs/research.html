@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff7fb" />
+    <title>CartGuard Research | Fact-Checked Source Library</title>
+    <meta
+      name="description"
+      content="Fact-checked CartGuard research with confidence scores, verification dates, and source links."
+    />
+    <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="./site.webmanifest?v=4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero page-hero">
+      <nav class="top-nav" aria-label="Primary">
+        <a href="./index.html" class="nav-brand">CartGuard</a>
+        <div class="nav-links">
+          <a href="./problem.html">Problem</a>
+          <a href="./product.html">Product</a>
+          <a href="./developers.html">Developers</a>
+          <a href="./strategy.html">Strategy</a>
+          <a href="./competition.html">Competition</a>
+          <a href="./technical.html">Technical</a>
+          <a href="./pricing.html">Pricing</a>
+          <a href="./research.html" aria-current="page">Research</a>
+          <a href="./slides.html">Slides</a>
+        </div>
+      </nav>
+      <p class="eyebrow">Research</p>
+      <h1>Fact-checked research library for APAC to EU market entry.</h1>
+      <p class="lead">
+        Every entry includes confidence score, verification date, and source links. Use this page to keep website claims grounded in reality.
+      </p>
+    </header>
+
+    <main>
+      <section class="pricing" aria-label="Research standards">
+        <h2>Research Standards</h2>
+        <ul>
+          <li>Primary sources first: regulators, official statistics, and institutional publications.</li>
+          <li>Each entry must include confidence level and last verification date.</li>
+          <li>Modeled estimates must be labeled clearly as modeled.</li>
+          <li>CartGuard provides recommendations only and does not provide legal advice.</li>
+        </ul>
+      </section>
+
+      <section class="architecture" aria-label="Research entries">
+        <h2>Research Entries</h2>
+        <p class="small-note" id="research-updated">Loading index...</p>
+        <div id="research-list" class="grid" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>CartGuard • Fact-Checked Research</p>
+    </footer>
+
+    <script>
+      const listEl = document.getElementById('research-list');
+      const updatedEl = document.getElementById('research-updated');
+
+      const badgeClass = (confidence) => {
+        const c = String(confidence || '').toLowerCase();
+        if (c === 'high') return 'status yes';
+        if (c === 'medium') return 'status partial';
+        return 'status no';
+      };
+
+      const renderEntry = (entry) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+
+        const geo = (entry.geography || []).join(', ');
+        const scope = (entry.industry_scope || []).join(', ');
+        const sources = Array.isArray(entry.sources)
+          ? entry.sources
+              .map((url) => `<li><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></li>`)
+              .join('')
+          : '';
+
+        card.innerHTML = `
+          <h3>${entry.title}</h3>
+          <p>${entry.summary || ''}</p>
+          <div class="pill-row">
+            <span class="pill">Status: ${entry.status || 'unknown'}</span>
+            <span class="pill">Owner: ${entry.owner || 'n/a'}</span>
+            <span class="pill">Created: ${entry.created_at || 'n/a'}</span>
+            <span class="pill">Verified: ${entry.last_verified_at || 'n/a'}</span>
+            <span class="pill">Sources: ${entry.source_count || 0}</span>
+            <span class="pill">Geo: ${geo || 'n/a'}</span>
+            <span class="pill">Scope: ${scope || 'n/a'}</span>
+            <span class="pill">Confidence: <span class="${badgeClass(entry.confidence)}">${entry.confidence || 'low'}</span></span>
+          </div>
+          <p>
+            <a class="btn btn-secondary" href="${entry.repo_url}" target="_blank" rel="noopener noreferrer">Open Research Doc</a>
+          </p>
+          <details>
+            <summary>Sources</summary>
+            <ul>${sources}</ul>
+          </details>
+        `;
+
+        return card;
+      };
+
+      fetch('./assets/research/index.json')
+        .then((r) => {
+          if (!r.ok) throw new Error('Failed to load research index');
+          return r.json();
+        })
+        .then((data) => {
+          updatedEl.textContent = `Last updated: ${data.updated_at || 'unknown'}`;
+          const entries = Array.isArray(data.entries) ? data.entries : [];
+          if (entries.length === 0) {
+            listEl.innerHTML = '<article class="card"><h3>No entries yet</h3><p>Add docs in /research/entries and index them in /docs/assets/research/index.json.</p></article>';
+            return;
+          }
+          entries.forEach((entry) => listEl.appendChild(renderEntry(entry)));
+        })
+        .catch((err) => {
+          updatedEl.textContent = 'Failed to load research index.';
+          listEl.innerHTML = `<article class="card"><h3>Load error</h3><p>${err.message}</p></article>`;
+        });
+    </script>
+  </body>
+</html>

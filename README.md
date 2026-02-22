@@ -80,6 +80,15 @@ Primary converting visitors:
 - `@cartguard/cli`: build-time command interface
 - `@cartguard/example`: reference sample content + CI simulation
 
+## Fact-Checked Research Area
+
+- Repo research docs: `research/`
+- Research entries: `research/entries/`
+- Website research explorer: `docs/research.html`
+- Website metadata index: `docs/assets/research/index.json`
+
+Each research entry should include metadata (confidence score, source links, created date, last verified date, owner, and status) so market claims remain auditable.
+
 Monorepo layout:
 
 ```text
