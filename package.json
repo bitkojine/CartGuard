@@ -12,9 +12,10 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "clean": "pnpm -r clean",
+    "guard:nav": "tsx scripts/guard-nav-links.mts",
     "guard:no-js": "tsx scripts/guard-no-js-files.mts",
     "guard:no-any": "tsx scripts/guard-no-explicit-any.mts",
-    "guard": "pnpm guard:no-js && pnpm guard:no-any"
+    "guard": "pnpm guard:nav && pnpm guard:no-js && pnpm guard:no-any"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

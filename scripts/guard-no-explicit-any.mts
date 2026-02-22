@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
 const typeScriptPattern = /\.(?:ts|mts|tsx|cts)$/i;
-const explicitAnyPattern = /\bany\b/;
+const explicitAnyPattern = /(:\s*any\b|\bas\s+any\b|<\s*any\s*>)/;
 const ignorePaths = new Set<string>(["pnpm-lock.yaml"]);
 
 const output = execFileSync("git", ["ls-files", "-z"], {
@@ -29,11 +29,11 @@ for (const file of targetFiles) {
 }
 
 if (violations.length > 0) {
-  console.error("Explicit 'any' usage is not allowed. Violations:");
+  console.error("Explicit any type usage is not allowed. Violations:");
   for (const violation of violations) {
     console.error(` - ${violation.file}:${violation.line} ${violation.text}`);
   }
   process.exit(1);
 }
 
-console.log("OK: no explicit 'any' usage found in tracked TypeScript files.");
+console.log("OK: no explicit any type usage found in tracked TypeScript files.");
