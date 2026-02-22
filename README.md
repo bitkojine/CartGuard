@@ -8,8 +8,8 @@ CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into sou
 
 ## Current Status
 
-- Pitch-readiness score (brutal): `5.6/10`
-- Repo execution score: `7.1/10`
+- Pitch-readiness score (brutal): `5.4/10`
+- Repo execution score: `7.3/10`
 - Current wedge: `EU cosmetics ecommerce` (build-time claim gating)
 
 ## Who This Is For
@@ -149,16 +149,35 @@ Deployment trigger:
 Site URL:
 - [https://bitkojine.github.io/CartGuard/](https://bitkojine.github.io/CartGuard/)
 
-## Brutal Business View
+## Top Product Weakness (Brutal)
+
+The biggest weakness is not product architecture. It is missing market proof.
+
+Today CartGuard has no public evidence that target teams will pay now for this workflow over internal tooling, manual compliance review, or agency processes. Until that proof exists, the product is credible but commercially unproven.
+
+## Re-Rating (Brutal)
+
+Pitch/business scores (0-10):
+- Problem severity: `9.0`
+- Willingness to pay now: `5.0`
+- Differentiation in buyer eyes: `5.2`
+- GTM readiness: `4.3`
+- Investability at this stage: `4.8`
+
+Updated pitch-readiness score: `5.4/10`
+
+Repo/product scores (0-10):
+- Codebase quality and structure: `8.2`
+- Spec-driven integrity: `8.1`
+- CLI and developer usability: `7.0`
+- Test confidence for MVP scope: `7.1`
+- Production maturity: `6.0`
+
+Updated repo execution score: `7.3/10`
 
 Hard truth:
-- Without customer proof that CartGuard reduces real compliance incidents and manual review costs, this stays a nice-to-have.
-- To become must-have infra, CartGuard needs pilot evidence and quantified business impact.
-
-Top current weaknesses:
-- No published pilot outcomes yet
-- No validated pricing model yet
-- No proven distribution channel yet
+- If pilot evidence is not captured soon, this remains a strong technical project with weak buying urgency.
+- The next real upgrade is customer proof, not more internal engineering polish.
 
 ## If Current Wedge Fails
 
