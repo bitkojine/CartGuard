@@ -3,6 +3,7 @@
   if (!navs.length) return;
 
   const links = [
+    { href: './index.html', label: 'Home', key: 'index' },
     { href: './beachhead.html', label: 'Beachhead', key: 'beachhead' },
     { href: './paid-pilots.html', label: 'Paid Pilots', key: 'paid-pilots' },
     { href: './roadmap.html', label: 'Roadmap', key: 'roadmap' },
