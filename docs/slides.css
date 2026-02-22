@@ -108,8 +108,8 @@ code {
 
 .shot img {
   width: 100%;
-  max-height: 42vh;
-  object-fit: contain;
+  max-height: 50vh;
+  object-fit: cover;
   object-position: top;
   border: 1px solid var(--line);
   border-radius: 12px;
