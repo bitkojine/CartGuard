@@ -1,5 +1,7 @@
 # CartGuard
 
+## Current Pitch-Readiness Score: `5.8/10` (Brutal)
+
 Five seconds. No poetry.
 
 > "CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into source-verified, policy-validated claims and blocks products that could be non-compliant at build time."
