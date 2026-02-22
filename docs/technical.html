@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff7fb" />
+    <title>CartGuard Technical | Implementation Defense</title>
+    <meta
+      name="description"
+      content="How CartGuard plans legal context storage, rollout scope, and key technical risks."
+    />
+    <link rel="icon" href="./assets/favicon.ico?v=3" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=3" />
+    <link rel="manifest" href="./site.webmanifest?v=4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero page-hero">
+      <nav class="top-nav" aria-label="Primary">
+        <a href="./index.html" class="nav-brand">CartGuard</a>
+        <div class="nav-links">
+          <a href="./product.html">Product</a>
+          <a href="./developers.html">Developers</a>
+          <a href="./strategy.html">Strategy</a>
+          <a href="./competition.html">Competition</a>
+          <a href="./technical.html" aria-current="page">Technical</a>
+        </div>
+      </nav>
+      <p class="eyebrow">Technical Defense</p>
+      <h1>How we plan to build this without hand-wavy claims.</h1>
+      <p class="lead">
+        This page answers the hard implementation questions investors and technical judges ask.
+      </p>
+    </header>
+
+    <main>
+      <section class="pricing" aria-label="Legal context storage">
+        <h2>Where We Store Legal Context</h2>
+        <p>Short answer: versioned policy packs, not hardcoded rules.</p>
+        <ul>
+          <li>Store legal rules as machine-readable policy files in a policy pack repo.</li>
+          <li>Each rule has metadata: jurisdiction, source law URL, version, effective date, risk level.</li>
+          <li>Keep extracted guidance snippets and mapping notes with citations.</li>
+          <li>Use semantic versioning so every validation run references a rule version.</li>
+          <li>Output evidence artifacts with rule IDs + source references for audit replay.</li>
+        </ul>
+      </section>
+
+      <section class="pricing" aria-label="Country rollout strategy">
+        <h2>Do We Start With One Country?</h2>
+        <p>
+          Yes. Start narrow: one jurisdiction profile first, then expand. For this wedge, begin with
+          EU cosmetics common criteria and one priority market profile before adding more country layers.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Step 1: EU cosmetics baseline rules</span>
+          <span class="pill">Step 2: Country-specific overrides</span>
+          <span class="pill">Step 3: Multi-country policy packs</span>
+        </div>
+      </section>
+
+      <section class="grid" aria-label="Major technical challenges">
+        <article class="card">
+          <h2>Major Technical Challenges</h2>
+          <ul>
+            <li>Turning legal text into precise, testable rules without over-simplifying.</li>
+            <li>Scoring source quality so \"citation\" means real evidence, not random links.</li>
+            <li>Keeping rule outputs deterministic so the same input gives the same result.</li>
+            <li>Integrating into CMS/PIM/CI flows with low setup friction.</li>
+            <li>Managing policy/version drift across jurisdictions and customer overrides.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>Failure Modes To Avoid</h2>
+          <ul>
+            <li>False confidence: saying \"compliant\" instead of \"risk reduced\".</li>
+            <li>Weak evidence packs that legal teams do not trust.</li>
+            <li>Too many warnings and too few actionable blocks.</li>
+            <li>Manual policy maintenance that does not scale.</li>
+            <li>Slow pipelines that developers bypass.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="pricing" aria-label="Most important questions for pitch">
+        <h2>Most Important Questions To Answer Right Now (Pitch-Critical)</h2>
+        <ol>
+          <li>What exact legal baseline are we implementing first?</li>
+          <li>Who signs off that our rule mapping is acceptable?</li>
+          <li>What makes our evidence output trusted by compliance teams?</li>
+          <li>How quickly can a dev team integrate this in CI?</li>
+          <li>What pilot metric proves value in 2-4 weeks?</li>
+        </ol>
+      </section>
+
+      <section class="pricing" aria-label="Current answers status">
+        <h2>Current Answer Status (Brutal)</h2>
+        <ul>
+          <li>Legal baseline scope: <strong>partially defined</strong></li>
+          <li>Rule-to-law mapping process: <strong>in progress</strong></li>
+          <li>Evidence quality model: <strong>not mature yet</strong></li>
+          <li>CI integration experience: <strong>working MVP</strong></li>
+          <li>Pilot proof metrics: <strong>not captured yet</strong></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>CartGuard • Technical Implementation Defense</p>
+    </footer>
+  </body>
+</html>
