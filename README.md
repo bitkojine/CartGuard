@@ -3,6 +3,7 @@
 ## Current Pitch-Readiness Score: `5.6/10` (Brutal)
 ## Current Repo Execution Score: `7.1/10` (Strong foundation, still early)
 ## Current Direction: EU cosmetics ecommerce compliance infrastructure (build-time claim gating)
+## Team Backlog: see `BACKLOG.md` for execution tasks and owners
 ## If This Wedge Fails: Pivot Options
 - EU supplements / nutraceutical claim compliance
 - Sustainability-claim enforcement across DTC ecommerce
