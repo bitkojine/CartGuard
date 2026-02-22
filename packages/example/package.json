@@ -1,0 +1,17 @@
+{
+  "name": "@cartguard/example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "CartGuard reference integration example",
+  "license": "MIT",
+  "scripts": {
+    "build": "echo 'No build step for example package'",
+    "test": "node --test test/*.test.js",
+    "clean": "rm -f generated-product.json",
+    "demo": "node ./src/demo-ci.js"
+  },
+  "dependencies": {
+    "@cartguard/cli": "workspace:*"
+  }
+}

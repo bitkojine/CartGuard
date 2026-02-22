@@ -1,0 +1,116 @@
+import { ZodError } from "zod";
+import {
+  ProductContentSchema,
+  ValidationPolicySchema,
+  type ProductContent,
+  type ValidationPolicy
+} from "@cartguard/spec";
+
+/** Validation issue emitted by the CartGuard engine. */
+export interface ValidationIssue {
+  code: string;
+  message: string;
+  path?: string;
+}
+
+/** Engine output for product content validation. */
+export interface ValidationResult {
+  valid: boolean;
+  errors: ValidationIssue[];
+  warnings: ValidationIssue[];
+}
+
+const toPath = (path: (string | number)[]): string | undefined =>
+  path.length > 0 ? path.map((segment) => String(segment)).join(".") : undefined;
+
+const fromZodError = (
+  error: ZodError,
+  codePrefix: "SCHEMA_PRODUCT" | "SCHEMA_POLICY"
+): ValidationIssue[] =>
+  error.issues.map((issue) => {
+    const path = toPath(issue.path);
+    return path
+      ? {
+          code: `${codePrefix}_${issue.code.toUpperCase()}`,
+          message: issue.message,
+          path
+        }
+      : {
+          code: `${codePrefix}_${issue.code.toUpperCase()}`,
+          message: issue.message
+        };
+  });
+
+const enforcePolicy = (
+  content: ProductContent,
+  policy: ValidationPolicy
+): ValidationResult => {
+  const errors: ValidationIssue[] = [];
+  const warnings: ValidationIssue[] = [];
+
+  if (content.claims.length > policy.maxClaimsPerProduct) {
+    errors.push({
+      code: "POLICY_MAX_CLAIMS_EXCEEDED",
+      message: `Claim count ${content.claims.length} exceeds maxClaimsPerProduct ${policy.maxClaimsPerProduct}`,
+      path: "claims"
+    });
+  }
+
+  const allowed = new Set(policy.allowedCategories);
+  const requiredSource = new Set(policy.requireSourceForCategories);
+
+  for (const [index, claim] of content.claims.entries()) {
+    if (!allowed.has(claim.category)) {
+      errors.push({
+        code: "POLICY_CATEGORY_NOT_ALLOWED",
+        message: `Category '${claim.category}' is not allowed by policy`,
+        path: `claims.${index}.category`
+      });
+    }
+
+    if (claim.confidence < policy.minConfidence) {
+      errors.push({
+        code: "POLICY_MIN_CONFIDENCE",
+        message: `Confidence ${claim.confidence} is below minConfidence ${policy.minConfidence}`,
+        path: `claims.${index}.confidence`
+      });
+    }
+
+    if (requiredSource.has(claim.category) && claim.sourceUrl.trim().length === 0) {
+      errors.push({
+        code: "POLICY_SOURCE_REQUIRED",
+        message: `Category '${claim.category}' requires a sourceUrl`,
+        path: `claims.${index}.sourceUrl`
+      });
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+    warnings
+  };
+};
+
+/**
+ * Validate product content against schemas and explicit policy inputs.
+ * The result is deterministic and traceable to spec + policy constraints.
+ */
+export const validateProductContent = (
+  contentInput: unknown,
+  policyInput: unknown
+): ValidationResult => {
+  const content = ProductContentSchema.safeParse(contentInput);
+  if (!content.success) {
+    const errors = fromZodError(content.error, "SCHEMA_PRODUCT");
+    return { valid: false, errors, warnings: [] };
+  }
+
+  const policy = ValidationPolicySchema.safeParse(policyInput);
+  if (!policy.success) {
+    const errors = fromZodError(policy.error, "SCHEMA_POLICY");
+    return { valid: false, errors, warnings: [] };
+  }
+
+  return enforcePolicy(content.data, policy.data);
+};

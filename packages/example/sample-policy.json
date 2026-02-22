@@ -1,0 +1,6 @@
+{
+  "minConfidence": 0.75,
+  "allowedCategories": ["sustainability", "pricing", "general"],
+  "requireSourceForCategories": ["sustainability", "health", "pricing"],
+  "maxClaimsPerProduct": 10
+}

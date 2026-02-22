@@ -1,0 +1,23 @@
+{
+  "productId": "sku-eco-bottle-100",
+  "title": "CartGuard Eco Bottle",
+  "description": "Reusable bottle with auditable claims.",
+  "claims": [
+    {
+      "id": "10000000-0000-4000-8000-000000000001",
+      "statement": "Built with 65% recycled stainless steel",
+      "sourceUrl": "https://example.com/recycled-materials-audit",
+      "category": "sustainability",
+      "confidence": 0.91,
+      "createdAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000002",
+      "statement": "Retail launch price is 39.99 EUR",
+      "sourceUrl": "https://example.com/pricing-sheet",
+      "category": "pricing",
+      "confidence": 0.95,
+      "createdAt": "2026-01-15T10:05:00.000Z"
+    }
+  ]
+}
