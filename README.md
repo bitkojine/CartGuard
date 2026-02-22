@@ -10,7 +10,7 @@ CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into sou
 
 1. "We are building developer-first compliance infrastructure for AI-generated cosmetics content."
 2. "CartGuard validates source-linked claims in CI and blocks potentially non-compliant listings before release."
-3. "We enter through engineering teams first, then expand to compliance and operations."
+3. "We enter through engineering teams first, then expand to compliance and operations. This is a Stripe-style go-to-market path."
 4. "If cosmetics does not validate fast, we pivot into adjacent regulated claim workflows."
 5. "Tonight we can show a working CLI and policy engine, not slides-only vapor."
 
