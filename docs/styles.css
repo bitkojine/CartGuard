@@ -298,6 +298,45 @@ code {
   color: #4f2940;
 }
 
+.table-wrap {
+  overflow-x: auto;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 400 0.82rem/1.45 "IBM Plex Mono", monospace;
+}
+
+.comparison-table th,
+.comparison-table td {
+  border: 1px solid var(--line);
+  padding: 0.5rem 0.45rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.comparison-table th:first-child,
+.comparison-table td:first-child {
+  text-align: left;
+  min-width: 220px;
+}
+
+.comparison-table .yes {
+  color: #0f8f52;
+  font-weight: 700;
+}
+
+.comparison-table .partial {
+  color: #9e6c0a;
+  font-weight: 700;
+}
+
+.comparison-table .no {
+  color: #8b5f74;
+  font-weight: 700;
+}
+
 footer {
   max-width: var(--max);
   margin: 0 auto;
