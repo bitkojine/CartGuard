@@ -63,6 +63,13 @@ footer {
   animation: rise 0.8s ease-out;
 }
 
+.hero-logo {
+  width: 58px;
+  height: 58px;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
 .eyebrow {
   margin: 0;
   font: 500 0.82rem/1 "IBM Plex Mono", "SFMono-Regular", monospace;

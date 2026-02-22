@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="CartGuard logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0B1A2B"/>
+      <stop offset="100%" stop-color="#143A55"/>
+    </linearGradient>
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#57D8FF"/>
+      <stop offset="100%" stop-color="#2DE2A5"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#bg)"/>
+
+  <path d="M160 180h192l-16 116c-6 42-41 74-84 74h-8c-43 0-78-32-84-74l-16-116z"
+        fill="none" stroke="url(#stroke)" stroke-width="26" stroke-linejoin="round"/>
+
+  <path d="M206 230h100" stroke="#E7F7FF" stroke-width="18" stroke-linecap="round"/>
+  <path d="M198 274h116" stroke="#E7F7FF" stroke-width="18" stroke-linecap="round"/>
+
+  <circle cx="214" cy="398" r="18" fill="#E7F7FF"/>
+  <circle cx="298" cy="398" r="18" fill="#E7F7FF"/>
+
+  <path d="M150 158l14 22" stroke="#2DE2A5" stroke-width="14" stroke-linecap="round"/>
+  <path d="M174 140l18 30" stroke="#2DE2A5" stroke-width="14" stroke-linecap="round"/>
+</svg>
