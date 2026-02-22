@@ -14,6 +14,37 @@ CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into sou
 4. "If cosmetics does not validate fast, we pivot into adjacent regulated claim workflows."
 5. "Tonight we can show a working CLI and policy engine, not slides-only vapor."
 
+## Event Win Readiness (Brutal)
+
+Context: `Make Kaunas Great Again` build/pitch event on **February 22, 2026**.
+
+Overall chance to stand out tonight: `6.6/10`
+
+Why this is not higher:
+- No customer proof yet (biggest weakness in front of judges)
+- Business urgency is still argued, not proven
+- Message can still drift into technical language if not tightly delivered
+
+Scoring for tonight (0-10):
+- Clear problem statement: `8.0`
+- Live demo reliability: `8.1`
+- Product quality for MVP stage: `7.3`
+- Commercial proof: `3.8`
+- Memorability of pitch: `6.7`
+- Team readiness to answer hard questions: `6.4`
+
+Likely judge reaction:
+- "Strong technical execution."
+- "Interesting market pain."
+- "Show me proof that buyers pay and this is urgent now."
+
+Highest ROI moves before/at the event:
+1. Lead with one sentence: "We stop risky AI cosmetics claims before they go live."
+2. Show the working CLI in under 60 seconds.
+3. Admit unknowns directly: no pilot proof yet, currently validating buyer urgency.
+4. Ask for 3 pilot intros from the room instead of pretending traction.
+5. End with a concrete next step and timeline (first pilot in 30 days).
+
 ## Current Status
 
 - Pitch-readiness score (brutal): `5.4/10`
