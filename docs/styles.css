@@ -1,12 +1,12 @@
 :root {
-  --bg: #1e1620;
-  --bg-soft: #2a1f2d;
-  --panel: rgba(42, 26, 42, 0.78);
-  --text: #fff2f8;
-  --muted: #dfbfd1;
-  --line: rgba(241, 180, 214, 0.32);
-  --accent: #ff8fb6;
-  --accent-2: #ffbfd5;
+  --bg: #fff7fb;
+  --bg-soft: #ffeef6;
+  --panel: rgba(255, 255, 255, 0.92);
+  --text: #221320;
+  --muted: #6e495f;
+  --line: rgba(199, 133, 165, 0.34);
+  --accent: #d64f8f;
+  --accent-2: #f3a3ca;
   --max: 1120px;
 }
 
@@ -18,9 +18,9 @@ body {
   margin: 0;
   font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
   color: var(--text);
-  background: radial-gradient(circle at 18% -10%, #5a2f50 0%, transparent 50%),
-    radial-gradient(circle at 90% 8%, #6d3557 0%, transparent 45%),
-    linear-gradient(145deg, #160f1a, #261726 45%, #301a2e);
+  background: radial-gradient(circle at 20% -10%, #ffd8ea 0%, transparent 48%),
+    radial-gradient(circle at 90% 8%, #ffe4f0 0%, transparent 44%),
+    linear-gradient(145deg, #fff9fc, #fff3f8 45%, #ffeef6);
   min-height: 100vh;
 }
 
@@ -30,7 +30,7 @@ body {
   height: 360px;
   border-radius: 999px;
   filter: blur(60px);
-  opacity: 0.25;
+  opacity: 0.32;
   pointer-events: none;
   z-index: 0;
   animation: float 10s ease-in-out infinite;
@@ -87,8 +87,8 @@ footer {
 }
 
 .nav-links a[aria-current="page"] {
-  color: #3b1224;
-  background: linear-gradient(100deg, var(--accent), #ffc2d8);
+  color: #ffffff;
+  background: linear-gradient(100deg, var(--accent), #e174ab);
   border-color: transparent;
 }
 
@@ -153,19 +153,19 @@ h1 {
 }
 
 .btn-primary {
-  background: linear-gradient(100deg, var(--accent), #ffc2d8);
-  color: #3b1224;
+  background: linear-gradient(100deg, var(--accent), #e174ab);
+  color: #ffffff;
 }
 
 .btn-secondary {
-  background: rgba(21, 37, 57, 0.85);
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.9);
+  color: #3d1f31;
   border: 1px solid var(--line);
 }
 
 .small-note {
   margin: 1rem 0 0;
-  color: #f3bed7;
+  color: #8a6077;
   font: 400 0.82rem/1.4 "IBM Plex Mono", monospace;
 }
 
@@ -258,7 +258,7 @@ li + li {
 .flow-box {
   padding: 0.58rem 0.75rem;
   border-radius: 10px;
-  background: rgba(56, 33, 53, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid var(--line);
   font: 500 0.84rem/1 "IBM Plex Mono", monospace;
 }
@@ -273,13 +273,13 @@ pre {
   overflow-x: auto;
   border-radius: 12px;
   padding: 0.8rem;
-  background: rgba(5, 12, 20, 0.92);
-  border: 1px solid rgba(119, 159, 197, 0.2);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(205, 151, 178, 0.32);
 }
 
 code {
   font: 400 0.82rem/1.45 "IBM Plex Mono", monospace;
-  color: #ffd4e6;
+  color: #4a2538;
 }
 
 .pill-row {
@@ -293,16 +293,16 @@ code {
   padding: 0.4rem 0.62rem;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(59, 35, 57, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   font: 500 0.74rem/1.2 "IBM Plex Mono", monospace;
-  color: #ffe4f0;
+  color: #4f2940;
 }
 
 footer {
   max-width: var(--max);
   margin: 0 auto;
   padding: 0 1.25rem 2rem;
-  color: #f3bed7;
+  color: #8a6077;
   font: 400 0.75rem/1.4 "IBM Plex Mono", monospace;
 }
 
