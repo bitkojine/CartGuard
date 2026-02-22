@@ -1,140 +1,83 @@
 # CartGuard
 
-## Current Pitch-Readiness Score: `5.6/10` (Brutal)
-## Current Repo Execution Score: `7.1/10` (Strong foundation, still early)
-## Current Direction: EU cosmetics ecommerce compliance infrastructure (build-time claim gating)
-## Team Backlog: see `BACKLOG.md` for execution tasks and owners
-## If This Wedge Fails: Pivot Options
-- EU supplements / nutraceutical claim compliance
-- Sustainability-claim enforcement across DTC ecommerce
-- Marketplace seller-listing compliance gate
-- Pricing and promotion claim compliance engine
-- Cross-border localization compliance validation
-- Enterprise validation API (policy engine as infrastructure)
+**Ship compliant AI product claims.**
 
-Five seconds. No poetry.
+CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into source-verified, policy-validated claims and blocks potentially non-compliant products at build time.
 
-> "CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into source-verified, policy-validated claims and blocks products that could be non-compliant at build time."
+[Live Site](https://bitkojine.github.io/CartGuard/) • [Sales Backlog](./BACKLOG.md)
 
-That’s it. Infrastructure for trustworthy AI commerce, not another copy generator.
+## Current Status
 
-## Who It Is For (Primary User)
+- Pitch-readiness score (brutal): `5.6/10`
+- Repo execution score: `7.1/10`
+- Current wedge: `EU cosmetics ecommerce` (build-time claim gating)
 
-CartGuard is built for EU cosmetics ecommerce teams that ship product content through code.
+## Who This Is For
 
-Primary buyer group:
+CartGuard is currently built and positioned for teams that:
+- Operate EU cosmetics ecommerce listings
+- Use headless TypeScript/Node workflows
+- Need compliance and engineering to collaborate in CI
+- Want machine-readable, auditable claim validation
+
+Primary converting visitors:
 - Head of Engineering
-- Compliance/Legal lead
-- Platform/marketplace operations lead
+- Compliance / Legal lead
+- Platform operations lead
 
-## Where Users Get The Most Value
+## Why Teams Use CartGuard
 
-The highest-value outcome is preventing potentially non-compliant cosmetics products from reaching production.
+- Prevent potentially non-compliant products from reaching production
+- Enforce policy in CI, not after legal escalation
+- Keep claim decisions traceable to sources and policy configuration
+- Produce deterministic pass/fail outputs for internal and external audit trails
 
-CartGuard gives teams:
-- Build-time CI enforcement instead of post-publication legal cleanup
-- Source-linked, auditable claims for every product assertion
-- Policy-based controls that map to country/category requirements
-- A shared contract between legal/compliance and engineering
+## What CartGuard Includes
 
-## Brutal Review
+- `@cartguard/spec`: domain schemas + policy contracts (source of truth)
+- `@cartguard/engine`: policy-driven validation runtime
+- `@cartguard/ai`: generator interfaces + mock adapter
+- `@cartguard/cli`: build-time command interface
+- `@cartguard/example`: reference sample content + CI simulation
 
-No optimism fluff. Current viability depends on execution speed, proof of enforcement quality, and distribution.
-
-Pitch/business scores (0-10):
-- Problem severity: `9/10`  
-  EU ecommerce compliance pressure is real and increasing.
-- Urgency to buy: `6.5/10`  
-  Pain is high, but many teams still delay until legal/commercial pressure becomes acute.
-- Product differentiation today: `5.5/10`  
-  Spec-first angle is good, but still easy to misclassify as another AI layer without customer proof.
-- Technical defensibility (near-term): `6.5/10`  
-  Typed claims + policy engine + CI gating is a solid foundation; moats are weak until real regulatory adapters and integrations exist.
-- Go-to-market difficulty: `3.5/10`  
-  Selling infra + compliance into mid-market ecommerce is slow, multi-stakeholder, and trust-heavy.
-- Adoption friction: `5/10`  
-  Requires policy setup, claim discipline, and workflow changes across engineering/content/compliance.
-- Revenue potential (if executed): `8/10`  
-  Clear expansion path: API, enterprise policy packs, marketplace enforcement, audits.
-- Current investability (MVP stage): `4.5/10`  
-  Good thesis, but still missing pilot logos, measurable risk reduction, and integration velocity.
-
-Overall pitch/business viability score: `5.6/10` (credible idea, not de-risked)
-
-Repo/product execution scores (0-10):
-- Codebase structure and clarity: `8/10`
-- Spec-first design integrity: `8/10`
-- Test coverage for MVP scope: `7/10`
-- Production readiness today: `5/10`
-- Demo quality for technical audiences: `7/10`
-
-Overall repo execution score: `7.1/10` (strong technical base, needs real-world proof)
-
-Hard truth:
-- Without concrete proof that CartGuard prevents costly compliance incidents better than internal tooling, this stays a \"nice-to-have.\"
-- To become a must-have, CartGuard must show direct business impact: fewer blocked launches, fewer legal escalations, faster compliant publishing, and clear auditability for regulators/partners.
-
-## Architecture Overview
-
-Monorepo structure:
+Monorepo layout:
 
 ```text
 /packages
-  /spec     Domain schemas + policy definitions (source of truth)
-  /engine   Policy-driven validation execution
-  /ai       Generation interfaces + mock adapter
-  /cli      cartguard command line entrypoint
-  /example  Reference integration + CI simulation
+  /spec
+  /engine
+  /ai
+  /cli
+  /example
 ```
 
-Design principles:
-- Spec-first domain modeling
-- Strict TypeScript + runtime schema validation
-- Policy-driven enforcement (no hidden constants)
-- Clean separation of spec from execution
+## Quickstart
 
-## GitHub Pages
+Requirements:
+- Node 20+
+- pnpm 9+
 
-This repository includes a static marketing site in `/docs` and deploys it from `main` via `/.github/workflows/pages.yml`.
-If this is a new repository, set Pages source to `GitHub Actions` in repository settings.
-
-## Spec-Driven Philosophy
-
-CartGuard encodes business rules in explicit schemas and policy objects, not buried in handlers.
-
-- `ClaimSchema` defines source-linked claim shape.
-- `ProductContentSchema` defines listing content integrity.
-- `ValidationPolicySchema` defines runtime policy constraints.
-- Engine logic consumes validated policy + content and emits structured results.
-
-This gives traceable validation decisions and deterministic CI gating.
-
-## Example Policy Configuration
-
-```json
-{
-  "minConfidence": 0.75,
-  "allowedCategories": ["sustainability", "pricing", "general"],
-  "requireSourceForCategories": ["sustainability", "health", "pricing"],
-  "maxClaimsPerProduct": 10
-}
-```
-
-## CLI Usage
-
-Install dependencies:
+Install:
 
 ```bash
 pnpm install
 ```
 
-Build all packages:
+Build:
 
 ```bash
 pnpm build
 ```
 
-Validate a product against a policy:
+Test:
+
+```bash
+pnpm test
+```
+
+## CLI Usage
+
+Validate product content against policy:
 
 ```bash
 node packages/cli/dist/src/bin/cartguard.js validate \
@@ -142,7 +85,7 @@ node packages/cli/dist/src/bin/cartguard.js validate \
   --policy packages/example/sample-policy.json
 ```
 
-Generate content from mock adapter:
+Generate mock AI content:
 
 ```bash
 node packages/cli/dist/src/bin/cartguard.js generate \
@@ -150,7 +93,7 @@ node packages/cli/dist/src/bin/cartguard.js generate \
   --out packages/example/generated-product.json
 ```
 
-Machine-readable validation output:
+Machine-readable output:
 
 ```bash
 node packages/cli/dist/src/bin/cartguard.js validate \
@@ -159,9 +102,7 @@ node packages/cli/dist/src/bin/cartguard.js validate \
   --json
 ```
 
-## Example Failing Validation Output
-
-Example (`strict-policy.json` with `minConfidence: 0.9`):
+## Example Failing Output
 
 ```json
 {
@@ -179,34 +120,63 @@ Example (`strict-policy.json` with `minConfidence: 0.9`):
 
 ## Demo CI Simulation
 
-The example package includes a CI-style script:
-
 ```bash
 pnpm --filter @cartguard/example demo
 ```
 
-Flow:
-1. Generates a product payload.
-2. Validates with strict policy.
-3. Exits with code `1` on non-compliance.
+The demo intentionally exits with code `1` when strict policy fails.
 
-## Testing
+## Spec-Driven Model
 
-Node test runner is used across packages.
+Core contracts in `@cartguard/spec`:
+- `ClaimSchema`
+- `ProductContentSchema`
+- `ValidationPolicySchema`
 
-```bash
-pnpm test
-```
+Engine behavior in `@cartguard/engine`:
+- Validate schemas first
+- Enforce policy constraints second
+- Return structured `ValidationResult`
 
-Coverage focus:
-- Schema rejection paths
-- Policy edge conditions
-- Duplicate claim detection
-- Confidence threshold failures
+## GitHub Pages Deployment
 
-## Roadmap
+This repository deploys static site content from `docs/` using GitHub Actions workflow:
+- `/.github/workflows/pages.yml`
 
-- LLM and RAG adapters implementing `ContentGenerator`
-- EU cosmetics regulatory policy adapters (per jurisdiction/domain)
-- SaaS validation API and hosted policy engine
-- Marketplace-native integration layer
+Deployment trigger:
+- Push to `main`
+
+Site URL:
+- [https://bitkojine.github.io/CartGuard/](https://bitkojine.github.io/CartGuard/)
+
+## Brutal Business View
+
+Hard truth:
+- Without customer proof that CartGuard reduces real compliance incidents and manual review costs, this stays a nice-to-have.
+- To become must-have infra, CartGuard needs pilot evidence and quantified business impact.
+
+Top current weaknesses:
+- No published pilot outcomes yet
+- No validated pricing model yet
+- No proven distribution channel yet
+
+## If Current Wedge Fails
+
+Pivot options:
+- EU supplements / nutraceutical claim compliance
+- Sustainability claim enforcement across DTC
+- Marketplace seller listing compliance gate
+- Pricing and promotion claim compliance engine
+- Cross-border localization compliance validation
+- Enterprise policy engine API
+
+## Roadmap (Near-Term)
+
+- Secure design-partner pilots in EU cosmetics
+- Add jurisdiction-aware cosmetics policy adapters
+- Add first real platform integration adapter
+- Publish measurable pilot outcomes
+
+## License
+
+MIT. See [LICENSE](./LICENSE).
