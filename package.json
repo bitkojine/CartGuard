@@ -14,6 +14,7 @@
     "clean": "pnpm -r clean",
     "crm:check": "tsx scripts/check-airtable-crm-schema.mts",
     "crm:bootstrap": "tsx scripts/bootstrap-airtable-crm.mts",
+    "crm:seed-demo": "tsx scripts/seed-airtable-crm-demo.mts",
     "guard:nav": "tsx scripts/guard-nav-links.mts",
     "guard:no-js": "tsx scripts/guard-no-js-files.mts",
     "guard:no-any": "tsx scripts/guard-no-explicit-any.mts",
