@@ -90,6 +90,7 @@ What it does:
 - runs the demo commands
 - verifies outputs
 - closes the VSCode test window after slideshow completion
+- reads slideshow/runtime data from `packages/vscode-extension/demo/*.json`
 
 ### Run slow/manual slideshow demo
 

@@ -18,7 +18,11 @@ This document explains every file used in the VSCode extension demo workspace.
 
 - `workflow-batch.json`
   - Live-fire slideshow data pack (6 SKUs + scenario metadata).
-  - Drives symptom-first manual steps, decision gates, unknown escalation, false-alarm pass case, and role-specific output cards.
+  - Drives product table, scenarios, and role-output cards in the slideshow.
+
+- `slideshow.json`
+  - Runtime source of truth for slideshow steps and decision gates.
+  - Removes hardcoded step/gate definitions from extension code.
 
 ## Demo output folder
 

@@ -51,17 +51,6 @@
       ]
     },
     {
-      "id": "version_mismatch_battery",
-      "symptom": "Battery gadget shows evidence present but still flagged at-risk.",
-      "rootCause": "Current product revision differs from revision covered by attached test report.",
-      "firstOwner": "Compliance after comparing listing data and report metadata",
-      "businessImpact": "Additional re-testing and supplier roundtrip before approval.",
-      "missingEvidence": [
-        "Current revision test report",
-        "Updated technical-file component mapping"
-      ]
-    },
-    {
       "id": "wrong_directive_radio",
       "symptom": "Wi-Fi camera evidence set references LVD/EMC only despite radio features.",
       "rootCause": "Product classification treated a radio SKU as non-radio equipment.",
@@ -113,17 +102,6 @@
       "missingEvidence": [
         "Detailed feature specification",
         "Clarified product-function declaration"
-      ]
-    },
-    {
-      "id": "myc_last_minute",
-      "symptom": "Compliance request appears close to planned launch date.",
-      "rootCause": "Evidence gaps were not resolved before submission.",
-      "firstOwner": "Ops",
-      "businessImpact": "Launch disruption and costly internal escalation.",
-      "missingEvidence": [
-        "Document bundle completeness",
-        "Pre-submission risk triage"
       ]
     }
   ],
