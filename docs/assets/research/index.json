@@ -2,6 +2,45 @@
   "updated_at": "2026-02-23",
   "entries": [
     {
+      "id": "technical-feasibility-pilot-proof-engine-2026-02-23",
+      "title": "Technical Feasibility - Pilot Proof Engine (APAC to EU)",
+      "summary": "Conditional Go verdict with buildability scores, 30/60/90 engineering path, risks, and kill criteria for pilot proof infrastructure.",
+      "owner": "cartguard-core",
+      "status": "reviewed",
+      "confidence": "medium",
+      "created_at": "2026-02-23",
+      "last_verified_at": "2026-02-23",
+      "geography": [
+        "APAC",
+        "EU",
+        "China",
+        "Germany"
+      ],
+      "industry_scope": [
+        "b2b saas",
+        "developer tools",
+        "ecommerce compliance workflow"
+      ],
+      "source_count": 13,
+      "repo_doc": "research/entries/2026-02-23-technical-feasibility-pilot-proof-engine.md",
+      "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-technical-feasibility-pilot-proof-engine.md",
+      "sources": [
+        "https://docs.github.com/actions",
+        "https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions",
+        "https://docs.github.com/articles/getting-started-with-github-actions",
+        "https://betterstack.com/community/guides/observability/opentelemetry-collector-components/",
+        "https://dataworkz.de/blog/building-in-compliance-in-your-ci-cd-pipeline-with-conftest/",
+        "https://www.akeneo.com/blog/pim-data-governance/",
+        "https://galileo.ai/blog/scaling-ai-guardrails-architecture-patterns",
+        "https://sprinto.com/blog/vanta-vs-drata-vs-delve/",
+        "https://taxation-customs.ec.europa.eu/customs/eu-customs-union-facts-and-figures/e-commerce-product-compliance-and-safety_en",
+        "https://www.europarl.europa.eu/doceo/document/A-10-2025-0133_EN.html",
+        "https://www.packnode.org/en/e-commerce/germany-ecommerce-packaging-law-2025",
+        "https://www.symanty.com/blog/our-blog-1/how-much-does-it-cost-to-be-a-compliant-seller-in-europe-in-2025-12",
+        "https://newsroom.fedex.com/newsroom/europe-english/fedex-survey-reveals-85-of-apac-smes-confident-in-europe-trade-growth"
+      ]
+    },
+    {
       "id": "business-weaknesses-register-2026-02-23",
       "title": "Business Weaknesses and Falsification Questions Register",
       "summary": "Live register of assumptions, weaknesses, and falsification questions to pressure-test startup viability.",
@@ -10,8 +49,17 @@
       "confidence": "medium",
       "created_at": "2026-02-23",
       "last_verified_at": "2026-02-23",
-      "geography": ["APAC", "EU", "China", "Germany"],
-      "industry_scope": ["startup strategy", "b2b saas", "go-to-market"],
+      "geography": [
+        "APAC",
+        "EU",
+        "China",
+        "Germany"
+      ],
+      "industry_scope": [
+        "startup strategy",
+        "b2b saas",
+        "go-to-market"
+      ],
       "source_count": 5,
       "repo_doc": "research/entries/2026-02-23-business-weaknesses-register.md",
       "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-business-weaknesses-register.md",
@@ -32,8 +80,17 @@
       "confidence": "medium",
       "created_at": "2026-02-23",
       "last_verified_at": "2026-02-23",
-      "geography": ["APAC", "EU", "China", "Germany"],
-      "industry_scope": ["b2b saas", "ecommerce compliance", "go-to-market"],
+      "geography": [
+        "APAC",
+        "EU",
+        "China",
+        "Germany"
+      ],
+      "industry_scope": [
+        "b2b saas",
+        "ecommerce compliance",
+        "go-to-market"
+      ],
       "source_count": 4,
       "repo_doc": "research/entries/2026-02-23-paid-pilots-b2b-playbook.md",
       "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-paid-pilots-b2b-playbook.md",
@@ -53,8 +110,16 @@
       "confidence": "medium",
       "created_at": "2026-02-23",
       "last_verified_at": "2026-02-23",
-      "geography": ["China", "Germany", "EU"],
-      "industry_scope": ["ecommerce", "marketplace", "consumer electronics"],
+      "geography": [
+        "China",
+        "Germany",
+        "EU"
+      ],
+      "industry_scope": [
+        "ecommerce",
+        "marketplace",
+        "consumer electronics"
+      ],
       "source_count": 17,
       "repo_doc": "research/entries/2026-02-23-beachhead-china-germany-electronics.md",
       "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-beachhead-china-germany-electronics.md",
@@ -81,8 +146,16 @@
       "confidence": "high",
       "created_at": "2026-02-23",
       "last_verified_at": "2026-02-23",
-      "geography": ["EU", "APAC", "China"],
-      "industry_scope": ["ecommerce", "cross-border", "consumer"],
+      "geography": [
+        "EU",
+        "APAC",
+        "China"
+      ],
+      "industry_scope": [
+        "ecommerce",
+        "cross-border",
+        "consumer"
+      ],
       "source_count": 5,
       "repo_doc": "research/entries/2026-02-23-apac-eu-entry-signals.md",
       "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-apac-eu-entry-signals.md",
@@ -103,8 +176,14 @@
       "confidence": "medium",
       "created_at": "2026-02-23",
       "last_verified_at": "2026-02-23",
-      "geography": ["APAC", "EU"],
-      "industry_scope": ["ecommerce", "cross-border trade"],
+      "geography": [
+        "APAC",
+        "EU"
+      ],
+      "industry_scope": [
+        "ecommerce",
+        "cross-border trade"
+      ],
       "source_count": 19,
       "repo_doc": "research/entries/2026-02-23-apac-eu-ecommerce-entry.md",
       "repo_url": "https://github.com/bitkojine/CartGuard/blob/main/research/entries/2026-02-23-apac-eu-ecommerce-entry.md",
