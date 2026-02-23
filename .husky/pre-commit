@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 
+pnpm guard:test-doubles-staged
 pnpm lint
 pnpm guard

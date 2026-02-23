@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: no-test-doubles
+        name: Block test doubles
+        entry: pnpm guard:test-doubles-staged
+        language: system
+        pass_filenames: false
