@@ -99,23 +99,15 @@ suite("CartGuard Extension E2E", () => {
       return;
     }
 
-    console.log("[CartGuard E2E] Slide advance: Step 1 -> Step 2.");
-    const step1 = await vscode.commands.executeCommand("cartguard.demoNextStep");
-    const step1State = step1 as { stepIndex?: number };
-    assert.equal(step1State.stepIndex, 1);
-    await pause(stepMs);
+    let state = { stepIndex: 0, done: false };
+    for (let i = 1; i <= 10; i += 1) {
+      console.log(`[CartGuard E2E] Slide advance: ${i - 1} -> ${i}.`);
+      const next = await vscode.commands.executeCommand("cartguard.demoNextStep");
+      state = next as { stepIndex: number; done: boolean };
+      assert.equal(state.stepIndex, i);
+      await pause(stepMs);
+    }
 
-    console.log("[CartGuard E2E] Slide advance: Step 2 -> Step 3.");
-    const step2 = await vscode.commands.executeCommand("cartguard.demoNextStep");
-    const step2State = step2 as { stepIndex?: number };
-    assert.equal(step2State.stepIndex, 2);
-    await pause(stepMs);
-
-    console.log("[CartGuard E2E] Slide advance: Step 3 -> Step 4.");
-    const step3 = await vscode.commands.executeCommand("cartguard.demoNextStep");
-    const step3State = step3 as { stepIndex?: number; done?: boolean };
-    assert.equal(step3State.stepIndex, 3);
-    assert.equal(step3State.done, true);
-    await pause(stepMs);
+    assert.equal(state.done, true);
   });
 });

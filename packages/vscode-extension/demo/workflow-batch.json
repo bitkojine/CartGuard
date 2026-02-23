@@ -1,0 +1,79 @@
+{
+  "products": [
+    {
+      "id": "SKU-AC-220V",
+      "name": "AC Mains Charger 65W",
+      "archetype": "non-radio mains",
+      "status": "Blocked"
+    },
+    {
+      "id": "SKU-BATT-GADGET",
+      "name": "Battery Sensor Gadget",
+      "archetype": "battery non-radio",
+      "status": "At Risk"
+    },
+    {
+      "id": "SKU-WIFI-CAM",
+      "name": "Wi-Fi Indoor Camera",
+      "archetype": "radio-enabled",
+      "status": "Blocked"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "missing_doc_mains",
+      "symptom": "Mains charger cannot move to listing-ready because the DoC is missing.",
+      "rootCause": "Supplier package omitted a product-specific EU Declaration of Conformity.",
+      "firstOwner": "Ops and compliance during pre-submission review",
+      "businessImpact": "High chance of launch delay and late document scramble.",
+      "missingEvidence": [
+        "EU Declaration of Conformity",
+        "DoC model traceability fields"
+      ]
+    },
+    {
+      "id": "version_mismatch_battery",
+      "symptom": "Battery gadget shows evidence present but still flagged at-risk.",
+      "rootCause": "Current product revision differs from revision covered by attached test report.",
+      "firstOwner": "Compliance after comparing listing data and report metadata",
+      "businessImpact": "Additional re-testing and supplier roundtrip before approval.",
+      "missingEvidence": [
+        "Current revision test report",
+        "Updated technical-file component mapping"
+      ]
+    },
+    {
+      "id": "wrong_directive_radio",
+      "symptom": "Wi-Fi camera evidence set references LVD/EMC only despite radio features.",
+      "rootCause": "Product classification treated a radio SKU as non-radio equipment.",
+      "firstOwner": "Compliance during directive mapping review",
+      "businessImpact": "Hard blocker risk in marketplace compliance checks.",
+      "missingEvidence": [
+        "RED-aligned DoC",
+        "Radio-focused test evidence"
+      ]
+    },
+    {
+      "id": "manual_language_de",
+      "symptom": "Manual language matrix shows English-only files for Germany launch.",
+      "rootCause": "Localization was deferred until after listing submission prep.",
+      "firstOwner": "Ops and compliance during documentation handoff",
+      "businessImpact": "Potential compliance escalation and rework before go-live.",
+      "missingEvidence": [
+        "German user manual",
+        "German safety instructions"
+      ]
+    },
+    {
+      "id": "rp_identity_mismatch",
+      "symptom": "Responsible Person identity differs across label, DoC, and account records.",
+      "rootCause": "Entity data changed in one system but not synchronized across artifacts.",
+      "firstOwner": "Responsible Person and compliance",
+      "businessImpact": "Authority-response friction and delayed issue resolution.",
+      "missingEvidence": [
+        "Aligned manufacturer/importer label fields",
+        "Consistent RP identity across records"
+      ]
+    }
+  ]
+}

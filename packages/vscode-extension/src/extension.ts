@@ -88,6 +88,35 @@ interface DemoSlide {
   now: string;
   next: string;
   customerImpact: string;
+  whatUserSees: string;
+  cartGuardChecks: string;
+  ownerRole: string;
+  fixAction: string;
+  evidenceType: "legal" | "marketplace" | "best_practice";
+  checkId: string;
+  inputArtifact: string;
+  scenarioId?: string;
+}
+
+interface WorkflowProduct {
+  id: string;
+  name: string;
+  archetype: string;
+  status: string;
+}
+
+interface WorkflowScenario {
+  id: string;
+  symptom: string;
+  rootCause: string;
+  firstOwner: string;
+  businessImpact: string;
+  missingEvidence: string[];
+}
+
+interface WorkflowData {
+  products: WorkflowProduct[];
+  scenarios: WorkflowScenario[];
 }
 
 interface RuleEvaluationRow {
@@ -214,6 +243,79 @@ const runEvaluation = async (
   return { evaluation, listing, rules, applicability };
 };
 
+const resolveWorkflowPath = (context: vscode.ExtensionContext): string => {
+  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  if (workspaceRoot) {
+    return join(workspaceRoot, "workflow-batch.json");
+  }
+  return join(context.extensionPath, "demo", "workflow-batch.json");
+};
+
+const parseWorkflowData = (input: unknown): WorkflowData | undefined => {
+  if (typeof input !== "object" || input === null) {
+    return undefined;
+  }
+
+  if (!("products" in input) || !("scenarios" in input)) {
+    return undefined;
+  }
+
+  const productsRaw = (input as { products: unknown }).products;
+  const scenariosRaw = (input as { scenarios: unknown }).scenarios;
+  if (!Array.isArray(productsRaw) || !Array.isArray(scenariosRaw)) {
+    return undefined;
+  }
+
+  const products: WorkflowProduct[] = productsRaw
+    .filter(
+      (entry): entry is { id: string; name: string; archetype: string; status: string } =>
+        typeof entry === "object" &&
+        entry !== null &&
+        typeof (entry as { id?: unknown }).id === "string" &&
+        typeof (entry as { name?: unknown }).name === "string" &&
+        typeof (entry as { archetype?: unknown }).archetype === "string" &&
+        typeof (entry as { status?: unknown }).status === "string"
+    )
+    .map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      archetype: entry.archetype,
+      status: entry.status
+    }));
+
+  const scenarios: WorkflowScenario[] = scenariosRaw
+    .filter(
+      (
+        entry
+      ): entry is {
+        id: string;
+        symptom: string;
+        rootCause: string;
+        firstOwner: string;
+        businessImpact: string;
+        missingEvidence: string[];
+      } =>
+        typeof entry === "object" &&
+        entry !== null &&
+        typeof (entry as { id?: unknown }).id === "string" &&
+        typeof (entry as { symptom?: unknown }).symptom === "string" &&
+        typeof (entry as { rootCause?: unknown }).rootCause === "string" &&
+        typeof (entry as { firstOwner?: unknown }).firstOwner === "string" &&
+        typeof (entry as { businessImpact?: unknown }).businessImpact === "string" &&
+        Array.isArray((entry as { missingEvidence?: unknown }).missingEvidence)
+    )
+    .map((entry) => ({
+      id: entry.id,
+      symptom: entry.symptom,
+      rootCause: entry.rootCause,
+      firstOwner: entry.firstOwner,
+      businessImpact: entry.businessImpact,
+      missingEvidence: entry.missingEvidence
+    }));
+
+  return { products, scenarios };
+};
+
 const escapeHtml = (value: unknown): string =>
   String(value)
     .replace(/&/g, "&amp;")
@@ -235,28 +337,175 @@ const statusClass = (status: string): string => {
 
 const demoSlides: DemoSlide[] = [
   {
-    title: "Step 1 of 4: Load Customer Compliance Context",
-    now: "Load the listing, rule catalog, and applicability catalog that represent the customer's launch scenario.",
-    next: "Map which legal and marketplace rules apply to this specific listing.",
-    customerImpact: "Teams start from one shared input set, avoiding fragmented spreadsheets and guesswork."
+    title: "Step 1 of 11: Dashboard - Today's Launch Batch",
+    now: "Show the launch batch with three draft SKUs and current readiness status.",
+    next: "Open the blocked mains charger item and explain the failure symptom first.",
+    customerImpact: "Ops immediately sees what is ready versus what is at risk before Amazon review.",
+    whatUserSees:
+      "Batch list with status chips: Ready, At Risk, Blocked across mains charger, battery gadget, and Wi-Fi camera.",
+    cartGuardChecks:
+      "Batch preflight aggregation across required evidence presence and mismatch signals.",
+    ownerRole: "Ops",
+    fixAction: "Prioritize blocked SKUs before submission.",
+    evidenceType: "best_practice",
+    checkId: "batch_overview",
+    inputArtifact: "workflow-batch.json products[]"
   },
   {
-    title: "Step 2 of 4: Resolve Applicable Rules",
-    now: "Apply RED/LVD/EMC applicability logic so only relevant rules are evaluated.",
-    next: "Run deterministic evidence checks against the applicable rules.",
-    customerImpact: "Reduces false blockers by ignoring rules that do not apply to this product context."
+    title: "Step 2 of 11: Mains Charger Missing DoC",
+    now: "Open the blocked mains charger and surface the blocker symptom from an operator perspective.",
+    next: "Show exactly why LVD requires an EU Declaration of Conformity for this product.",
+    customerImpact: "Avoids last-minute listing delays caused by missing mandatory artifacts.",
+    whatUserSees:
+      "SKU detail where DoC slot is empty while other files are present.",
+    cartGuardChecks:
+      "LVD scope check and declaration presence check for mains-powered equipment.",
+    ownerRole: "Compliance",
+    fixAction: "Attach a valid DoC for the exact model before listing submission.",
+    evidenceType: "legal",
+    checkId: "check_lvd_doc_presence",
+    inputArtifact: "sample-listing.json + rules.json",
+    scenarioId: "missing_doc_mains"
   },
   {
-    title: "Step 3 of 4: Evaluate Evidence",
-    now: "Check required evidence keys and status fields to classify each rule outcome as present, missing, stale, mismatched, unknown, or not applicable.",
-    next: "Summarize blockers and warnings into a clear action plan.",
-    customerImpact: "Catches missing or stale documents before listing submission, which lowers delay risk."
+    title: "Step 3 of 11: Why LVD Applies",
+    now: "Explain directive applicability and required evidence in plain operator language.",
+    next: "Move to the battery non-radio SKU to show version mismatch risk.",
+    customerImpact: "Builds trust that checks map to explicit legal conditions, not black-box scoring.",
+    whatUserSees:
+      "Directive mapping note: mains voltage in LVD scope, DoC required before market placement.",
+    cartGuardChecks:
+      "Voltage-driven applicability mapping plus mandatory artifact expectation.",
+    ownerRole: "Compliance",
+    fixAction: "Collect DoC with correct model, manufacturer identity, and referenced standards.",
+    evidenceType: "legal",
+    checkId: "explain_lvd_scope",
+    inputArtifact: "sample-listing.json voltage fields"
   },
   {
-    title: "Step 4 of 4: Deliver Action Plan",
-    now: "Present blockers, warnings, and next actions in operator language for ops/compliance/developers.",
-    next: "Rerun after document updates to prove readiness improvements.",
-    customerImpact: "Shortens review loops and gives customer teams deterministic proof for launch decisions."
+    title: "Step 4 of 11: Battery Gadget Version Drift",
+    now: "Show a realistic case where a test report is present but tied to an older hardware revision.",
+    next: "Open the mismatch details so teams can act without back-and-forth.",
+    customerImpact: "Catches hidden evidence drift that usually appears only during late review.",
+    whatUserSees:
+      "Battery SKU marked At Risk with a report tagged as older revision evidence.",
+    cartGuardChecks:
+      "EMC applicability plus report-to-product revision consistency checks.",
+    ownerRole: "Compliance",
+    fixAction: "Request updated report or re-test for current hardware revision.",
+    evidenceType: "best_practice",
+    checkId: "check_emc_version_alignment",
+    inputArtifact: "workflow-batch.json scenario version_mismatch",
+    scenarioId: "version_mismatch_battery"
+  },
+  {
+    title: "Step 5 of 11: Version Mismatch Detail",
+    now: "Show side-by-side evidence mismatch between listed revision and tested revision.",
+    next: "Switch to the radio-enabled Wi-Fi camera scenario.",
+    customerImpact: "Reduces review loops by giving engineering and supplier teams exact correction targets.",
+    whatUserSees:
+      "Model revision delta with highlighted fields from listing and evidence.",
+    cartGuardChecks:
+      "Critical identifier comparison across listing, report metadata, and rule expectations.",
+    ownerRole: "Engineering",
+    fixAction: "Update feed metadata and attach evidence for the shipped revision.",
+    evidenceType: "best_practice",
+    checkId: "show_version_diff",
+    inputArtifact: "workflow-batch.json product version fields",
+    scenarioId: "version_mismatch_battery"
+  },
+  {
+    title: "Step 6 of 11: Wi-Fi Camera Wrong Directive",
+    now: "Show the radio product where listing attributes imply RED but evidence references only LVD/EMC.",
+    next: "Explain directive logic for radio equipment and expected RED evidence.",
+    customerImpact: "Prevents severe classification errors that lead to hard listing blocks.",
+    whatUserSees:
+      "Wi-Fi camera with radio capability fields set, but DoC lacking RED reference.",
+    cartGuardChecks:
+      "Radio capability detection against directive applicability rules.",
+    ownerRole: "Compliance",
+    fixAction: "Replace documentation set with RED-aligned DoC and tests.",
+    evidenceType: "legal",
+    checkId: "check_red_applicability",
+    inputArtifact: "sample-listing.json radio attributes",
+    scenarioId: "wrong_directive_radio"
+  },
+  {
+    title: "Step 7 of 11: Directive Mapping Proof",
+    now: "Display decision logic: radio equipment routes to RED obligations.",
+    next: "Run language checks for Germany-focused launch readiness.",
+    customerImpact: "Answers compliance skepticism with deterministic, explainable logic.",
+    whatUserSees:
+      "Rule trace showing why RED, not standalone LVD/EMC, governs this case.",
+    cartGuardChecks:
+      "Applicability rule trace with legal source category tagging.",
+    ownerRole: "Compliance",
+    fixAction: "Use directive mapping trace as internal approval evidence.",
+    evidenceType: "legal",
+    checkId: "show_directive_mapping",
+    inputArtifact: "applicability.json"
+  },
+  {
+    title: "Step 8 of 11: German Instructions Check",
+    now: "Show missing German-language manuals for Germany target marketplace.",
+    next: "Check traceability and Responsible Person consistency across artifacts.",
+    customerImpact: "Avoids preventable consumer-facing and compliance escalations post-launch.",
+    whatUserSees:
+      "Manual language matrix with red flags on English-only instructions for DE launch.",
+    cartGuardChecks:
+      "Destination-country language requirement and manual presence checks.",
+    ownerRole: "Ops",
+    fixAction: "Attach German manuals and safety instructions before approval.",
+    evidenceType: "legal",
+    checkId: "check_manual_language",
+    inputArtifact: "workflow-batch.json manuals list",
+    scenarioId: "manual_language_de"
+  },
+  {
+    title: "Step 9 of 11: RP and Label Consistency",
+    now: "Show mismatch between Responsible Person/importer fields across label, DoC, and listing records.",
+    next: "Summarize likely Amazon readiness risk from current evidence set.",
+    customerImpact: "Reduces authority-response risk and avoids identity confusion across teams.",
+    whatUserSees:
+      "Entity mismatch panel for manufacturer/importer/RP identities.",
+    cartGuardChecks:
+      "Cross-artifact traceability consistency checks.",
+    ownerRole: "Responsible Person",
+    fixAction: "Align label artwork, DoC entity data, and account metadata.",
+    evidenceType: "legal",
+    checkId: "check_traceability_consistency",
+    inputArtifact: "workflow-batch.json RP fields",
+    scenarioId: "rp_identity_mismatch"
+  },
+  {
+    title: "Step 10 of 11: Amazon Readiness Summary",
+    now: "Present SKU-level readiness and likely documentation-request risk before submission.",
+    next: "Close with KPI impact to show operational value over time.",
+    customerImpact: "Ops gets a clear submit-or-fix decision instead of surprise dashboard escalations.",
+    whatUserSees:
+      "Readiness board with likely compliance request risk labels per SKU.",
+    cartGuardChecks:
+      "Heuristic mapping from legal evidence gaps to marketplace-risk signal.",
+    ownerRole: "Ops",
+    fixAction: "Submit only green SKUs; route red SKUs to compliance action queue.",
+    evidenceType: "marketplace",
+    checkId: "summarize_amazon_risk",
+    inputArtifact: "evaluation summary + workflow scenarios"
+  },
+  {
+    title: "Step 11 of 11: Before vs After KPI Impact",
+    now: "Show illustrative improvements in blocker rate, review time, and rework loops.",
+    next: "End demo and close VSCode host.",
+    customerImpact: "Connects compliance preflight work directly to launch velocity and reliability.",
+    whatUserSees:
+      "Illustrative KPI deltas for internal workflow improvement.",
+    cartGuardChecks:
+      "No legal determination; internal operational analytics and trend framing.",
+    ownerRole: "Ops",
+    fixAction: "Adopt preflight checks as mandatory gate before listing submission.",
+    evidenceType: "best_practice",
+    checkId: "show_internal_kpis",
+    inputArtifact: "internal trend metrics"
   }
 ];
 
@@ -300,17 +549,42 @@ const renderDemoHtml = (
   listingPath: string,
   rulesPath: string,
   applicabilityPath: string,
-  run: EvaluationBundle | undefined
+  run: EvaluationBundle | undefined,
+  workflowData: WorkflowData | undefined
 ): string => {
-  const slide = demoSlides[state.stepIndex] ?? demoSlides[0] ?? {
+  const fallbackSlide: DemoSlide = {
     title: "Step",
     now: "",
     next: "",
-    customerImpact: ""
+    customerImpact: "",
+    whatUserSees: "",
+    cartGuardChecks: "",
+    ownerRole: "Ops",
+    fixAction: "",
+    evidenceType: "best_practice",
+    checkId: "unknown",
+    inputArtifact: "unknown"
   };
+  const slide = demoSlides[state.stepIndex] ?? demoSlides[0] ?? fallbackSlide;
   const nextSlide =
     state.stepIndex < demoSlides.length - 1 ? demoSlides[state.stepIndex + 1] : undefined;
   const summary = run?.evaluation.result?.summary;
+  const scenario = slide.scenarioId
+    ? workflowData?.scenarios.find((entry) => entry.id === slide.scenarioId)
+    : undefined;
+  const productRows =
+    workflowData?.products
+      .map(
+        (product) => `
+          <tr>
+            <td><code>${escapeHtml(product.id)}</code></td>
+            <td>${escapeHtml(product.name)}</td>
+            <td>${escapeHtml(product.archetype)}</td>
+            <td><span class="pill ${product.status === "Ready" ? "ok" : product.status === "Blocked" ? "bad" : "unknown"}">${escapeHtml(product.status)}</span></td>
+          </tr>
+        `
+      )
+      .join("") ?? "";
   const rows =
     run?.evaluation.result?.evaluations
       .slice(0, 10)
@@ -379,6 +653,11 @@ const renderDemoHtml = (
           margin: 4px 0;
           word-break: break-all;
         }
+        .meta-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 8px;
+        }
         .grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -430,13 +709,67 @@ const renderDemoHtml = (
       <h1>CartGuard Demo Slideshow</h1>
       <div class="card">
         <h2>${escapeHtml(slide.title)}</h2>
-        <div class="label">What we are doing now</div>
+        <div class="label">Symptom</div>
+        <div class="value">${escapeHtml(scenario?.symptom ?? slide.whatUserSees)}</div>
+        <div class="label" style="margin-top:10px;">What we are doing now</div>
         <div class="value">${escapeHtml(slide.now)}</div>
         <div class="label" style="margin-top:10px;">What we do next</div>
         <div class="value">${escapeHtml(slide.next)}</div>
         <div class="label" style="margin-top:10px;">How this helps customers</div>
         <div class="value">${escapeHtml(slide.customerImpact)}</div>
+        <div class="label" style="margin-top:10px;">What user sees</div>
+        <div class="value">${escapeHtml(slide.whatUserSees)}</div>
+        <div class="label" style="margin-top:10px;">CartGuard check</div>
+        <div class="value">${escapeHtml(slide.cartGuardChecks)}</div>
+        <div class="label" style="margin-top:10px;">Fix now</div>
+        <div class="value">${escapeHtml(slide.fixAction)}</div>
       </div>
+      <div class="card">
+        <h3>Step Metadata</h3>
+        <div class="meta-grid">
+          <div><strong>Role</strong><div>${escapeHtml(slide.ownerRole)}</div></div>
+          <div><strong>Check ID</strong><div><code>${escapeHtml(slide.checkId)}</code></div></div>
+          <div><strong>Evidence Type</strong><div><span class="pill ${slide.evidenceType === "legal" ? "bad" : slide.evidenceType === "marketplace" ? "unknown" : "na"}">${escapeHtml(slide.evidenceType)}</span></div></div>
+          <div><strong>Input Artifact</strong><div>${escapeHtml(slide.inputArtifact)}</div></div>
+        </div>
+      </div>
+      ${
+        scenario
+          ? `
+      <div class="card">
+        <h3>Scenario Breakdown</h3>
+        <div class="label">Root cause</div>
+        <div class="value">${escapeHtml(scenario.rootCause)}</div>
+        <div class="label" style="margin-top:10px;">Who sees it first</div>
+        <div class="value">${escapeHtml(scenario.firstOwner)}</div>
+        <div class="label" style="margin-top:10px;">Business impact</div>
+        <div class="value">${escapeHtml(scenario.businessImpact)}</div>
+        <div class="label" style="margin-top:10px;">Missing or mismatched evidence</div>
+        <div class="value">${escapeHtml(scenario.missingEvidence.join(", "))}</div>
+      </div>
+      `
+          : ""
+      }
+      ${
+        productRows
+          ? `
+      <div class="card">
+        <h3>Batch Products</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Archetype</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>${productRows}</tbody>
+        </table>
+      </div>
+      `
+          : ""
+      }
       <div class="card">
         <h3>Inputs in this demo</h3>
         <div class="path">Listing: ${escapeHtml(listingPath)}</div>
@@ -629,6 +962,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
   let demoPanel: vscode.WebviewPanel | undefined;
   let demoState: DemoControlState | undefined;
   let demoRun: EvaluationBundle | undefined;
+  let workflowData: WorkflowData | undefined;
 
   const updateDemoPanel = (
     listingPath: string,
@@ -644,7 +978,8 @@ export const activate = (context: vscode.ExtensionContext): void => {
       listingPath,
       rulesPath,
       applicabilityPath,
-      demoRun
+      demoRun,
+      workflowData
     );
   };
 
@@ -811,11 +1146,19 @@ export const activate = (context: vscode.ExtensionContext): void => {
 
   const openDemoSlideshow = vscode.commands.registerCommand(
     "cartguard.openDemoSlideshow",
-    (args?: ValidationCommandArgs) => {
+    async (args?: ValidationCommandArgs) => {
       try {
         const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
 
         demoRun = undefined;
+        workflowData = undefined;
+        const workflowPath = resolveWorkflowPath(context);
+        try {
+          const parsed = parseWorkflowData(await readJsonFile(workflowPath));
+          workflowData = parsed;
+        } catch {
+          workflowData = undefined;
+        }
         demoState = {
           stepIndex: 0,
           done: false,
@@ -835,6 +1178,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
           demoPanel = undefined;
           demoState = undefined;
           demoRun = undefined;
+          workflowData = undefined;
         });
 
         demoPanel.webview.onDidReceiveMessage(async (message: unknown) => {

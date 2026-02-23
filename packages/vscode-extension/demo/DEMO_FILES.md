@@ -16,6 +16,10 @@ This document explains every file used in the VSCode extension demo workspace.
   - Applicability rule set for the demo.
   - Determines which legal/policy rules apply to this listing context.
 
+- `workflow-batch.json`
+  - Real-workflow slideshow data pack (3 SKUs + scenario metadata).
+  - Drives symptom-first manual demo steps, role ownership, and fix actions.
+
 ## Demo output folder
 
 - `_cartguard_in_memory_showcase/`
