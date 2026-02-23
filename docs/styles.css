@@ -265,6 +265,7 @@ main > * + * {
   background: #fff1f4;
   border-radius: 14px;
   padding: 1rem;
+  margin: 0.85rem 0 0.25rem;
 }
 
 .warning-label {
@@ -277,9 +278,9 @@ main > * + * {
 
 .warning-banner h2 {
   margin: 0;
-  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  font-size: 1.25rem;
   line-height: 1.25;
-  max-width: 60ch;
+  max-width: none;
 }
 
 .warning-banner p {
@@ -294,6 +295,11 @@ main > * + * {
 
 .warning-banner li + li {
   margin-top: 0.35rem;
+}
+
+.warning-banner li {
+  color: #5f2637;
+  line-height: 1.45;
 }
 
 .grid {
