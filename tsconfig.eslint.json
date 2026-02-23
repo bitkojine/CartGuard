@@ -1,7 +1,14 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@cartguard/spec": ["packages/spec/src/index.ts"],
+      "@cartguard/engine": ["packages/engine/src/index.ts"],
+      "@cartguard/ai": ["packages/ai/src/index.ts"],
+      "@cartguard/cli": ["packages/cli/src/index.ts"]
+    }
   },
   "include": [
     "packages/**/*.ts",
