@@ -37,20 +37,39 @@
     <main>
       <section class="architecture" aria-label="Stage-safe signals">
         <h2>Stage-Safe Signals</h2>
+        <p class="small-note" id="signals-updated">Loading stage-safe signals...</p>
         <div class="table-wrap">
           <table class="comparison-table">
             <thead>
               <tr>
                 <th>Signal</th>
                 <th>Value</th>
-                <th>Source</th>
+                <th>Confidence</th>
+                <th>Evidence</th>
               </tr>
             </thead>
-            <tbody>
-              <tr><td>Low-value consignments entering EU</td><td>4.6B in 2024, 91% from China</td><td>EU parliamentary/customs sources</td></tr>
-              <tr><td>APAC SMEs increasing exports to Europe</td><td>76% in FedEx survey</td><td>FedEx APAC survey reporting</td></tr>
-              <tr><td>EU cross-border ecommerce market</td><td>EUR 275.6B in 2024</td><td>European ecommerce industry reporting</td></tr>
-            </tbody>
+            <tbody id="signals-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="architecture" aria-label="Pilot outcomes">
+        <h2>Pilot Outcomes (Anonymized)</h2>
+        <p class="small-note" id="pilots-updated">Loading pilot outcomes...</p>
+        <div class="table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Pilot</th>
+                <th>Metric</th>
+                <th>Baseline</th>
+                <th>Current</th>
+                <th>Change</th>
+                <th>Status</th>
+                <th>Evidence</th>
+              </tr>
+            </thead>
+            <tbody id="pilots-table-body"></tbody>
           </table>
         </div>
       </section>
@@ -74,6 +93,95 @@
     <footer>
       <p>CartGuard • Proof page</p>
     </footer>
+    <script>
+      const DATA_ROOT = '/CartGuard/assets/research';
+      const signalsUpdatedEl = document.getElementById('signals-updated');
+      const signalsTableBodyEl = document.getElementById('signals-table-body');
+      const pilotsUpdatedEl = document.getElementById('pilots-updated');
+      const pilotsTableBodyEl = document.getElementById('pilots-table-body');
+
+      const escapeHtml = (value) => String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      const badgeClass = (confidence) => {
+        const c = String(confidence || '').toLowerCase();
+        if (c === 'high') return 'status yes';
+        if (c === 'medium') return 'status partial';
+        return 'status no';
+      };
+
+      const fetchJson = async (path, label) => {
+        let response;
+        try {
+          response = await fetch(path, { cache: 'no-store' });
+        } catch (error) {
+          throw new Error(`${label} network error: ${error && error.message ? error.message : 'request failed'}`);
+        }
+        if (!response.ok) {
+          throw new Error(`${label} unavailable (${response.status}) at ${path}`);
+        }
+        try {
+          return await response.json();
+        } catch (error) {
+          throw new Error(`${label} parse error: ${error && error.message ? error.message : 'invalid JSON'}`);
+        }
+      };
+
+      fetchJson(`${DATA_ROOT}/facts.json`, 'Stage-safe signals')
+        .then((data) => {
+          signalsUpdatedEl.textContent = `Stage-safe signals updated: ${data.updated_at || 'unknown'}`;
+          const facts = Array.isArray(data.facts) ? data.facts : [];
+          if (facts.length === 0) {
+            signalsTableBodyEl.innerHTML = '<tr><td colspan="4">No stage-safe signals yet.</td></tr>';
+            return;
+          }
+          facts.forEach((fact) => {
+            const entryHref = `/CartGuard/ops/research.html#entry-${fact.research_entry_id}`;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${escapeHtml(fact.signal || 'n/a')}</td>
+              <td>${escapeHtml(fact.value || fact.claim || 'n/a')}</td>
+              <td><span class="${badgeClass(fact.confidence)}">${escapeHtml(fact.confidence || 'low')}</span></td>
+              <td><a href="${escapeHtml(fact.source_url || '#')}" target="_blank" rel="noopener noreferrer">Source</a> • <a href="${entryHref}">Research entry</a></td>
+            `;
+            signalsTableBodyEl.appendChild(row);
+          });
+        })
+        .catch((err) => {
+          signalsUpdatedEl.textContent = 'Failed to load stage-safe signals.';
+          signalsTableBodyEl.innerHTML = `<tr><td colspan="4">${escapeHtml(err.message)}</td></tr>`;
+        });
+
+      fetchJson(`${DATA_ROOT}/pilots.json`, 'Pilot outcomes')
+        .then((data) => {
+          pilotsUpdatedEl.textContent = `Pilot outcomes updated: ${data.updated_at || 'unknown'}`;
+          const pilots = Array.isArray(data.pilots) ? data.pilots : [];
+          if (pilots.length === 0) {
+            pilotsTableBodyEl.innerHTML = '<tr><td colspan="7">No pilot outcomes yet.</td></tr>';
+            return;
+          }
+          pilots.forEach((pilot) => {
+            const entryHref = `/CartGuard/ops/research.html#entry-${pilot.research_entry_id}`;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${escapeHtml(pilot.pilot_label || 'n/a')}</td>
+              <td>${escapeHtml(pilot.metric || 'n/a')}</td>
+              <td>${escapeHtml(pilot.baseline || 'n/a')}</td>
+              <td>${escapeHtml(pilot.current || 'n/a')}</td>
+              <td>${escapeHtml(pilot.improvement || 'n/a')}</td>
+              <td>${escapeHtml(pilot.status || 'n/a')}</td>
+              <td><a href="${entryHref}">Research entry</a></td>
+            `;
+            pilotsTableBodyEl.appendChild(row);
+          });
+        })
+        .catch((err) => {
+          pilotsUpdatedEl.textContent = 'Failed to load pilot outcomes.';
+          pilotsTableBodyEl.innerHTML = `<tr><td colspan="7">${escapeHtml(err.message)}</td></tr>`;
+        });
+    </script>
     <script id="data-mobile-table-labels">
     (() => {
       const tables = document.querySelectorAll(".comparison-table");

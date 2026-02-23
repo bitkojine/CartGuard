@@ -1,0 +1,41 @@
+{
+  "updated_at": "2026-02-23",
+  "pilots": [
+    {
+      "id": "pilot-a-missing-doc-rate",
+      "pilot_label": "Pilot A (Anonymized)",
+      "metric": "Missing-document rate before publish",
+      "baseline": "27%",
+      "current": "12%",
+      "improvement": "-15pp",
+      "confidence": "medium",
+      "status": "completed",
+      "is_anonymized": true,
+      "research_entry_id": "paid-pilots-b2b-playbook-2026-02-23"
+    },
+    {
+      "id": "pilot-a-review-time",
+      "pilot_label": "Pilot A (Anonymized)",
+      "metric": "Median review time",
+      "baseline": "43h",
+      "current": "29h",
+      "improvement": "-14h",
+      "confidence": "medium",
+      "status": "completed",
+      "is_anonymized": true,
+      "research_entry_id": "paid-pilots-b2b-playbook-2026-02-23"
+    },
+    {
+      "id": "pilot-b-rework-loops",
+      "pilot_label": "Pilot B (Anonymized)",
+      "metric": "Rework loops per listing",
+      "baseline": "3.1",
+      "current": "1.9",
+      "improvement": "-1.2",
+      "confidence": "low",
+      "status": "in_progress",
+      "is_anonymized": true,
+      "research_entry_id": "technical-feasibility-pilot-proof-engine-2026-02-23"
+    }
+  ]
+}

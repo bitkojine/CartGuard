@@ -1,0 +1,53 @@
+{
+  "updated_at": "2026-02-23",
+  "facts": [
+    {
+      "id": "eu-low-value-consignments-2024",
+      "signal": "Low-value consignments entering EU",
+      "value": "4.6B consignments in 2024; 91% from China",
+      "claim": "Low-value consignments entering the EU reached 4.6 billion in 2024, and 91% originated from China.",
+      "date": "2024",
+      "geography": "EU",
+      "confidence": "high",
+      "source_url": "https://www.europarl.europa.eu/doceo/document/A-10-2025-0133_EN.html",
+      "is_modeled": false,
+      "research_entry_id": "apac-eu-entry-signals-2026-02-23"
+    },
+    {
+      "id": "apac-sme-eu-export-growth-2025",
+      "signal": "APAC SMEs increasing exports to Europe",
+      "value": "76% of surveyed APAC SMEs",
+      "claim": "A FedEx survey reported 76% of APAC SMEs increased exports to Europe.",
+      "date": "2025",
+      "geography": "APAC to EU",
+      "confidence": "medium",
+      "source_url": "https://newsroom.fedex.com/newsroom/europe-english/fedex-survey-reveals-85-of-apac-smes-confident-in-europe-trade-growth",
+      "is_modeled": false,
+      "research_entry_id": "apac-eu-entry-20260223"
+    },
+    {
+      "id": "eu-cross-border-ecommerce-2024",
+      "signal": "EU cross-border ecommerce market",
+      "value": "EUR 275.6B in 2024",
+      "claim": "Cross-border ecommerce in Europe was estimated at EUR 275.6 billion in 2024.",
+      "date": "2024",
+      "geography": "Europe",
+      "confidence": "medium",
+      "source_url": "https://ecommercenews.eu/ecommerce-in-europe/",
+      "is_modeled": false,
+      "research_entry_id": "beachhead-china-germany-electronics-2026-02-23"
+    },
+    {
+      "id": "apac-eu-entrant-count-modeled-2026",
+      "signal": "Mid-sized APAC entrant count",
+      "value": "No direct official dataset; proxy model required",
+      "claim": "There is no single official dataset that directly counts mid-sized APAC ecommerce companies entering the EU each year.",
+      "date": "2026-02-23",
+      "geography": "APAC to EU",
+      "confidence": "medium",
+      "source_url": "https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20250227-2",
+      "is_modeled": true,
+      "research_entry_id": "apac-eu-entry-20260223"
+    }
+  ]
+}

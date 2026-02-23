@@ -24,8 +24,10 @@
     "guard:no-js": "tsx scripts/guard-no-js-files.mts",
     "guard:no-any": "tsx scripts/guard-no-explicit-any.mts",
     "guard:no-comments": "tsx scripts/guard-no-code-comments.mts",
-    "guard": "pnpm guard:nav && pnpm guard:warning && pnpm guard:css-refresh && pnpm guard:no-js && pnpm guard:no-any && pnpm guard:no-comments",
-    "check": "pnpm lint && pnpm guard && pnpm test"
+    "guard": "pnpm guard:nav && pnpm guard:warning && pnpm guard:css-refresh && pnpm guard:no-js && pnpm guard:no-any && pnpm guard:no-comments && pnpm guard:research-data && pnpm guard:page-data",
+    "check": "pnpm lint && pnpm guard && pnpm test",
+    "guard:research-data": "tsx scripts/guard-research-data.mts",
+    "guard:page-data": "tsx scripts/guard-page-data-wiring.mts"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.46.1",

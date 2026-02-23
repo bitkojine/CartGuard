@@ -1,0 +1,93 @@
+{
+  "updated_at": "2026-02-23",
+  "roles": [
+    {
+      "id": "founder-ceo",
+      "title": "Founder / CEO",
+      "hiring_stage": "Need Now",
+      "primary_kpi": "pilot conversion rate",
+      "who_thrives": "Operators who can make hard scope decisions weekly and close budget-owner alignment with clear metrics.",
+      "daily_work": [
+        "Run weekly convert/extend/stop decisions for every active pilot.",
+        "Join budget-owner calls in week 1 and close week.",
+        "Unblock deals that are stuck on scope or buying committee confusion."
+      ],
+      "weekly_deliverables": [
+        "Decision log for all active pilots",
+        "One-page close plan for each qualified account",
+        "Updated priority list tied to conversion risk"
+      ],
+      "interview_rubric": [
+        "Can explain one past example of converting a pilot into a paid contract.",
+        "Can define three hard metrics and reject vanity metrics.",
+        "Shows clear communication under uncertainty."
+      ]
+    },
+    {
+      "id": "sales-partnerships",
+      "title": "Sales / Partnerships",
+      "hiring_stage": "Need Now",
+      "primary_kpi": "qualified pilots started",
+      "who_thrives": "People who can source pipeline in a narrow wedge and win access to the real budget owner quickly.",
+      "daily_work": [
+        "Outbound to target accounts and partner channels.",
+        "Qualify against ICP, timeline, and implementation readiness.",
+        "Book calls with buyer plus budget owner, not just an evaluator."
+      ],
+      "weekly_deliverables": [
+        "Qualified pipeline with next-step dates",
+        "Pilot start commitments",
+        "Objection log tied to proof requirements"
+      ],
+      "interview_rubric": [
+        "Can map a buying committee and identify signature authority.",
+        "Can show examples of disqualifying weak deals early.",
+        "Can defend a pilot value proposition with quantified outcomes."
+      ]
+    },
+    {
+      "id": "software-engineer",
+      "title": "Software Engineer",
+      "hiring_stage": "Need Now",
+      "primary_kpi": "time to integration + KPI accuracy",
+      "who_thrives": "Engineers who can ship deterministic outputs, keep metrics trustworthy, and simplify integration friction for real customer workflows.",
+      "daily_work": [
+        "Fix integration blockers and improve instrumentation quality.",
+        "Reduce false positives in missing-document checks.",
+        "Keep pilot scorecard metrics reproducible."
+      ],
+      "weekly_deliverables": [
+        "Shipped reliability fixes tied to pilot blockers",
+        "Metric quality checks with evidence",
+        "Integration docs updates"
+      ],
+      "interview_rubric": [
+        "Can design deterministic checks with transparent outputs.",
+        "Can reason about trustworthy baseline/endline metrics.",
+        "Can prioritize narrow scope for pilot speed."
+      ]
+    },
+    {
+      "id": "research-lead",
+      "title": "Research Lead",
+      "hiring_stage": "Need Now",
+      "primary_kpi": "high-confidence research updates",
+      "who_thrives": "Researchers who prefer falsification over storytelling and can maintain source-backed claims under deadline pressure.",
+      "daily_work": [
+        "Validate claims and update evidence records.",
+        "Flag weak sources and confidence drops quickly.",
+        "Link sales claims to fact records and source URLs."
+      ],
+      "weekly_deliverables": [
+        "New or revised fact entries with confidence levels",
+        "Claim-to-source gap report",
+        "Updated prompt pack for unresolved questions"
+      ],
+      "interview_rubric": [
+        "Can separate source-backed facts from modeled estimates.",
+        "Can explain confidence scoring consistently.",
+        "Can define what evidence would falsify a claim."
+      ]
+    }
+  ]
+}

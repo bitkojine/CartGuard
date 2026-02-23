@@ -83,6 +83,27 @@
         <div id="prompt-list" class="grid" aria-live="polite"></div>
       </section>
 
+      <section class="architecture" aria-label="Fact database">
+        <h2>Fact Database</h2>
+        <p class="small-note" id="facts-updated">Loading fact database...</p>
+        <div class="table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Geography</th>
+                <th>Claim</th>
+                <th>Confidence</th>
+                <th>Modeled</th>
+                <th>Source</th>
+                <th>Entry Link</th>
+              </tr>
+            </thead>
+            <tbody id="facts-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
       <section class="architecture" aria-label="Research entries">
         <h2>Research Entries</h2>
         <p class="small-note" id="research-updated">Loading research index...</p>
@@ -97,11 +118,47 @@
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markdown.min.js"></script>
     <script>
+      const DATA_ROOT = '/CartGuard/assets/research';
       const listEl = document.getElementById('research-list');
       const updatedEl = document.getElementById('research-updated');
       const promptListEl = document.getElementById('prompt-list');
       const promptsUpdatedEl = document.getElementById('prompts-updated');
+      const factsUpdatedEl = document.getElementById('facts-updated');
+      const factsTableBodyEl = document.getElementById('facts-table-body');
       const docsById = new Map();
+
+      const escapeHtml = (value) => String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      const friendlyError = (message, detail) => {
+        const safeDetail = escapeHtml(detail || 'Unknown error');
+        return `
+          <article class="card">
+            <h3>${escapeHtml(message)}</h3>
+            <p>${safeDetail}</p>
+            <p>To add first entries, create JSON rows in <code>docs/assets/research/facts.json</code>, <code>docs/assets/research/index.json</code>, and <code>docs/assets/research/prompts.json</code>.</p>
+          </article>
+        `;
+      };
+
+      const fetchJson = async (path, label) => {
+        let response;
+        try {
+          response = await fetch(path, { cache: 'no-store' });
+        } catch (error) {
+          throw new Error(`${label} network error: ${error && error.message ? error.message : 'request failed'}`);
+        }
+        if (!response.ok) {
+          throw new Error(`${label} unavailable (${response.status}) at ${path}`);
+        }
+        try {
+          return await response.json();
+        } catch (error) {
+          throw new Error(`${label} parse error: ${error && error.message ? error.message : 'invalid JSON'}`);
+        }
+      };
 
       const badgeClass = (confidence) => {
         const c = String(confidence || '').toLowerCase();
@@ -119,10 +176,9 @@
         const sources = Array.isArray(entry.sources)
           ? entry.sources.map((url) => `<li><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></li>`).join('')
           : '';
-        const escapedDoc = String(inlineDoc)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
+        const escapedDoc = escapeHtml(inlineDoc);
+        const entryAnchor = `entry-${entry.id}`;
+        card.id = entryAnchor;
         card.innerHTML = `
           <h3>${entry.title}</h3>
           <p>${entry.summary || ''}</p>
@@ -150,10 +206,7 @@
       const renderPrompt = (p) => {
         const card = document.createElement('article');
         card.className = 'card';
-        const escaped = String(p.text || '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
+        const escaped = escapeHtml(p.text || '');
         card.innerHTML = `
           <h3>${p.title}</h3>
           <p><strong>ID:</strong> ${p.id}</p>
@@ -165,11 +218,22 @@
         return card;
       };
 
-      const loadDocs = fetch('./assets/research/docs.json')
-        .then((r) => {
-          if (!r.ok) throw new Error('Failed to load inline research docs');
-          return r.json();
-        })
+      const renderFactRow = (fact) => {
+        const row = document.createElement('tr');
+        const entryHref = `#entry-${fact.research_entry_id}`;
+        row.innerHTML = `
+          <td>${escapeHtml(fact.date || 'n/a')}</td>
+          <td>${escapeHtml(fact.geography || 'n/a')}</td>
+          <td>${escapeHtml(fact.claim || 'n/a')}</td>
+          <td><span class="${badgeClass(fact.confidence)}">${escapeHtml(fact.confidence || 'low')}</span></td>
+          <td>${fact.is_modeled ? 'Yes' : 'No'}</td>
+          <td><a href="${escapeHtml(fact.source_url || '#')}" target="_blank" rel="noopener noreferrer">Open source</a></td>
+          <td><a href="${entryHref}">Open entry</a></td>
+        `;
+        return row;
+      };
+
+      const loadDocs = fetchJson(`${DATA_ROOT}/docs.json`, 'Inline research docs')
         .then((data) => {
           const docs = Array.isArray(data.docs) ? data.docs : [];
           docs.forEach((d) => {
@@ -177,45 +241,51 @@
           });
         })
         .catch(() => {
-          // Keep page usable even if inline docs fail; cards will show fallback text.
         });
 
-      fetch('./assets/research/prompts.json')
-        .then((r) => {
-          if (!r.ok) throw new Error('Failed to load prompt pack');
-          return r.json();
-        })
+      fetchJson(`${DATA_ROOT}/prompts.json`, 'Prompt pack')
         .then((data) => {
           promptsUpdatedEl.textContent = `Prompt pack updated: ${data.updated_at || 'unknown'}`;
           const prompts = Array.isArray(data.prompts) ? data.prompts : [];
           if (prompts.length === 0) {
-            promptListEl.innerHTML = '<article class="card"><h3>No prompts yet</h3></article>';
+            promptListEl.innerHTML = friendlyError('No prompts yet', 'Add the first prompt objects in docs/assets/research/prompts.json.');
             return;
           }
           prompts.forEach((p) => promptListEl.appendChild(renderPrompt(p)));
         })
         .catch((err) => {
           promptsUpdatedEl.textContent = 'Failed to load prompt pack.';
-          promptListEl.innerHTML = `<article class="card"><h3>Load error</h3><p>${err.message}</p></article>`;
+          promptListEl.innerHTML = friendlyError('Prompt pack load failed', err.message);
         });
 
-      loadDocs.then(() => fetch('./assets/research/index.json'))
-        .then((r) => {
-          if (!r.ok) throw new Error('Failed to load research index');
-          return r.json();
+      fetchJson(`${DATA_ROOT}/facts.json`, 'Fact database')
+        .then((data) => {
+          factsUpdatedEl.textContent = `Fact database updated: ${data.updated_at || 'unknown'}`;
+          const facts = Array.isArray(data.facts) ? data.facts : [];
+          if (facts.length === 0) {
+            factsTableBodyEl.innerHTML = '<tr><td colspan="7">No facts yet. Add entries to docs/assets/research/facts.json.</td></tr>';
+            return;
+          }
+          facts.forEach((fact) => factsTableBodyEl.appendChild(renderFactRow(fact)));
         })
+        .catch((err) => {
+          factsUpdatedEl.textContent = 'Failed to load fact database.';
+          factsTableBodyEl.innerHTML = `<tr><td colspan="7">${escapeHtml(err.message)}</td></tr>`;
+        });
+
+      loadDocs.then(() => fetchJson(`${DATA_ROOT}/index.json`, 'Research index'))
         .then((data) => {
           updatedEl.textContent = `Research index updated: ${data.updated_at || 'unknown'}`;
           const entries = Array.isArray(data.entries) ? data.entries : [];
           if (entries.length === 0) {
-            listEl.innerHTML = '<article class="card"><h3>No entries yet</h3></article>';
+            listEl.innerHTML = friendlyError('No entries yet', 'Add the first entry to docs/assets/research/index.json and docs/assets/research/docs.json.');
             return;
           }
           entries.forEach((entry) => listEl.appendChild(renderEntry(entry)));
         })
         .catch((err) => {
           updatedEl.textContent = 'Failed to load research index.';
-          listEl.innerHTML = `<article class="card"><h3>Load error</h3><p>${err.message}</p></article>`;
+          listEl.innerHTML = friendlyError('Research index load failed', err.message);
         });
     </script>
     <script id="data-mobile-table-labels">
