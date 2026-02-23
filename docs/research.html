@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -71,6 +72,8 @@
       <p>CartGuard • Fact-checked research database</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markdown.min.js"></script>
     <script>
       const listEl = document.getElementById('research-list');
       const updatedEl = document.getElementById('research-updated');
@@ -112,10 +115,13 @@
             <span class="pill">Confidence: <span class="${badgeClass(entry.confidence)}">${entry.confidence || 'low'}</span></span>
           </div>
           <h4 style="margin:.7rem 0 .45rem;">Research Note (Inline)</h4>
-          <pre><code>${escapedDoc}</code></pre>
+          <pre><code class="language-markdown">${escapedDoc}</code></pre>
           <p><a class="btn btn-secondary" href="${entry.repo_url}" target="_blank" rel="noopener noreferrer">Open On GitHub (Optional)</a></p>
           <details><summary>Sources</summary><ul>${sources}</ul></details>
         `;
+        if (window.Prism) {
+          card.querySelectorAll("code").forEach((node) => window.Prism.highlightElement(node));
+        }
         return card;
       };
 
@@ -129,8 +135,11 @@
         card.innerHTML = `
           <h3>${p.title}</h3>
           <p><strong>ID:</strong> ${p.id}</p>
-          <pre><code>${escaped}</code></pre>
+          <pre><code class="language-markdown">${escaped}</code></pre>
         `;
+        if (window.Prism) {
+          card.querySelectorAll("code").forEach((node) => window.Prism.highlightElement(node));
+        }
         return card;
       };
 

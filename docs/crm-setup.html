@@ -12,7 +12,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
     <link rel="stylesheet" href="./styles.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
   </head>
   <body>
     <header class="hero page-hero">
@@ -68,7 +73,7 @@
 
       <section class="architecture" aria-label="Repo structure">
         <h2>Suggested Repo Structure</h2>
-        <pre><code>crm/
+        <pre><code class="language-text">crm/
   schema.json
 scripts/
   crm-types.mts
@@ -78,7 +83,7 @@ scripts/
 
       <section class="architecture" aria-label="Run now">
         <h2>Run It Now (No Manual Columns)</h2>
-        <pre><code># 1) set Airtable credentials
+        <pre><code class="language-bash"># 1) set Airtable credentials
 export AIRTABLE_TOKEN=your_personal_access_token
 export AIRTABLE_BASE_ID=your_airtable_base_id
 
@@ -107,7 +112,7 @@ pnpm crm:seed-demo</code></pre>
 
       <section class="architecture" aria-label="Schema example">
         <h2>Schema Spec Example (`crm/schema.json`)</h2>
-        <pre><code>{
+        <pre><code class="language-json">{
   "baseName": "CartGuard CRM",
   "tables": [
     {
@@ -142,7 +147,7 @@ pnpm crm:seed-demo</code></pre>
 
       <section class="architecture" aria-label="CI example">
         <h2>CI Security + Quality Checks</h2>
-        <pre><code>name: CRM Schema Check
+        <pre><code class="language-yaml">name: CRM Schema Check
 
 on:
   pull_request:
