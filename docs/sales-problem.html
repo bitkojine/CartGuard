@@ -82,7 +82,7 @@
       }
       const refreshCss = () => {
         const stamp = Date.now().toString();
-        const links = document.querySelectorAll("link[rel="stylesheet"]");
+        const links = document.querySelectorAll('link[rel="stylesheet"]');
         links.forEach((node) => {
           if (!(node instanceof HTMLLinkElement)) {
             return;
