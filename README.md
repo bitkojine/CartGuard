@@ -95,25 +95,80 @@ The slideshow and scenario model are file-driven (not hardcoded):
 - `packages/vscode-extension/demo/rules.json`
 - `packages/vscode-extension/demo/applicability.json`
 
-## Browser VS Code (Codespaces) for Internal Team Demos
+## Local Setup (New Machines)
 
-This repo includes a ready devcontainer at `.devcontainer/devcontainer.json`.
+Use this flow for team laptops/workstations.
 
-What it does:
-- opens workspace in `packages/vscode-extension/demo`
-- installs dependencies with lockfile
-- builds and packages extension deterministically
-- installs extension into Codespaces VS Code
+1. Install prerequisites:
+- Node.js `>=20`
+- pnpm `9.15.4`
+- VS Code desktop
 
-Manual rerun in Codespaces terminal:
+2. Clone and bootstrap:
 
 ```bash
-pnpm demo:web:setup
+git clone https://github.com/bitkojine/CartGuard.git
+cd CartGuard
+pnpm install --frozen-lockfile
 ```
 
-Then in Command Palette run:
+3. Build workspace:
 
+```bash
+pnpm build
+```
+
+4. Package the extension (cross-platform output path inside repo):
+
+```bash
+pnpm --filter cartguard-vscode-extension exec vsce package --no-dependencies -o packages/vscode-extension/cartguard.vsix
+```
+
+5. Install the VSIX in VS Code:
+
+Option A: VS Code CLI installed
+
+```bash
+code --install-extension packages/vscode-extension/cartguard.vsix --force
+```
+
+Option B: VS Code UI (recommended fallback)
+- Open VS Code
+- Open Extensions view
+- Click `...` (top-right in Extensions view)
+- Click `Install from VSIX...`
+- Select `packages/vscode-extension/cartguard.vsix`
+
+6. Open the demo workspace folder in VS Code:
+- `packages/vscode-extension/demo`
+
+7. Reload VS Code window and run:
+- `CartGuard: Run Demo`
 - `CartGuard: Open Slideshow Demo`
+
+Optional fast verification:
+
+```bash
+pnpm --filter cartguard-vscode-extension test:e2e
+```
+
+### Local setup troubleshooting
+
+- `code: command not found`
+  - Use the VS Code UI install path (`Install from VSIX...`) instead of CLI.
+
+- `vsce` packaging fails
+  - Re-run:
+    ```bash
+    pnpm install --frozen-lockfile
+    pnpm --filter cartguard-vscode-extension build
+    pnpm --filter cartguard-vscode-extension exec vsce package --no-dependencies -o packages/vscode-extension/cartguard.vsix
+    ```
+
+- CartGuard commands not visible in Command Palette
+  - Confirm extension is installed (`@installed cartguard` in Extensions search).
+  - Run `Developer: Reload Window`.
+  - Ensure you opened folder `packages/vscode-extension/demo`.
 
 ## CLI Quick Usage
 
