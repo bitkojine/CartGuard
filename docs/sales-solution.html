@@ -69,5 +69,20 @@
     <footer>
       <p>CartGuard • Solution page</p>
     </footer>
-  </body>
+    <script id="data-mobile-table-labels">
+    (() => {
+      const tables = document.querySelectorAll(".comparison-table");
+      tables.forEach((table) => {
+        const headers = Array.from(table.querySelectorAll("thead th")).map((th) => th.textContent?.trim() || "Field");
+        table.querySelectorAll("tbody tr").forEach((row) => {
+          Array.from(row.children).forEach((cell, index) => {
+            if (cell instanceof HTMLElement) {
+              cell.setAttribute("data-label", headers[index] || headers[0] || "Field");
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</body>
 </html>
