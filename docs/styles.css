@@ -14,6 +14,8 @@
   --nav-offset: 0.75rem;
   --nav-shell-height: 3.4rem;
   --safe-top: env(safe-area-inset-top, 0px);
+  --nav-bg: rgba(255, 255, 255, 0.93);
+  --active-end: #e174ab;
 }
 
 * {
@@ -29,6 +31,38 @@ body {
     linear-gradient(145deg, #fff9fc, #fff3f8 45%, #ffeef6);
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+body.ops-theme {
+  --bg: #f7f9fb;
+  --bg-soft: #edf3f8;
+  --panel: rgba(255, 255, 255, 0.95);
+  --text: #122027;
+  --muted: #3d5a69;
+  --line: rgba(89, 125, 147, 0.34);
+  --accent: #2f7ca8;
+  --accent-2: #9ec7dd;
+  --nav-bg: rgba(244, 251, 255, 0.95);
+  --active-end: #4f9fc8;
+  background: radial-gradient(circle at 15% -8%, #dff0fb 0%, transparent 42%),
+    radial-gradient(circle at 92% 12%, #e7f4fc 0%, transparent 40%),
+    linear-gradient(150deg, #fbfdff, #f2f7fb 52%, #ebf3f9);
+}
+
+body.sales-theme {
+  --bg: #fff7fb;
+  --bg-soft: #ffeef6;
+  --panel: rgba(255, 255, 255, 0.92);
+  --text: #221320;
+  --muted: #6e495f;
+  --line: rgba(199, 133, 165, 0.34);
+  --accent: #d64f8f;
+  --accent-2: #f3a3ca;
+  --nav-bg: rgba(255, 255, 255, 0.93);
+  --active-end: #e174ab;
+  background: radial-gradient(circle at 20% -10%, #ffd8ea 0%, transparent 48%),
+    radial-gradient(circle at 90% 8%, #ffe4f0 0%, transparent 44%),
+    linear-gradient(145deg, #fff9fc, #fff3f8 45%, #ffeef6);
 }
 
 .background-glow {
@@ -78,7 +112,7 @@ footer {
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.93);
+  background: var(--nav-bg);
   backdrop-filter: blur(10px);
 }
 
@@ -135,7 +169,7 @@ footer {
 
 .nav-links a[aria-current="page"] {
   color: #ffffff;
-  background: linear-gradient(100deg, var(--accent), #e174ab);
+  background: linear-gradient(100deg, var(--accent), var(--active-end));
   border-color: transparent;
 }
 
@@ -258,19 +292,19 @@ h1 {
 }
 
 .btn-primary {
-  background: linear-gradient(100deg, var(--accent), #e174ab);
+  background: linear-gradient(100deg, var(--accent), var(--active-end));
   color: #ffffff;
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.9);
-  color: #3d1f31;
+  background: var(--panel);
+  color: var(--text);
   border: 1px solid var(--line);
 }
 
 .small-note {
   margin: 1rem 0 0;
-  color: #8a6077;
+  color: var(--muted);
   font: 400 0.82rem/1.4 "IBM Plex Mono", monospace;
 }
 
