@@ -597,7 +597,7 @@ footer {
   font: 400 0.75rem/1.4 "IBM Plex Mono", monospace;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 1024px) {
   .hero {
     padding-top: calc(var(--safe-top) + 1rem);
   }
@@ -623,13 +623,13 @@ footer {
     width: 100%;
     gap: 0.45rem;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .nav-links a {
-    font-size: 0.75rem;
+    font-size: 0.76rem;
     justify-content: center;
-    min-height: 2.1rem;
+    min-height: 2.2rem;
   }
 
   .brand-lockup {
@@ -645,6 +645,21 @@ footer {
   main {
     padding-top: 1rem;
     padding-bottom: 2.2rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .top-nav {
+    position: static;
+  }
+
+  .nav-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nav-links a {
+    font-size: 0.75rem;
+    min-height: 2.1rem;
   }
 
   .comparison-table {
