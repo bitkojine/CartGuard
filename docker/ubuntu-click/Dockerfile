@@ -20,6 +20,7 @@ RUN rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/goo
     libxshmfence1 \
     libxkbfile1 \
     libsecret-1-0 \
+    wmctrl \
     xvfb \
   && rm -rf /var/lib/apt/lists/*
 
