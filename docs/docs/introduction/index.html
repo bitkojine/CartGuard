@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff7fb" />
+    <title>CartGuard Docs | Introduction</title>
+    <meta name="description" content="CartGuard documentation introduction: scope, customer workflow, and product boundaries." />
+    <link rel="icon" type="image/svg+xml" href="/CartGuard/assets/logo-mark.svg?v=7" />
+    <link rel="alternate icon" href="/CartGuard/assets/favicon.ico?v=7" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/CartGuard/assets/apple-touch-icon.png?v=7" />
+    <link rel="manifest" href="/CartGuard/site.webmanifest?v=7" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/CartGuard/styles.css" />
+  </head>
+  <body class="sales-theme">
+    <header class="hero page-hero">
+      <nav class="top-nav" aria-label="Sales primary">
+        <a href="/CartGuard/sales/" class="nav-brand"><img src="/CartGuard/assets/logo-mark.svg" alt="CartGuard" class="nav-mark" /><span>CartGuard</span></a>
+        <div class="nav-links">
+          <a href="/CartGuard/sales/">Home</a>
+          <a href="/CartGuard/sales/problem.html">Problem</a>
+          <a href="/CartGuard/sales/solution.html">Solution</a>
+          <a href="/CartGuard/sales/proof.html">Proof</a>
+          <a href="/CartGuard/sales/pilot.html">Pilot</a>
+          <a href="/CartGuard/ops/">Ops Manual</a>
+          <button type="button" class="nav-refresh-btn" id="css-hard-refresh">Refresh CSS</button>
+        </div>
+      </nav>
+      <p class="eyebrow">Documentation</p>
+      <h1>Introduction</h1>
+      <p class="lead">CartGuard helps listing teams catch missing EU-required documents before Amazon.de submission, so launches avoid review delays and rework loops.</p>
+      <p class="small-note">Recommendation-only checks. CartGuard does not provide legal advice or legal determinations.</p>
+      <div class="actions">
+        <a class="btn" href="/CartGuard/docs/concepts/domain/">Open Domain Concepts</a>
+        <a class="btn btn-secondary" href="/CartGuard/ops/">Open Ops Manual</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="pricing" aria-label="What CartGuard does">
+        <h2>What CartGuard Does</h2>
+        <ul>
+          <li>Reads listing and product data before publish/submission steps.</li>
+          <li>Flags missing required documents based on configured check rules.</li>
+          <li>Shows blockers by SKU/listing with clear next actions for operators.</li>
+          <li>Tracks workflow metrics: missing-document rate, review time, and rework count.</li>
+        </ul>
+      </section>
+
+      <section class="pricing" aria-label="What CartGuard does not do">
+        <h2>What CartGuard Does Not Do</h2>
+        <ul>
+          <li>Does not issue legal determinations or legal opinions.</li>
+          <li>Does not replace legal counsel or regulatory authorities.</li>
+          <li>Does not auto-approve listings without customer workflow review.</li>
+        </ul>
+      </section>
+
+      <section class="architecture" aria-label="Core workflow">
+        <h2>Core Workflow</h2>
+        <div class="table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Step</th>
+                <th>Team Action</th>
+                <th>CartGuard Output</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Draft listing</td><td>Ops prepares listing batch and product attributes.</td><td>Initial missing-document check results.</td></tr>
+              <tr><td>Internal review</td><td>Ops/compliance review open issues.</td><td>Issue list grouped by listing/SKU and document type.</td></tr>
+              <tr><td>Resolution</td><td>Team uploads documents or records exception reasoning.</td><td>Issue status update and audit trail.</td></tr>
+              <tr><td>Submission ready</td><td>Team confirms no unresolved blockers.</td><td>Final recommendation report.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="pricing" aria-label="Read next">
+        <h2>Read Next</h2>
+        <ul>
+          <li><a href="/CartGuard/docs/concepts/domain/">Domain Concepts</a>: ubiquitous language and DDD boundaries.</li>
+          <li><a href="/CartGuard/ops/beachhead.html">Initial Segment</a>: first customer scenario and target profile.</li>
+          <li><a href="/CartGuard/ops/paid-pilots.html">Paid Trials</a>: execution and decision model.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>CartGuard • Documentation introduction</p>
+    </footer>
+    <script id="data-mobile-table-labels">
+    (() => {
+      const tables = document.querySelectorAll(".comparison-table");
+      tables.forEach((table) => {
+        const headers = Array.from(table.querySelectorAll("thead th")).map((th) => th.textContent?.trim() || "Field");
+        table.querySelectorAll("tbody tr").forEach((row) => {
+          Array.from(row.children).forEach((cell, index) => {
+            if (cell instanceof HTMLElement) {
+              cell.setAttribute("data-label", headers[index] || headers[0] || "Field");
+            }
+          });
+        });
+      });
+    })();
+  </script>
+  <script id="css-refresh-script">
+    (() => {
+      const applyStampToStylesheets = (stamp) => {
+        const links = document.querySelectorAll('link[rel="stylesheet"]');
+        links.forEach((node) => {
+          if (!(node instanceof HTMLLinkElement)) {
+            return;
+          }
+          const url = new URL(node.href, window.location.href);
+          url.searchParams.set("css_refresh", stamp);
+          node.href = url.toString();
+        });
+      };
+
+      const pageUrl = new URL(window.location.href);
+      const urlStamp = pageUrl.searchParams.get("css_refresh");
+      const storedStamp = window.sessionStorage.getItem("cartguard_css_refresh");
+      if (urlStamp) {
+        applyStampToStylesheets(urlStamp);
+      } else if (storedStamp) {
+        applyStampToStylesheets(storedStamp);
+      }
+
+      const button = document.getElementById("css-hard-refresh");
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      const refreshCss = () => {
+        const stamp = Date.now().toString();
+        window.sessionStorage.setItem("cartguard_css_refresh", stamp);
+        applyStampToStylesheets(stamp);
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set("css_refresh", stamp);
+        window.location.replace(nextUrl.toString());
+      };
+
+      button.addEventListener("click", refreshCss);
+    })();
+  </script>
+</body>
+</html>

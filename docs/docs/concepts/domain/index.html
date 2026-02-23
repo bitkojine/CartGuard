@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff7fb" />
+    <title>CartGuard Docs | Domain Concepts</title>
+    <meta name="description" content="CartGuard domain concepts and ubiquitous language for listing compliance workflows." />
+    <link rel="icon" type="image/svg+xml" href="/CartGuard/assets/logo-mark.svg?v=7" />
+    <link rel="alternate icon" href="/CartGuard/assets/favicon.ico?v=7" sizes="any" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/CartGuard/assets/apple-touch-icon.png?v=7" />
+    <link rel="manifest" href="/CartGuard/site.webmanifest?v=7" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/CartGuard/styles.css" />
+  </head>
+  <body class="sales-theme">
+    <header class="hero page-hero">
+      <nav class="top-nav" aria-label="Sales primary">
+        <a href="/CartGuard/sales/" class="nav-brand"><img src="/CartGuard/assets/logo-mark.svg" alt="CartGuard" class="nav-mark" /><span>CartGuard</span></a>
+        <div class="nav-links">
+          <a href="/CartGuard/sales/">Home</a>
+          <a href="/CartGuard/sales/problem.html">Problem</a>
+          <a href="/CartGuard/sales/solution.html">Solution</a>
+          <a href="/CartGuard/sales/proof.html">Proof</a>
+          <a href="/CartGuard/sales/pilot.html">Pilot</a>
+          <a href="/CartGuard/ops/">Ops Manual</a>
+          <button type="button" class="nav-refresh-btn" id="css-hard-refresh">Refresh CSS</button>
+        </div>
+      </nav>
+      <p class="eyebrow">Documentation</p>
+      <h1>Domain Concepts and Ubiquitous Language</h1>
+      <p class="lead">This glossary is the source of truth for customer-facing and product-facing terms in CartGuard's listing compliance workflow.</p>
+      <div class="actions">
+        <a class="btn" href="/CartGuard/docs/introduction/">Back to Introduction</a>
+        <a class="btn btn-secondary" href="/CartGuard/ops/">Open Ops Manual</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="architecture" aria-label="Core bounded context">
+        <h2>Core Bounded Context: ListingCompliance</h2>
+        <div class="table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Term</th>
+                <th>Definition</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Entity</td><td>Listing</td><td>A marketplace listing under review before submission or publish.</td></tr>
+              <tr><td>Entity</td><td>Product</td><td>A sellable item linked to one or more listings and variants.</td></tr>
+              <tr><td>Entity</td><td>Document</td><td>A provided artifact such as declaration, test report, or label evidence.</td></tr>
+              <tr><td>Entity</td><td>DocumentType</td><td>A required category of document for a listing scenario.</td></tr>
+              <tr><td>Entity</td><td>CheckRule</td><td>A rule that evaluates whether required document conditions are met.</td></tr>
+              <tr><td>Entity</td><td>Issue</td><td>A missing-document or consistency problem found by checks.</td></tr>
+              <tr><td>Entity</td><td>Resolution</td><td>The recorded action that closes an issue.</td></tr>
+              <tr><td>Entity</td><td>WorkflowStage</td><td>Draft, InternalReview, SubmissionReady, Submitted, or Live.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="architecture" aria-label="Value objects">
+        <h2>Value Objects</h2>
+        <div class="table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Term</th>
+                <th>Definition</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>MarketplaceChannel</td><td>Channel identifier, for example Amazon.de.</td></tr>
+              <tr><td>Country</td><td>Jurisdiction code used by check rules and reporting.</td></tr>
+              <tr><td>Category</td><td>Product category used for requirement selection.</td></tr>
+              <tr><td>Sla</td><td>Expected turnaround target for review/resolution steps.</td></tr>
+              <tr><td>Delay</td><td>Measured launch delay attributed to unresolved issues.</td></tr>
+              <tr><td>Rate</td><td>Percentage metric such as missing-document rate.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="architecture" aria-label="Commercial context">
+        <h2>Separate Bounded Context: Commercials</h2>
+        <p class="small-note">Use these terms for sales process and contracts. Keep them out of the core listing-compliance model.</p>
+        <div class="table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Term</th>
+                <th>Use</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Account</td><td>Company record in pipeline and contract workflow.</td></tr>
+              <tr><td>TrialProject</td><td>Time-bounded paid evaluation project.</td></tr>
+              <tr><td>Contract</td><td>Ongoing commercial agreement after trial.</td></tr>
+              <tr><td>Stakeholder</td><td>Decision maker, user, or blocker in account workflow.</td></tr>
+              <tr><td>TrialConversionRate</td><td>Commercial metric for trial-to-contract outcomes.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="pricing" aria-label="Preferred vocabulary">
+        <h2>Preferred Vocabulary</h2>
+        <ul>
+          <li>Say: listing, missing document, review delay, rework loop, blocker, resolution.</li>
+          <li>Avoid in buyer copy: wedge, beachhead, kill criteria, stage-safe claim, feature-vs-company test.</li>
+          <li>Use buyer language in UI labels, reports, and error messages.</li>
+          <li>Keep strategy terms in internal pages and planning notes only.</li>
+        </ul>
+      </section>
+
+      <section class="pricing" aria-label="Implementation guidance">
+        <h2>Implementation Guidance</h2>
+        <ul>
+          <li>TypeScript interfaces in product code should use ListingCompliance terms.</li>
+          <li>Sales/process modules should live under Commercials terms.</li>
+          <li>When adding a new term, update this page before using it in code or copy.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>CartGuard • Domain concepts</p>
+    </footer>
+    <script id="data-mobile-table-labels">
+    (() => {
+      const tables = document.querySelectorAll(".comparison-table");
+      tables.forEach((table) => {
+        const headers = Array.from(table.querySelectorAll("thead th")).map((th) => th.textContent?.trim() || "Field");
+        table.querySelectorAll("tbody tr").forEach((row) => {
+          Array.from(row.children).forEach((cell, index) => {
+            if (cell instanceof HTMLElement) {
+              cell.setAttribute("data-label", headers[index] || headers[0] || "Field");
+            }
+          });
+        });
+      });
+    })();
+  </script>
+  <script id="css-refresh-script">
+    (() => {
+      const applyStampToStylesheets = (stamp) => {
+        const links = document.querySelectorAll('link[rel="stylesheet"]');
+        links.forEach((node) => {
+          if (!(node instanceof HTMLLinkElement)) {
+            return;
+          }
+          const url = new URL(node.href, window.location.href);
+          url.searchParams.set("css_refresh", stamp);
+          node.href = url.toString();
+        });
+      };
+
+      const pageUrl = new URL(window.location.href);
+      const urlStamp = pageUrl.searchParams.get("css_refresh");
+      const storedStamp = window.sessionStorage.getItem("cartguard_css_refresh");
+      if (urlStamp) {
+        applyStampToStylesheets(urlStamp);
+      } else if (storedStamp) {
+        applyStampToStylesheets(storedStamp);
+      }
+
+      const button = document.getElementById("css-hard-refresh");
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      const refreshCss = () => {
+        const stamp = Date.now().toString();
+        window.sessionStorage.setItem("cartguard_css_refresh", stamp);
+        applyStampToStylesheets(stamp);
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set("css_refresh", stamp);
+        window.location.replace(nextUrl.toString());
+      };
+
+      button.addEventListener("click", refreshCss);
+    })();
+  </script>
+</body>
+</html>
