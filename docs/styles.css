@@ -14,7 +14,7 @@
   --nav-offset: 0.75rem;
   --nav-shell-height: 3.4rem;
   --safe-top: env(safe-area-inset-top, 0px);
-  --nav-bg: rgba(255, 255, 255, 0.93);
+  --nav-bg: #ffffff;
   --active-end: #e174ab;
 }
 
@@ -42,7 +42,7 @@ body.ops-theme {
   --line: rgba(89, 125, 147, 0.34);
   --accent: #2f7ca8;
   --accent-2: #9ec7dd;
-  --nav-bg: rgba(244, 251, 255, 0.95);
+  --nav-bg: #f4fbff;
   --active-end: #4f9fc8;
   background: radial-gradient(circle at 15% -8%, #dff0fb 0%, transparent 42%),
     radial-gradient(circle at 92% 12%, #e7f4fc 0%, transparent 40%),
@@ -58,7 +58,7 @@ body.sales-theme {
   --line: rgba(199, 133, 165, 0.34);
   --accent: #d64f8f;
   --accent-2: #f3a3ca;
-  --nav-bg: rgba(255, 255, 255, 0.93);
+  --nav-bg: #ffffff;
   --active-end: #e174ab;
   background: radial-gradient(circle at 20% -10%, #ffd8ea 0%, transparent 48%),
     radial-gradient(circle at 90% 8%, #ffe4f0 0%, transparent 44%),
@@ -113,7 +113,7 @@ footer {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--nav-bg);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 26px rgba(25, 33, 52, 0.14);
 }
 
 .nav-brand {
