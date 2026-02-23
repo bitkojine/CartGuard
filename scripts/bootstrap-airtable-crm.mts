@@ -58,6 +58,36 @@ const buildFieldPayload = (field: FieldSpec): Record<string, unknown> => {
     };
   }
 
+  if (field.type === "number") {
+    return {
+      name: field.name,
+      type: "number",
+      options: { precision: 0 }
+    };
+  }
+
+  if (field.type === "date") {
+    return {
+      name: field.name,
+      type: "date",
+      options: {
+        dateFormat: { name: "iso" }
+      }
+    };
+  }
+
+  if (field.type === "dateTime") {
+    return {
+      name: field.name,
+      type: "dateTime",
+      options: {
+        dateFormat: { name: "iso" },
+        timeFormat: { name: "24hour" },
+        timeZone: "utc"
+      }
+    };
+  }
+
   return {
     name: field.name,
     type: mapFieldType(field.type)
@@ -128,6 +158,9 @@ const main = async (): Promise<void> => {
   for (const tableSpec of schema.tables) {
     const existingTable = tableByName.get(tableSpec.name);
     if (!existingTable) {
+      if (!apply) {
+        continue;
+      }
       throw new Error(`Table ${tableSpec.name} still missing after bootstrap.`);
     }
 
