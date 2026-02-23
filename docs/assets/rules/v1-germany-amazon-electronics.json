@@ -1,0 +1,108 @@
+{
+  "rules": [
+    {
+      "rule_id": "AMZN-MYC-REQ-001",
+      "jurisdiction": "DE",
+      "channel": "AmazonDE",
+      "requirement_type": "marketplace",
+      "trigger": "Product appears in the Manage your compliance (MYC) dashboard with one or more compliance requirements listed",
+      "required_evidence": [
+        "Documents and information specified for the product in the MYC dashboard entry"
+      ],
+      "validation_checks": [
+        "Entry exists for the product in the MYC dashboard",
+        "Seller has uploaded the requested documents and information through MYC"
+      ],
+      "submission_metadata": {
+        "path": "Seller Central -> Performance -> Account Health -> Manage your compliance (MYC)",
+        "deadline": "unknown",
+        "enforcement_if_missed": "unknown"
+      },
+      "source_url": "https://sellercentral.amazon.com/help/hub/reference/external/GUDCM66BHG6B4GXZ",
+      "source_type": "amazon_official",
+      "last_verified_at": "2026-02-23",
+      "confidence": "medium",
+      "unknown_reason": "Amazon public help does not list specific document types, deadlines or enforcement wording for MYC entries"
+    },
+    {
+      "rule_id": "AMZN-ACCHEALTH-MYC-002",
+      "jurisdiction": "DE",
+      "channel": "AmazonDE",
+      "requirement_type": "marketplace",
+      "trigger": "Account Health page shows an official request for documentation in the MYC section for a product requiring specific certifications or testing",
+      "required_evidence": [
+        "Documentation requested in the MYC section for the affected product"
+      ],
+      "validation_checks": [
+        "Account Health page shows the MYC section with a documentation request",
+        "Seller has submitted requested documentation causing a case to be generated"
+      ],
+      "submission_metadata": {
+        "path": "Seller Central -> Performance -> Account Health -> MYC section",
+        "deadline": "unknown",
+        "enforcement_if_missed": "unknown"
+      },
+      "source_url": "https://sellercentral.amazon.com/seller-forums/discussions/t/8a41416f-e1ad-4221-9675-7145d5cc5e28",
+      "source_type": "amazon_official",
+      "last_verified_at": "2026-02-23",
+      "confidence": "medium",
+      "unknown_reason": "Forum post describes existence of requests and case creation but not specific documents, SLA or enforcement wording"
+    },
+    {
+      "rule_id": "LVD-DOC-DECL-003",
+      "jurisdiction": "EU",
+      "channel": "All",
+      "requirement_type": "legal",
+      "trigger": "Electrical equipment within the scope of Directive 2014/35/EU is placed or made available on the EU market",
+      "required_evidence": [
+        "EU declaration of conformity stating that the safety objectives of Article 3 and Annex I are fulfilled",
+        "EU declaration of conformity following the model structure of Annex IV and containing elements specified in Module A (Annex III)",
+        "EU declaration of conformity translated into the language or languages required by the Member State where the equipment is placed or made available"
+      ],
+      "validation_checks": [
+        "Declaration of conformity exists for the electrical equipment",
+        "Declaration states that fulfilment of safety objectives referred to in Article 3 and Annex I has been demonstrated",
+        "Declaration follows the model structure in Annex IV and includes elements required by Annex III Module A",
+        "Declaration is translated into required Member State language(s)"
+      ],
+      "submission_metadata": {
+        "path": "",
+        "deadline": "",
+        "enforcement_if_missed": ""
+      },
+      "source_url": "https://www.legislation.gov.uk/eudr/2014/35/chapter/3",
+      "source_type": "eurlex",
+      "last_verified_at": "2026-02-23",
+      "confidence": "high",
+      "unknown_reason": ""
+    },
+    {
+      "rule_id": "EMC-DOC-DECL-004",
+      "jurisdiction": "EU",
+      "channel": "All",
+      "requirement_type": "legal",
+      "trigger": "Apparatus within the scope of Directive 2014/30/EU is placed or made available on the EU market",
+      "required_evidence": [
+        "EU declaration of conformity stating that the essential requirements of Annex I have been fulfilled",
+        "EU declaration of conformity following the model structure of Annex IV and containing elements specified in the relevant modules in Annexes II and III",
+        "EU declaration of conformity translated into the language or languages required by the Member State where the apparatus is placed or made available"
+      ],
+      "validation_checks": [
+        "Declaration of conformity exists for the apparatus",
+        "Declaration states that essential requirements in Annex I have been fulfilled",
+        "Declaration follows the model structure in Annex IV and includes elements required by Annexes II and III",
+        "Declaration is translated into required Member State language(s)"
+      ],
+      "submission_metadata": {
+        "path": "",
+        "deadline": "",
+        "enforcement_if_missed": ""
+      },
+      "source_url": "https://www.legislation.gov.uk/eudr/2014/30/chapter/3",
+      "source_type": "eurlex",
+      "last_verified_at": "2026-02-23",
+      "confidence": "high",
+      "unknown_reason": ""
+    }
+  ]
+}

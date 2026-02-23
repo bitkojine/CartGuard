@@ -1,8 +1,12 @@
 import type { ZodError } from "zod";
 import {
+  ApplicabilityCatalogSchema,
   ProductContentSchema,
+  RuleCatalogSchema,
   ValidationPolicySchema,
+  type ApplicabilityCatalog,
   type ProductContent,
+  type RuleCatalog,
   type ValidationPolicy
 } from "@cartguard/spec";
 
@@ -107,4 +111,28 @@ export const validateProductContent = (
   }
 
   return enforcePolicy(content.data, policy.data);
+};
+
+export const validateRuleCatalog = (
+  catalogInput: unknown
+): ValidationResult & { catalog?: RuleCatalog } => {
+  const parsed = RuleCatalogSchema.safeParse(catalogInput);
+  if (!parsed.success) {
+    const errors = fromZodError(parsed.error, "SCHEMA_PRODUCT");
+    return { valid: false, errors, warnings: [] };
+  }
+
+  return { valid: true, errors: [], warnings: [], catalog: parsed.data };
+};
+
+export const validateApplicabilityCatalog = (
+  catalogInput: unknown
+): ValidationResult & { catalog?: ApplicabilityCatalog } => {
+  const parsed = ApplicabilityCatalogSchema.safeParse(catalogInput);
+  if (!parsed.success) {
+    const errors = fromZodError(parsed.error, "SCHEMA_POLICY");
+    return { valid: false, errors, warnings: [] };
+  }
+
+  return { valid: true, errors: [], warnings: [], catalog: parsed.data };
 };

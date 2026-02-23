@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { validateProductContent } from "../src/index.js";
+import {
+  validateApplicabilityCatalog,
+  validateProductContent,
+  validateRuleCatalog
+} from "../src/index.js";
 
 const baseContent = {
   productId: "sku-123",
@@ -116,4 +120,52 @@ void test("returns schema errors for duplicate claims", () => {
     result.errors.some((error) => error.code.startsWith("SCHEMA_PRODUCT")),
     true
   );
+});
+
+void test("validates rule catalog payloads", () => {
+  const result = validateRuleCatalog({
+    rules: [
+      {
+        rule_id: "LVD-DOC-DECL-003",
+        jurisdiction: "EU",
+        channel: "All",
+        requirement_type: "legal",
+        trigger: "Equipment in LVD scope is placed on the market",
+        required_evidence: ["EU declaration of conformity"],
+        validation_checks: ["Declaration exists"],
+        submission_metadata: {
+          path: "",
+          deadline: "",
+          enforcement_if_missed: ""
+        },
+        source_url: "https://www.legislation.gov.uk/eudr/2014/35/chapter/3",
+        source_type: "eurlex",
+        last_verified_at: "2026-02-23",
+        confidence: "high",
+        unknown_reason: ""
+      }
+    ]
+  });
+
+  assert.equal(result.valid, true);
+  assert.equal(result.errors.length, 0);
+});
+
+void test("rejects malformed applicability catalog payloads", () => {
+  const result = validateApplicabilityCatalog({
+    applicability_rules: [
+      {
+        rule_id: "APPL-RED-001",
+        if: [],
+        then_applies: ["RED_2014_53_EU"],
+        then_not_applies: ["LVD_2014_35_EU_for_safety"],
+        source_url: "https://www.legislation.gov.uk/eudr/2014/53/body",
+        confidence: "high",
+        last_verified_at: "2026-02-23"
+      }
+    ]
+  });
+
+  assert.equal(result.valid, false);
+  assert.equal(result.errors.length > 0, true);
 });

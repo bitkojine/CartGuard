@@ -63,3 +63,90 @@ export const ValidationPolicySchema = z.object({
 });
 
 export type ValidationPolicy = z.infer<typeof ValidationPolicySchema>;
+
+export const RequirementTypeValues = ["legal", "marketplace", "best_practice"] as const;
+
+export const RequirementTypeSchema = z.enum(RequirementTypeValues);
+
+export type RequirementType = z.infer<typeof RequirementTypeSchema>;
+
+export const SourceTypeValues = [
+  "eurlex",
+  "eu_official",
+  "national_authority",
+  "amazon_official",
+  "secondary"
+] as const;
+
+export const SourceTypeSchema = z.enum(SourceTypeValues);
+
+export type SourceType = z.infer<typeof SourceTypeSchema>;
+
+export const ConfidenceLevelValues = ["high", "medium", "low"] as const;
+
+export const ConfidenceLevelSchema = z.enum(ConfidenceLevelValues);
+
+export type ConfidenceLevel = z.infer<typeof ConfidenceLevelSchema>;
+
+export const ValidationStatusValues = [
+  "missing",
+  "present",
+  "stale",
+  "mismatched",
+  "not_applicable",
+  "unknown"
+] as const;
+
+export const ValidationStatusSchema = z.enum(ValidationStatusValues);
+
+export type ValidationStatus = z.infer<typeof ValidationStatusSchema>;
+
+export const SubmissionMetadataSchema = z.object({
+  path: z.string(),
+  deadline: z.string(),
+  enforcement_if_missed: z.string()
+});
+
+export type SubmissionMetadata = z.infer<typeof SubmissionMetadataSchema>;
+
+export const RuleRecordSchema = z.object({
+  rule_id: z.string().min(1),
+  jurisdiction: z.string().min(1),
+  channel: z.string().min(1),
+  requirement_type: RequirementTypeSchema,
+  trigger: z.string().min(1),
+  required_evidence: z.array(z.string().min(1)).min(1),
+  validation_checks: z.array(z.string().min(1)).min(1),
+  submission_metadata: SubmissionMetadataSchema,
+  source_url: z.string().url(),
+  source_type: SourceTypeSchema,
+  last_verified_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  confidence: ConfidenceLevelSchema,
+  unknown_reason: z.string()
+});
+
+export type RuleRecord = z.infer<typeof RuleRecordSchema>;
+
+export const RuleCatalogSchema = z.object({
+  rules: z.array(RuleRecordSchema).min(1)
+});
+
+export type RuleCatalog = z.infer<typeof RuleCatalogSchema>;
+
+export const ApplicabilityRuleSchema = z.object({
+  rule_id: z.string().min(1),
+  if: z.array(z.string().min(1)).min(1),
+  then_applies: z.array(z.string().min(1)),
+  then_not_applies: z.array(z.string().min(1)),
+  source_url: z.string().url(),
+  confidence: ConfidenceLevelSchema,
+  last_verified_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+});
+
+export type ApplicabilityRule = z.infer<typeof ApplicabilityRuleSchema>;
+
+export const ApplicabilityCatalogSchema = z.object({
+  applicability_rules: z.array(ApplicabilityRuleSchema).min(1)
+});
+
+export type ApplicabilityCatalog = z.infer<typeof ApplicabilityCatalogSchema>;

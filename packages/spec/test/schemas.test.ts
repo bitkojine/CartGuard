@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  ApplicabilityCatalogSchema,
   ProductContentSchema,
+  RuleCatalogSchema,
   ValidationPolicySchema
 } from "../src/index.js";
 
@@ -51,6 +53,52 @@ void test("ValidationPolicySchema enforces confidence bounds", () => {
     allowedCategories: ["general"],
     requireSourceForCategories: ["general"],
     maxClaimsPerProduct: 3
+  });
+
+  assert.equal(result.success, false);
+});
+
+void test("RuleCatalogSchema accepts valid catalog rows", () => {
+  const result = RuleCatalogSchema.safeParse({
+    rules: [
+      {
+        rule_id: "AMZN-MYC-REQ-001",
+        jurisdiction: "DE",
+        channel: "AmazonDE",
+        requirement_type: "marketplace",
+        trigger: "Product appears in MYC with compliance requirements",
+        required_evidence: ["Documents requested in MYC"],
+        validation_checks: ["Entry exists in MYC"],
+        submission_metadata: {
+          path: "Seller Central -> Performance -> Account Health -> MYC",
+          deadline: "unknown",
+          enforcement_if_missed: "unknown"
+        },
+        source_url: "https://sellercentral.amazon.com/help/hub/reference/external/GUDCM66BHG6B4GXZ",
+        source_type: "amazon_official",
+        last_verified_at: "2026-02-23",
+        confidence: "medium",
+        unknown_reason: ""
+      }
+    ]
+  });
+
+  assert.equal(result.success, true);
+});
+
+void test("ApplicabilityCatalogSchema rejects invalid date", () => {
+  const result = ApplicabilityCatalogSchema.safeParse({
+    applicability_rules: [
+      {
+        rule_id: "APPL-RED-001",
+        if: ["is_radio_equipment"],
+        then_applies: ["RED_2014_53_EU"],
+        then_not_applies: ["LVD_2014_35_EU_for_safety"],
+        source_url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0053",
+        confidence: "high",
+        last_verified_at: "2026/02/23"
+      }
+    ]
   });
 
   assert.equal(result.success, false);
