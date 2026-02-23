@@ -90,7 +90,11 @@ interface DemoSlide {
   next: string;
   customerImpact: string;
   whatUserSees: string;
+  whatUserClicks: string;
   cartGuardChecks: string;
+  legalBasis: string;
+  marketplacePolicy: string;
+  cartguardRecommendation: string;
   ownerRole: string;
   fixAction: string;
   evidenceType: "legal" | "marketplace" | "best_practice" | "unknown";
@@ -408,7 +412,7 @@ const evidenceTypeClass = (evidenceType: DemoSlide["evidenceType"]): string => {
 const decisionGates: DecisionGate[] = [
   {
     gateId: "GATE_WIFI_BASIC",
-    checkId: "check_red_applicability",
+    checkId: "decision_gate_wifi_basic",
     context: "Radio SKU missing RED-aligned evidence.",
     businessTradeoff: "Ship is fast but risky; hold avoids likely compliance rework.",
     options: ["ship", "hold", "escalate"],
@@ -416,7 +420,7 @@ const decisionGates: DecisionGate[] = [
   },
   {
     gateId: "GATE_MAINS_EU",
-    checkId: "check_lvd_doc_presence",
+    checkId: "decision_gate_mains_eu",
     context: "Mains SKU missing DoC and local-language readiness.",
     businessTradeoff: "Shipping now saves time but creates high compliance risk.",
     options: ["ship", "hold", "escalate"],
@@ -424,7 +428,7 @@ const decisionGates: DecisionGate[] = [
   },
   {
     gateId: "GATE_RP_CONFLICT",
-    checkId: "check_traceability_consistency",
+    checkId: "decision_gate_rp_conflict",
     context: "RP/importer identity mismatch across artifacts.",
     businessTradeoff: "Proceeding without alignment can break authority-response flow.",
     options: ["ship", "hold", "escalate"],
@@ -432,7 +436,7 @@ const decisionGates: DecisionGate[] = [
   },
   {
     gateId: "GATE_FALSE_ALARM_OK",
-    checkId: "false_alarm_avoided",
+    checkId: "decision_gate_false_alarm_ok",
     context: "Messy evidence appears valid after cross-check.",
     businessTradeoff: "Holding creates avoidable delay; shipping may be acceptable.",
     options: ["ship", "hold"],
@@ -440,7 +444,7 @@ const decisionGates: DecisionGate[] = [
   },
   {
     gateId: "GATE_UNKNOWN_SCOPE",
-    checkId: "unknown_scope_escalation",
+    checkId: "decision_gate_battery_unknown",
     context: "Applicability confidence is too low for automated decision.",
     businessTradeoff: "Escalation slows launch but avoids incorrect compliance claims.",
     options: ["ship", "hold", "escalate"],
@@ -453,207 +457,306 @@ const getGateForSlide = (slide: DemoSlide): DecisionGate | undefined =>
 
 const demoSlides: DemoSlide[] = [
   {
-    title: "Step 1 of 11: Dashboard - Today's Launch Batch",
-    now: "Show the launch batch with three draft SKUs and current readiness status.",
-    next: "Open the blocked mains charger item and explain the failure symptom first.",
-    customerImpact: "Ops immediately sees what is ready versus what is at risk before Amazon review.",
+    title: "Step 1 of 14: Morning Shock - MYC Backlog",
+    now: "Start from an operator symptom: urgent compliance requests and launch pressure.",
+    next: "Open batch triage to prioritize high-risk SKUs before submission.",
+    customerImpact: "Matches what teams actually see first: pressure from marketplace requests, not clean data.",
     whatUserSees:
-      "Batch list with status chips: Ready, At Risk, Blocked across mains charger, battery gadget, and Wi-Fi camera.",
+      "MYC-style pressure panel plus launch batch summary with high/medium/low risk tags.",
+    whatUserClicks: "Open in CartGuard - Today's launch batch",
     cartGuardChecks:
-      "Batch preflight aggregation across required evidence presence and mismatch signals.",
+      "Batch import and preflight index across listing attributes, documents, and directive scope hints.",
+    legalBasis: "No direct legal determination at this step.",
+    marketplacePolicy:
+      "Amazon states missing compliance documentation can remove listings and affect Account Health.",
+    cartguardRecommendation:
+      "Run preflight before responding to external requests so fixes happen upstream.",
     ownerRole: "Ops",
     fixAction: "Prioritize blocked SKUs before submission.",
+    evidenceType: "marketplace",
+    checkId: "myc_inbound_alert",
+    inputArtifact: "workflow-batch.json products[]"
+  },
+  {
+    title: "Step 2 of 14: Batch Triage by Risk",
+    now: "Sort by risk and move to the highest-risk SKU first.",
+    next: "Open Wi-Fi Basic and explain why radio scope causes hard blockers.",
+    customerImpact: "Compresses triage time when teams have many SKUs and no clear queue.",
+    whatUserSees:
+      "Batch table with risk, archetype, and missing-evidence counts.",
+    whatUserClicks: "Sort by Risk, then open Wi-Fi Camera Basic",
+    cartGuardChecks:
+      "Directive applicability preview (radio/mains/battery) plus evidence presence counts.",
+    legalBasis: "Scope logic uses RED/LVD/EMC applicability definitions.",
+    marketplacePolicy: "No marketplace decision at this step.",
+    cartguardRecommendation:
+      "Work high-risk SKUs first; defer medium-risk informational issues.",
+    ownerRole: "Compliance",
+    fixAction: "Open highest-risk SKU and begin evidence drilldown.",
     evidenceType: "best_practice",
     checkId: "batch_overview",
     inputArtifact: "workflow-batch.json products[]"
   },
   {
-    title: "Step 2 of 11: Mains Charger Missing DoC",
-    now: "Open the blocked mains charger and surface the blocker symptom from an operator perspective.",
-    next: "Show exactly why LVD requires an EU Declaration of Conformity for this product.",
-    customerImpact: "Avoids last-minute listing delays caused by missing mandatory artifacts.",
+    title: "Step 3 of 14: Wi-Fi Basic - RED Gap",
+    now: "Show a radio product with evidence that references only LVD/EMC.",
+    next: "Drill into DoC fields and highlight missing RED alignment.",
+    customerImpact: "Catches severe classification mistakes before launch day.",
     whatUserSees:
-      "SKU detail where DoC slot is empty while other files are present.",
+      "Wi-Fi fields enabled, but DoC directives list excludes RED.",
+    whatUserClicks: "Why is this high risk?",
     cartGuardChecks:
-      "LVD scope check and declaration presence check for mains-powered equipment.",
+      "Radio-feature detection and directive-set comparison in DoC metadata.",
+    legalBasis:
+      "Radio equipment falls under RED; required evidence must align with RED obligations.",
+    marketplacePolicy:
+      "Missing required evidence increases the risk of additional marketplace requests.",
+    cartguardRecommendation:
+      "Treat as blocked until RED-aligned evidence is attached.",
     ownerRole: "Compliance",
-    fixAction: "Attach a valid DoC for the exact model before listing submission.",
+    fixAction: "Request RED DoC and radio test evidence from supplier.",
+    evidenceType: "legal",
+    checkId: "check_red_applicability",
+    inputArtifact: "sample-listing.json + rules.json",
+    scenarioId: "wrong_directive_radio"
+  },
+  {
+    title: "Step 4 of 14: Wi-Fi Basic - DoC Drilldown",
+    now: "Parse DoC fields to expose missing directive references and weak traceability.",
+    next: "Check labels/manuals for Germany launch readiness.",
+    customerImpact: "Gives compliance managers field-level reasons, not generic fail labels.",
+    whatUserSees:
+      "Parsed DoC view showing directives, model ID, issuer, and date.",
+    whatUserClicks: "Compare against RED DoC reference structure",
+    cartGuardChecks:
+      "DoC structure and content checks against expected RED-oriented fields.",
+    legalBasis:
+      "RED requires a DoC and technical documentation that support conformity assessment.",
+    marketplacePolicy: "No marketplace policy decision at this step.",
+    cartguardRecommendation:
+      "Replace generic template DoC with model-specific RED-aligned DoC.",
+    ownerRole: "Compliance",
+    fixAction: "Update DoC and include applicable radio standards.",
+    evidenceType: "legal",
+    checkId: "check_red_doc_content",
+    inputArtifact: "workflow-batch.json documents"
+  },
+  {
+    title: "Step 5 of 14: Wi-Fi Basic - Labels and Manual",
+    now: "Show missing EU traceability fields and language gaps for Germany.",
+    next: "Take a ship/hold/escalate decision under launch pressure.",
+    customerImpact: "Makes RP and compliance concerns concrete and actionable.",
+    whatUserSees:
+      "CN-only label identity and English-only manual for DE target.",
+    whatUserClicks: "Check legal minimums",
+    cartGuardChecks:
+      "Traceability field checks and target-country instruction language checks.",
+    legalBasis:
+      "Manufacturer/importer identification and local-language instructions must accompany product placement.",
+    marketplacePolicy:
+      "Missing evidence can trigger additional requests and listing impact.",
+    cartguardRecommendation:
+      "Do not proceed until EU traceability and language gaps are resolved.",
+    ownerRole: "Responsible Person",
+    fixAction: "Update labels and attach German instructions.",
+    evidenceType: "legal",
+    checkId: "check_manual_language",
+    inputArtifact: "workflow-batch.json labels/manuals",
+    scenarioId: "manual_language_de"
+  },
+  {
+    title: "Step 6 of 14: Decision Gate - Wi-Fi Basic",
+    now: "Force a business decision with explicit tradeoff and recommendation.",
+    next: "Move to the mains charger case.",
+    customerImpact: "Shows CartGuard supports accountable decisions, not passive checklists.",
+    whatUserSees:
+      "Gate dialog with ship / hold / escalate options and recommended decision.",
+    whatUserClicks: "Select Hold, then continue",
+    cartGuardChecks:
+      "Compiles unresolved critical gaps into one decision context.",
+    legalBasis: "Critical RED and traceability prerequisites remain unresolved.",
+    marketplacePolicy:
+      "Marketplace consequences are possible; CartGuard labels this as risk, not certainty.",
+    cartguardRecommendation:
+      "Strongly recommend HOLD and record rationale for audit trail.",
+    ownerRole: "Compliance",
+    fixAction: "Record decision and assign corrective actions to supplier and localization owners.",
+    evidenceType: "best_practice",
+    checkId: "decision_gate_wifi_basic",
+    inputArtifact: "workflow-batch.json scenario wrong_directive_radio",
+    scenarioId: "wrong_directive_radio"
+  },
+  {
+    title: "Step 7 of 14: Mains EU Charger - Missing DoC",
+    now: "Open a classic blocker: in-scope mains product with no DoC attached.",
+    next: "Take decision gate for mains SKU.",
+    customerImpact: "Prevents avoidable late-stage fire drills before submission.",
+    whatUserSees:
+      "230V SKU with missing DoC and incomplete language readiness.",
+    whatUserClicks: "Why is this blocked?",
+    cartGuardChecks:
+      "LVD scope and mandatory declaration presence checks for mains equipment.",
+    legalBasis:
+      "In-scope electrical equipment requires documented conformity evidence before market placement.",
+    marketplacePolicy:
+      "Incomplete documents increase risk of downstream compliance requests.",
+    cartguardRecommendation:
+      "Block submission until model-specific DoC is present.",
+    ownerRole: "Compliance",
+    fixAction: "Obtain valid DoC and complete document bundle.",
     evidenceType: "legal",
     checkId: "check_lvd_doc_presence",
     inputArtifact: "sample-listing.json + rules.json",
     scenarioId: "missing_doc_mains"
   },
   {
-    title: "Step 3 of 11: Why LVD Applies",
-    now: "Explain directive applicability and required evidence in plain operator language.",
-    next: "Move to the battery non-radio SKU to show version mismatch risk.",
-    customerImpact: "Builds trust that checks map to explicit legal conditions, not black-box scoring.",
+    title: "Step 8 of 14: Decision Gate - Mains Charger",
+    now: "Force ship/hold/escalate decision for mains blocker.",
+    next: "Move to battery revision drift where answer is not binary.",
+    customerImpact: "Demonstrates that decisions are explicit and auditable.",
     whatUserSees:
-      "Directive mapping note: mains voltage in LVD scope, DoC required before market placement.",
+      "Gate with recommendation to hold until DoC and language coverage are complete.",
+    whatUserClicks: "Select Hold, then continue",
     cartGuardChecks:
-      "Voltage-driven applicability mapping plus mandatory artifact expectation.",
+      "Summarizes unresolved mains-scope blockers into one decision point.",
+    legalBasis: "Mains conformity evidence is incomplete.",
+    marketplacePolicy:
+      "Potential request/removal risk exists if submitted with missing evidence.",
+    cartguardRecommendation:
+      "Strong HOLD recommendation; proceed only after evidence update.",
     ownerRole: "Compliance",
-    fixAction: "Collect DoC with correct model, manufacturer identity, and referenced standards.",
-    evidenceType: "legal",
-    checkId: "explain_lvd_scope",
-    inputArtifact: "sample-listing.json voltage fields"
-  },
-  {
-    title: "Step 4 of 11: Battery Gadget Version Drift",
-    now: "Show a realistic case where a test report is present but tied to an older hardware revision.",
-    next: "Open the mismatch details so teams can act without back-and-forth.",
-    customerImpact: "Catches hidden evidence drift that usually appears only during late review.",
-    whatUserSees:
-      "Battery SKU marked At Risk with a report tagged as older revision evidence.",
-    cartGuardChecks:
-      "EMC applicability plus report-to-product revision consistency checks.",
-    ownerRole: "Compliance",
-    fixAction: "Request updated report or re-test for current hardware revision.",
+    fixAction: "Record gate decision and assign remediation tasks.",
     evidenceType: "best_practice",
-    checkId: "check_emc_version_alignment",
-    inputArtifact: "workflow-batch.json scenario version_mismatch",
-    scenarioId: "version_mismatch_battery"
+    checkId: "decision_gate_mains_eu",
+    inputArtifact: "workflow-batch.json scenario missing_doc_mains",
+    scenarioId: "missing_doc_mains"
   },
   {
-    title: "Step 5 of 11: Version Mismatch Detail",
-    now: "Show side-by-side evidence mismatch between listed revision and tested revision.",
-    next: "Switch to the radio-enabled Wi-Fi camera scenario.",
-    customerImpact: "Reduces review loops by giving engineering and supplier teams exact correction targets.",
+    title: "Step 9 of 14: Battery Rev A - Ambiguous Version Drift",
+    now: "Show a gray-area case with old evidence and planned hardware revision change.",
+    next: "Take an UNKNOWN escalation gate instead of pretending certainty.",
+    customerImpact: "Builds trust by handling ambiguity with escalation, not false confidence.",
     whatUserSees:
-      "Model revision delta with highlighted fields from listing and evidence.",
+      "Rev A test evidence and Rev C production intent shown side-by-side.",
+    whatUserClicks: "Compare versions",
     cartGuardChecks:
-      "Critical identifier comparison across listing, report metadata, and rule expectations.",
-    ownerRole: "Engineering",
-    fixAction: "Update feed metadata and attach evidence for the shipped revision.",
-    evidenceType: "best_practice",
-    checkId: "show_version_diff",
-    inputArtifact: "workflow-batch.json product version fields",
-    scenarioId: "version_mismatch_battery"
-  },
-  {
-    title: "Step 6 of 11: Wi-Fi Camera Wrong Directive",
-    now: "Show the radio product where listing attributes imply RED but evidence references only LVD/EMC.",
-    next: "Explain directive logic for radio equipment and expected RED evidence.",
-    customerImpact: "Prevents severe classification errors that lead to hard listing blocks.",
-    whatUserSees:
-      "Wi-Fi camera with radio capability fields set, but DoC lacking RED reference.",
-    cartGuardChecks:
-      "Radio capability detection against directive applicability rules.",
+      "Version and metadata diff across report, listing, and planned BOM fields.",
+    legalBasis:
+      "Technical documentation must represent product as placed on market; coverage unclear here.",
+    marketplacePolicy: "No direct marketplace rule at this step.",
+    cartguardRecommendation:
+      "Mark UNKNOWN and escalate to compliance/RP for human decision.",
     ownerRole: "Compliance",
-    fixAction: "Replace documentation set with RED-aligned DoC and tests.",
-    evidenceType: "legal",
-    checkId: "check_red_applicability",
-    inputArtifact: "sample-listing.json radio attributes",
-    scenarioId: "wrong_directive_radio"
-  },
-  {
-    title: "Step 7 of 11: Directive Mapping Proof",
-    now: "Display decision logic: radio equipment routes to RED obligations.",
-    next: "Run language checks for Germany-focused launch readiness.",
-    customerImpact: "Answers compliance skepticism with deterministic, explainable logic.",
-    whatUserSees:
-      "Rule trace showing why RED, not standalone LVD/EMC, governs this case.",
-    cartGuardChecks:
-      "Applicability rule trace with legal source category tagging.",
-    ownerRole: "Compliance",
-    fixAction: "Use directive mapping trace as internal approval evidence.",
-    evidenceType: "legal",
-    checkId: "show_directive_mapping",
-    inputArtifact: "applicability.json"
-  },
-  {
-    title: "Step 8 of 11: German Instructions Check",
-    now: "Show missing German-language manuals for Germany target marketplace.",
-    next: "Check traceability and Responsible Person consistency across artifacts.",
-    customerImpact: "Avoids preventable consumer-facing and compliance escalations post-launch.",
-    whatUserSees:
-      "Manual language matrix with red flags on English-only instructions for DE launch.",
-    cartGuardChecks:
-      "Destination-country language requirement and manual presence checks.",
-    ownerRole: "Ops",
-    fixAction: "Attach German manuals and safety instructions before approval.",
-    evidenceType: "legal",
-    checkId: "check_manual_language",
-    inputArtifact: "workflow-batch.json manuals list",
-    scenarioId: "manual_language_de"
-  },
-  {
-    title: "Step 9 of 11: RP and Label Consistency",
-    now: "Show mismatch between Responsible Person/importer fields across label, DoC, and listing records.",
-    next: "Summarize likely Amazon readiness risk from current evidence set.",
-    customerImpact: "Reduces authority-response risk and avoids identity confusion across teams.",
-    whatUserSees:
-      "Entity mismatch panel for manufacturer/importer/RP identities.",
-    cartGuardChecks:
-      "Cross-artifact traceability consistency checks.",
-    ownerRole: "Responsible Person",
-    fixAction: "Align label artwork, DoC entity data, and account metadata.",
-    evidenceType: "legal",
-    checkId: "check_traceability_consistency",
-    inputArtifact: "workflow-batch.json RP fields",
-    scenarioId: "rp_identity_mismatch"
-  },
-  {
-    title: "Step 10 of 13: False Alarm Avoided",
-    now: "Show a messy document bundle that still passes because identifiers and scope align.",
-    next: "Move to a gray-area case where the correct result is UNKNOWN and human review.",
-    customerImpact: "Builds trust that CartGuard does not over-block noisy but valid evidence.",
-    whatUserSees:
-      "Complex SKU with multiple files marked as pass and rationale trace.",
-    cartGuardChecks:
-      "Cross-document consistency checks confirm no critical mismatch.",
-    ownerRole: "Compliance",
-    fixAction: "Proceed with submission and keep evidence links attached.",
-    evidenceType: "best_practice",
-    checkId: "false_alarm_avoided",
-    inputArtifact: "workflow-batch.json scenario false_alarm_pass",
-    scenarioId: "false_alarm_pass"
-  },
-  {
-    title: "Step 11 of 13: Unknown - Escalate to Human Review",
-    now: "Present a borderline scope case where automation cannot safely decide applicability.",
-    next: "Show Amazon readiness with clear heuristic labels and non-deterministic disclaimer.",
-    customerImpact: "Prevents overconfident automation and keeps compliance ownership where required.",
-    whatUserSees:
-      "Issue state marked UNKNOWN with escalation owner and reason.",
-    cartGuardChecks:
-      "Scope confidence below threshold routes case to manual compliance review.",
-    ownerRole: "Compliance",
-    fixAction: "Escalate with context package and wait for directive decision.",
+    fixAction: "Escalate with context package and hold automated pass/fail outcome.",
     evidenceType: "unknown",
     checkId: "unknown_scope_escalation",
     inputArtifact: "workflow-batch.json scenario unknown_scope",
     scenarioId: "unknown_scope"
   },
   {
-    title: "Step 12 of 13: Amazon Readiness Summary",
-    now: "Present SKU-level readiness and likely documentation-request risk before submission.",
-    next: "Close with KPI impact and role-specific output cards.",
-    customerImpact: "Ops gets a clear submit-or-fix decision instead of surprise dashboard escalations.",
+    title: "Step 10 of 14: Decision Gate - Battery UNKNOWN",
+    now: "Require decision for ambiguous evidence scope.",
+    next: "Show a complex but valid case to prove over-block prevention.",
+    customerImpact: "Shows governance maturity in gray areas.",
     whatUserSees:
-      "Readiness board with likely compliance request risk labels per SKU plus disclaimer.",
+      "Gate with explicit UNKNOWN rationale and escalation recommendation.",
+    whatUserClicks: "Select Escalate, then continue",
     cartGuardChecks:
-      "Heuristic mapping from legal evidence gaps to marketplace-risk signal.",
+      "Prevents auto-pass/auto-fail when evidence confidence is below threshold.",
+    legalBasis: "Scope confidence insufficient for automated determination.",
+    marketplacePolicy: "No direct marketplace rule at this step.",
+    cartguardRecommendation:
+      "Escalate and wait for human compliance decision.",
+    ownerRole: "Compliance",
+    fixAction: "Route case to senior compliance or RP with artifacts attached.",
+    evidenceType: "unknown",
+    checkId: "decision_gate_battery_unknown",
+    inputArtifact: "workflow-batch.json scenario unknown_scope",
+    scenarioId: "unknown_scope"
+  },
+  {
+    title: "Step 11 of 14: False Alarm Avoided",
+    now: "Show a messy document bundle that still passes because identifiers and scope align.",
+    next: "Move to RP/importer consistency checks across systems.",
+    customerImpact: "Builds trust that CartGuard does not over-block noisy but valid evidence.",
+    whatUserSees:
+      "Complex SKU with multiple files marked as pass and rationale trace.",
+    whatUserClicks: "Run full consistency check",
+    cartGuardChecks:
+      "Cross-document consistency checks confirm no critical mismatch.",
+    legalBasis: "No blocker found against mandatory artifact and identity checks.",
+    marketplacePolicy: "No direct marketplace policy decision at this step.",
+    cartguardRecommendation:
+      "Proceed with submission while preserving evidence links for auditability.",
+    ownerRole: "Compliance",
+    fixAction: "Proceed with submission and keep evidence links attached.",
+    evidenceType: "best_practice",
+    checkId: "decision_gate_false_alarm_ok",
+    inputArtifact: "workflow-batch.json scenario false_alarm_pass",
+    scenarioId: "false_alarm_pass"
+  },
+  {
+    title: "Step 12 of 14: RP/Importer Traceability Snapshot",
+    now: "Show identity consistency and traceability across DoC, labels, and account fields.",
+    next: "Export role-specific packets for operational handoff.",
+    customerImpact: "Improves authority-response readiness and reduces ownership confusion.",
+    whatUserSees:
+      "RP/importer mismatch matrix with conflict highlights.",
+    whatUserClicks: "Generate RP traceability packet",
+    cartGuardChecks:
+      "Cross-artifact identity and traceability field consistency checks.",
+    legalBasis:
+      "Traceability obligations require coherent manufacturer/importer identity across artifacts.",
+    marketplacePolicy: "No direct marketplace policy decision at this step.",
+    cartguardRecommendation:
+      "Resolve identity conflicts before listing submission.",
+    ownerRole: "Responsible Person",
+    fixAction: "Align labels, DoC, and account metadata.",
+    evidenceType: "legal",
+    checkId: "decision_gate_rp_conflict",
+    inputArtifact: "workflow-batch.json scenario rp_identity_mismatch",
+    scenarioId: "rp_identity_mismatch"
+  },
+  {
+    title: "Step 13 of 14: Role-Specific Export Packets",
+    now: "Generate separate outputs for Ops, Compliance, Engineering, and RP.",
+    next: "Finish with Amazon-risk framing and final disclaimer.",
+    customerImpact: "Turns findings into immediate work queues instead of generic reports.",
+    whatUserSees:
+      "Export actions for Ops queue, legal-gap packet, engineering diff, and RP packet.",
+    whatUserClicks: "Export Ops and Compliance packets",
+    cartGuardChecks:
+      "Maps each issue to role ownership and action-oriented output fields.",
+    legalBasis: "Legal references remain attached per issue in Compliance packet.",
+    marketplacePolicy: "No direct marketplace policy decision at this step.",
+    cartguardRecommendation:
+      "Use role outputs as daily handoff artifacts across teams.",
+    ownerRole: "All",
+    fixAction: "Distribute role packets and track closure in launch board.",
+    evidenceType: "best_practice",
+    checkId: "export_role_outputs",
+    inputArtifact: "workflow-batch.json roleOutputs"
+  },
+  {
+    title: "Step 14 of 14: Amazon Risk View + Disclaimer",
+    now: "Show pre-submission risk levels with explicit non-prediction wording.",
+    next: "End demo and close VSCode host.",
+    customerImpact: "Links preflight quality to fewer surprise requests without overclaiming platform behavior.",
+    whatUserSees:
+      "SKU risk table with statement that risk is heuristic and not an Amazon decision.",
+    whatUserClicks: "Continue to close VSCode",
+    cartGuardChecks:
+      "Heuristic risk mapping from unresolved evidence gaps and scenario severity.",
+    legalBasis: "No legal determination at this final summary step.",
+    marketplacePolicy:
+      "Amazon guidance says missing documentation can lead to listing removal and Account Health impact.",
+    cartguardRecommendation:
+      "Treat this as a preflight risk signal; do not treat it as platform prediction.",
     ownerRole: "Ops",
-    fixAction: "Submit only green SKUs; route red SKUs to compliance action queue.",
+    fixAction: "Submit only green SKUs and track unresolved gates to closure.",
     evidenceType: "marketplace",
     checkId: "summarize_amazon_risk",
     inputArtifact: "evaluation summary + workflow scenarios"
-  },
-  {
-    title: "Step 13 of 13: Before vs After KPI Impact",
-    now: "Show illustrative improvements in blocker rate, review time, and rework loops.",
-    next: "End demo and close VSCode host.",
-    customerImpact: "Connects compliance preflight work directly to launch velocity and reliability.",
-    whatUserSees:
-      "Illustrative KPI deltas for internal workflow improvement and role-specific outputs.",
-    cartGuardChecks:
-      "No legal determination; internal operational analytics and trend framing.",
-    ownerRole: "Ops",
-    fixAction: "Adopt preflight checks as mandatory gate before listing submission.",
-    evidenceType: "best_practice",
-    checkId: "show_internal_kpis",
-    inputArtifact: "internal trend metrics"
   }
 ];
 
@@ -706,7 +809,11 @@ const renderDemoHtml = (
     next: "",
     customerImpact: "",
     whatUserSees: "",
+    whatUserClicks: "",
     cartGuardChecks: "",
+    legalBasis: "",
+    marketplacePolicy: "",
+    cartguardRecommendation: "",
     ownerRole: "Ops",
     fixAction: "",
     evidenceType: "best_practice",
@@ -895,8 +1002,16 @@ const renderDemoHtml = (
         <div class="value">${escapeHtml(slide.customerImpact)}</div>
         <div class="label" style="margin-top:10px;">What user sees</div>
         <div class="value">${escapeHtml(slide.whatUserSees)}</div>
+        <div class="label" style="margin-top:10px;">What user clicks</div>
+        <div class="value">${escapeHtml(slide.whatUserClicks)}</div>
         <div class="label" style="margin-top:10px;">CartGuard check</div>
         <div class="value">${escapeHtml(slide.cartGuardChecks)}</div>
+        <div class="label" style="margin-top:10px;">Legal</div>
+        <div class="value">${escapeHtml(slide.legalBasis)}</div>
+        <div class="label" style="margin-top:10px;">Marketplace</div>
+        <div class="value">${escapeHtml(slide.marketplacePolicy)}</div>
+        <div class="label" style="margin-top:10px;">CartGuard recommendation</div>
+        <div class="value">${escapeHtml(slide.cartguardRecommendation)}</div>
         <div class="label" style="margin-top:10px;">Fix now</div>
         <div class="value">${escapeHtml(slide.fixAction)}</div>
       </div>

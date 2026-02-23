@@ -1,22 +1,40 @@
 {
   "products": [
     {
-      "id": "SKU-AC-220V",
-      "name": "AC Mains Charger 65W",
+      "id": "SKU-AC-220V-EU",
+      "name": "AC Mains Charger 65W (EU Plug)",
       "archetype": "non-radio mains",
       "status": "Blocked"
     },
     {
-      "id": "SKU-BATT-GADGET",
-      "name": "Battery Sensor Gadget",
+      "id": "SKU-AC-220V-UK",
+      "name": "AC Mains Charger 65W (UK Plug)",
+      "archetype": "non-radio mains",
+      "status": "At Risk"
+    },
+    {
+      "id": "SKU-BATT-REV-A",
+      "name": "Battery Sensor Gadget Rev A",
       "archetype": "battery non-radio",
       "status": "At Risk"
     },
     {
-      "id": "SKU-WIFI-CAM",
-      "name": "Wi-Fi Indoor Camera",
+      "id": "SKU-BATT-REV-C",
+      "name": "Battery Sensor Gadget Rev C",
+      "archetype": "battery non-radio",
+      "status": "Ready"
+    },
+    {
+      "id": "SKU-WIFI-BASIC",
+      "name": "Wi-Fi Indoor Camera Basic",
       "archetype": "radio-enabled",
       "status": "Blocked"
+    },
+    {
+      "id": "SKU-WIFI-PRO",
+      "name": "Wi-Fi Indoor Camera Pro",
+      "archetype": "radio-enabled",
+      "status": "Ready"
     }
   ],
   "scenarios": [
@@ -28,7 +46,8 @@
       "businessImpact": "High chance of launch delay and late document scramble.",
       "missingEvidence": [
         "EU Declaration of Conformity",
-        "DoC model traceability fields"
+        "DoC model traceability fields",
+        "German instructions"
       ]
     },
     {
@@ -95,32 +114,81 @@
         "Detailed feature specification",
         "Clarified product-function declaration"
       ]
+    },
+    {
+      "id": "myc_last_minute",
+      "symptom": "Compliance request appears close to planned launch date.",
+      "rootCause": "Evidence gaps were not resolved before submission.",
+      "firstOwner": "Ops",
+      "businessImpact": "Launch disruption and costly internal escalation.",
+      "missingEvidence": [
+        "Document bundle completeness",
+        "Pre-submission risk triage"
+      ]
     }
   ],
   "roleOutputs": [
     {
       "role": "Ops",
       "summary": "Prioritize blocked SKUs and submit only listing-ready products.",
-      "fields": ["sku", "asin", "status", "top_issues", "next_actions"],
-      "actions": ["Route blocked SKUs to compliance", "Submit green SKUs", "Track risk queue daily"]
+      "fields": [
+        "sku",
+        "asin",
+        "marketplace",
+        "status",
+        "top_issues",
+        "next_actions"
+      ],
+      "actions": [
+        "Route blocked SKUs to compliance",
+        "Submit green SKUs",
+        "Track risk queue daily"
+      ]
     },
     {
       "role": "Compliance",
       "summary": "Resolve directive-linked evidence gaps with source-backed checks.",
-      "fields": ["directive_scope", "missing_evidence", "mismatch_fields", "legal_basis"],
-      "actions": ["Approve only complete evidence sets", "Escalate unknown scope", "Sign off listing-ready state"]
+      "fields": [
+        "directive_scope",
+        "missing_evidence",
+        "mismatch_fields",
+        "legal_basis"
+      ],
+      "actions": [
+        "Approve only complete evidence sets",
+        "Escalate unknown scope",
+        "Sign off listing-ready state"
+      ]
     },
     {
       "role": "Engineering",
       "summary": "Align feed attributes and document metadata to avoid mismatch flags.",
-      "fields": ["listing_attributes", "model_revision", "feed_field_diffs", "sync_targets"],
-      "actions": ["Patch feed mappings", "Sync model identifiers", "Regenerate listing payload"]
+      "fields": [
+        "listing_attributes",
+        "model_revision",
+        "feed_field_diffs",
+        "sync_targets"
+      ],
+      "actions": [
+        "Patch feed mappings",
+        "Sync model identifiers",
+        "Regenerate listing payload"
+      ]
     },
     {
       "role": "Responsible Person",
       "summary": "Validate traceability identity and documentation handoff readiness.",
-      "fields": ["manufacturer_identity", "importer_identity", "rp_identity", "label_alignment"],
-      "actions": ["Confirm entity consistency", "Request corrected labels", "Prepare authority-response packet"]
+      "fields": [
+        "manufacturer_identity",
+        "importer_identity",
+        "rp_identity",
+        "label_alignment"
+      ],
+      "actions": [
+        "Confirm entity consistency",
+        "Request corrected labels",
+        "Prepare authority-response packet"
+      ]
     }
   ]
 }
