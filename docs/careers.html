@@ -27,6 +27,7 @@
           <a href="./technical.html">Technical</a>
           <a href="./careers.html" aria-current="page">Careers</a>
           <a href="./sales.html">Sales Site</a>
+                  <button type="button" class="nav-refresh-btn" id="css-hard-refresh">Refresh CSS</button>
         </div>
       </nav>
       <section class="warning-banner" aria-label="Brutal priority warning">
@@ -156,6 +157,27 @@
           });
         });
       });
+    })();
+  </script>
+  <script id="css-refresh-script">
+    (() => {
+      const button = document.getElementById("css-hard-refresh");
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+      const refreshCss = () => {
+        const stamp = Date.now().toString();
+        const links = document.querySelectorAll("link[rel="stylesheet"]");
+        links.forEach((node) => {
+          if (!(node instanceof HTMLLinkElement)) {
+            return;
+          }
+          const url = new URL(node.href, window.location.href);
+          url.searchParams.set("css_refresh", stamp);
+          node.href = url.toString();
+        });
+      };
+      button.addEventListener("click", refreshCss);
     })();
   </script>
 </body>

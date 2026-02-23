@@ -26,6 +26,7 @@
           <a href="./sales-proof.html">Proof</a>
           <a href="./sales-pilot.html">Pilot</a>
           <a href="./index.html">Ops Manual</a>
+                  <button type="button" class="nav-refresh-btn" id="css-hard-refresh">Refresh CSS</button>
         </div>
       </nav>
       <p class="eyebrow">Buyer Overview</p>
@@ -85,6 +86,27 @@
           });
         });
       });
+    })();
+  </script>
+  <script id="css-refresh-script">
+    (() => {
+      const button = document.getElementById("css-hard-refresh");
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+      const refreshCss = () => {
+        const stamp = Date.now().toString();
+        const links = document.querySelectorAll("link[rel="stylesheet"]");
+        links.forEach((node) => {
+          if (!(node instanceof HTMLLinkElement)) {
+            return;
+          }
+          const url = new URL(node.href, window.location.href);
+          url.searchParams.set("css_refresh", stamp);
+          node.href = url.toString();
+        });
+      };
+      button.addEventListener("click", refreshCss);
     })();
   </script>
 </body>

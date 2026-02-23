@@ -167,6 +167,20 @@ footer {
   gap: 0.34rem;
 }
 
+.nav-refresh-btn {
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.44rem 0.62rem;
+  font: 500 0.8rem/1 "IBM Plex Mono", monospace;
+  cursor: pointer;
+}
+
+.nav-refresh-btn:hover {
+  border-color: var(--accent);
+}
+
 .nav-links a[aria-current="page"] {
   color: #ffffff;
   background: linear-gradient(100deg, var(--accent), var(--active-end));
@@ -719,6 +733,12 @@ footer {
     min-height: 2.2rem;
   }
 
+  .nav-refresh-btn {
+    font-size: 0.76rem;
+    min-height: 2.2rem;
+    width: 100%;
+  }
+
   .brand-lockup {
     width: 100%;
     padding: 0.5rem;
@@ -750,6 +770,11 @@ footer {
   }
 
   .nav-links a {
+    font-size: 0.75rem;
+    min-height: 2.1rem;
+  }
+
+  .nav-refresh-btn {
     font-size: 0.75rem;
     min-height: 2.1rem;
   }
