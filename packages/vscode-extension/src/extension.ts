@@ -1426,6 +1426,11 @@ export const activate = (context: vscode.ExtensionContext): void => {
     }
   );
 
+  const getDemoState = vscode.commands.registerCommand(
+    "cartguard.getDemoState",
+    () => demoState ?? null
+  );
+
   const reopenDemoSlideshow = vscode.commands.registerCommand(
     "cartguard.reopenDemoSlideshow",
     async () => {
@@ -1441,6 +1446,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
     openProcessView,
     openDemoSlideshow,
     demoNextStep,
+    getDemoState,
     reopenDemoSlideshow,
     output
   );

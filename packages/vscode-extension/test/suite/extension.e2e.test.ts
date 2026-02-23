@@ -6,6 +6,9 @@ import * as vscode from "vscode";
 const stepMs = Number(process.env.CARTGUARD_E2E_STEP_MS ?? "0");
 const holdOpenMs = Number(process.env.CARTGUARD_E2E_HOLD_OPEN_MS ?? "0");
 const manualContinue = process.env.CARTGUARD_E2E_MANUAL_CONTINUE === "1";
+const closeWindowOnDone = process.env.CARTGUARD_DEMO_CLOSE_WINDOW === "1";
+const e2eCloseOnDone = process.env.CARTGUARD_E2E_CLOSE_ON_DONE === "1";
+const manualMaxWaitMs = Number(process.env.CARTGUARD_E2E_MANUAL_MAX_WAIT_MS ?? "2147483647");
 const holdChunkMs = 30000;
 
 const pause = async (ms: number): Promise<void> => {
@@ -29,12 +32,16 @@ const waitForEditor = async (): Promise<vscode.TextEditor | undefined> => {
 };
 
 suite("CartGuard Extension E2E", () => {
+  suiteSetup(function setupSuite() {
+    this.timeout(0);
+  });
+
   setup(async () => {
     await pause(stepMs);
   });
 
   suiteTeardown(async () => {
-    if (holdOpenMs > 0) {
+    if (holdOpenMs > 0 && !closeWindowOnDone && !e2eCloseOnDone) {
       console.log(`[CartGuard E2E] Holding Extension Development Host open for ${holdOpenMs}ms.`);
       let remaining = holdOpenMs;
       while (remaining > 0) {
@@ -88,7 +95,8 @@ suite("CartGuard Extension E2E", () => {
     await pause(stepMs);
   });
 
-  test("slideshow demo advances step-by-step", async () => {
+  test("slideshow demo advances step-by-step", async function slideshowTest() {
+    this.timeout(0);
     console.log("[CartGuard E2E] Step 4: Open slideshow demo.");
     const opened = await vscode.commands.executeCommand("cartguard.openDemoSlideshow");
     assert.equal(typeof opened, "object");
@@ -96,6 +104,21 @@ suite("CartGuard Extension E2E", () => {
 
     if (manualContinue) {
       console.log("[CartGuard E2E] Manual continue mode enabled. Waiting for user clicks in slideshow.");
+      const startedAt = Date.now();
+      while (Date.now() - startedAt < manualMaxWaitMs) {
+        const state = (await vscode.commands.executeCommand("cartguard.getDemoState")) as
+          | { stepIndex: number; done: boolean }
+          | null;
+        if (state?.done) {
+          if (e2eCloseOnDone) {
+            await vscode.commands.executeCommand("workbench.action.closeWindow");
+            await pause(250);
+          }
+          return;
+        }
+        await pause(500);
+      }
+      assert.fail("Timed out waiting for slideshow to complete in manual mode.");
       return;
     }
 
