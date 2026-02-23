@@ -260,6 +260,33 @@ main > * + * {
   margin-top: var(--space-2);
 }
 
+.warning-banner {
+  border: 2px solid #b21f44;
+  background: #fff1f4;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.warning-label {
+  margin: 0 0 0.45rem;
+  color: #b21f44;
+  font: 700 0.76rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.warning-banner h2 {
+  margin: 0;
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  line-height: 1.25;
+  max-width: 60ch;
+}
+
+.warning-banner p {
+  margin: 0.5rem 0 0;
+  color: #5f2637;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
