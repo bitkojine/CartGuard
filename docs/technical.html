@@ -136,6 +136,29 @@
         </ul>
       </section>
 
+      <section class="architecture" aria-label="Public private execution plan">
+        <h2>Execution Plan: What Moves Where</h2>
+        <div class="table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Time Window</th>
+                <th>Action</th>
+                <th>Owner</th>
+                <th>Output</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>This week</td><td>Create a private repo for pilot run artifacts, customer mappings, and sales pipeline logic.</td><td>Engineering lead</td><td>Private repo live with access only for active pilot team members.</td></tr>
+              <tr><td>This week</td><td>Keep SDK, schemas, CLI, and docs in public repo with sanitized examples only.</td><td>Core engineering</td><td>Public repo remains clean and safe for developer adoption.</td></tr>
+              <tr><td>This month</td><td>Add a release flow: open-source generic modules after internal redaction review.</td><td>Engineering + founder</td><td>Regular public releases without customer leakage risk.</td></tr>
+              <tr><td>This month</td><td>Separate config into two tracks: public generic rulepacks and private customer-specific overlays.</td><td>Rules engineer</td><td>Fast client iteration without exposing client context.</td></tr>
+              <tr><td>Revisit after 2 paid pilots</td><td>Open-source reusable connectors only after removing customer identifiers and account-specific logic.</td><td>Engineering + sales</td><td>More public adoption while preserving commercial moat.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section class="pricing" aria-label="Business metric linkage">
         <h2>Metrics Engineering Is Accountable For</h2>
         <ul>
