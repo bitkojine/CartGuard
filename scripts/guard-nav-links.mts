@@ -4,45 +4,69 @@ import { join } from "node:path";
 const docsDir = "docs";
 const stylesPath = join(docsDir, "styles.css");
 const opsAllPages = [
-  "./index.html",
-  "./beachhead.html",
-  "./paid-pilots.html",
-  "./crm-setup.html",
-  "./roadmap.html",
-  "./research.html",
-  "./technical.html",
-  "./careers.html"
+  "ops/index.html",
+  "ops/beachhead.html",
+  "ops/paid-pilots.html",
+  "ops/crm-setup.html",
+  "ops/roadmap.html",
+  "ops/research.html",
+  "ops/technical.html",
+  "ops/careers.html"
 ];
 const opsNavPages = [
-  "./index.html",
-  "./beachhead.html",
-  "./paid-pilots.html",
-  "./research.html",
-  "./technical.html",
-  "./careers.html",
-  "./sales.html"
+  "/CartGuard/ops/",
+  "/CartGuard/ops/beachhead.html",
+  "/CartGuard/ops/paid-pilots.html",
+  "/CartGuard/ops/research.html",
+  "/CartGuard/ops/technical.html",
+  "/CartGuard/ops/careers.html",
+  "/CartGuard/sales/"
 ];
-const opsPages = [...opsAllPages, "./404.html"];
+const opsPages = [...opsAllPages, "404.html"];
 const salesPages = [
-  "./sales.html",
-  "./sales-problem.html",
-  "./sales-solution.html",
-  "./sales-proof.html",
-  "./sales-pilot.html",
-  "./index.html"
+  "sales/index.html",
+  "sales/problem.html",
+  "sales/solution.html",
+  "sales/proof.html",
+  "sales/pilot.html"
+];
+const salesNavPages = [
+  "/CartGuard/sales/",
+  "/CartGuard/sales/problem.html",
+  "/CartGuard/sales/solution.html",
+  "/CartGuard/sales/proof.html",
+  "/CartGuard/sales/pilot.html",
+  "/CartGuard/ops/"
 ];
 const allRequiredPages = [...opsAllPages, ...salesPages];
 
+const walkHtmlFiles = (baseDir: string): string[] => {
+  const files: string[] = [];
+  const walk = (relativeDir: string): void => {
+    const directory = join(baseDir, relativeDir);
+    const entries = readdirSync(directory, { withFileTypes: true });
+    for (const entry of entries) {
+      const nextRelative = relativeDir ? join(relativeDir, entry.name) : entry.name;
+      if (entry.isDirectory()) {
+        walk(nextRelative);
+      } else if (entry.isFile() && nextRelative.endsWith(".html")) {
+        files.push(nextRelative);
+      }
+    }
+  };
+  walk("");
+  return files;
+};
+
 for (const page of allRequiredPages) {
-  const relative = page.replace("./", "");
-  const fullPath = join(docsDir, relative);
+  const fullPath = join(docsDir, page);
   if (!existsSync(fullPath)) {
     console.error(`Required page is missing: ${fullPath}`);
     process.exit(1);
   }
 }
 
-const htmlFiles = readdirSync(docsDir).filter((file) => file.endsWith(".html"));
+const htmlFiles = walkHtmlFiles(docsDir);
 const violations: string[] = [];
 
 if (!existsSync(stylesPath)) {
@@ -83,24 +107,27 @@ if (!existsSync(stylesPath)) {
 for (const file of htmlFiles) {
   const fullPath = join(docsDir, file);
   const content = readFileSync(fullPath, "utf8");
-  const normalizedFile = `./${file}`;
+  const normalizedFile = file;
 
   const navMatch = content.match(/<nav class="top-nav"[\s\S]*?<\/nav>/);
   if (!navMatch) {
-    violations.push(`${fullPath}: missing <nav class="top-nav"> block`);
+    if (normalizedFile !== "index.html") {
+      violations.push(`${fullPath}: missing <nav class="top-nav"> block`);
+    }
     continue;
   }
 
   const navContent = navMatch[0];
-  const expectedPages = opsPages.includes(normalizedFile) ? opsNavPages : salesPages;
-  const expectedHomeHref = opsPages.includes(normalizedFile) ? "./index.html" : "./sales.html";
-  const homePattern = new RegExp(`href="${expectedHomeHref.replace(".", "\\.")}"[^>]*>\\s*Home\\s*<`);
+  const isOpsPage = opsPages.includes(normalizedFile);
+  const expectedPages = isOpsPage ? opsNavPages : salesNavPages;
+  const expectedHomeHref = isOpsPage ? "/CartGuard/ops/" : "/CartGuard/sales/";
+  const homePattern = new RegExp(`href="${expectedHomeHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"[^>]*>\\s*Home\\s*<`);
   if (!homePattern.test(navContent)) {
     violations.push(`${fullPath}: nav must include explicit Home link to ${expectedHomeHref}`);
   }
 
   for (const page of expectedPages) {
-    const linkPattern = new RegExp(`href="${page.replace(".", "\\.")}"`);
+    const linkPattern = new RegExp(`href="${page.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`);
     if (!linkPattern.test(navContent)) {
       violations.push(`${fullPath}: missing nav link ${page}`);
     }

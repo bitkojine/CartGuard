@@ -34,7 +34,7 @@ CartGuard provides recommendations and workflow checks only.
 
 ## Live Site Split
 
-- Buyer-facing flow: [Sales Site](https://bitkojine.github.io/CartGuard/sales.html)
+- Buyer-facing flow: [Sales Site](https://bitkojine.github.io/CartGuard/sales/)
 - Internal operating manual: [Ops Site](https://bitkojine.github.io/CartGuard/index.html)
 
 ## Product Architecture

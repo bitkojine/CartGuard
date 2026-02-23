@@ -1,8 +1,23 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const docsDir = "docs";
-const htmlFiles = readdirSync(docsDir).filter((file) => file.endsWith(".html"));
+const htmlFiles = [
+  "ops/index.html",
+  "ops/beachhead.html",
+  "ops/paid-pilots.html",
+  "ops/crm-setup.html",
+  "ops/roadmap.html",
+  "ops/research.html",
+  "ops/technical.html",
+  "ops/careers.html",
+  "sales/index.html",
+  "sales/problem.html",
+  "sales/solution.html",
+  "sales/proof.html",
+  "sales/pilot.html",
+  "404.html"
+];
 const violations: string[] = [];
 
 for (const file of htmlFiles) {

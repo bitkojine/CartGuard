@@ -2,7 +2,7 @@
   "name": "CartGuard",
   "short_name": "CartGuard",
   "description": "Build-time compliance gating for AI-generated ecommerce claims.",
-  "start_url": "/CartGuard/",
+  "start_url": "/CartGuard/ops/",
   "scope": "/CartGuard/",
   "display": "standalone",
   "background_color": "#fff7fb",

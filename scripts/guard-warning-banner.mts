@@ -1,21 +1,19 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const docsDir = "docs";
 const stylesPath = join(docsDir, "styles.css");
 const opsPages = [
-  "index.html",
-  "beachhead.html",
-  "paid-pilots.html",
-  "crm-setup.html",
-  "roadmap.html",
-  "research.html",
-  "technical.html",
-  "careers.html",
+  "ops/index.html",
+  "ops/beachhead.html",
+  "ops/paid-pilots.html",
+  "ops/crm-setup.html",
+  "ops/roadmap.html",
+  "ops/research.html",
+  "ops/technical.html",
+  "ops/careers.html",
   "404.html"
 ];
-
-const htmlFiles = readdirSync(docsDir).filter((file) => file.endsWith(".html"));
 const violations: string[] = [];
 
 if (!existsSync(stylesPath)) {
@@ -30,10 +28,7 @@ if (!existsSync(stylesPath)) {
   }
 }
 
-for (const file of htmlFiles) {
-  if (!opsPages.includes(file)) {
-    continue;
-  }
+for (const file of opsPages) {
   const fullPath = join(docsDir, file);
   const content = readFileSync(fullPath, "utf8");
 
