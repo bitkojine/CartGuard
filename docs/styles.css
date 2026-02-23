@@ -87,6 +87,16 @@ footer {
   text-decoration: none;
   font: 700 0.95rem/1 "IBM Plex Mono", monospace;
   letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.46rem;
+}
+
+.nav-mark {
+  width: 1.45rem;
+  height: 1.45rem;
+  display: block;
+  flex: 0 0 auto;
 }
 
 .nav-links {
