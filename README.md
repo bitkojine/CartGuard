@@ -1,114 +1,137 @@
 # CartGuard
 
-**CartGuard flags missing launch evidence for APAC ecommerce teams entering EU marketplaces before listings go live.**
+Policy-driven TypeScript tooling and public operations docs for launch-readiness checks in ecommerce workflows.
 
 [![Quality Gates](https://github.com/bitkojine/CartGuard/actions/workflows/quality.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/quality.yml)
+[![Block Test Doubles](https://github.com/bitkojine/CartGuard/actions/workflows/testdouble-block.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/testdouble-block.yml)
 [![Secret and Token Scan](https://github.com/bitkojine/CartGuard/actions/workflows/secrets.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/secrets.yml)
 [![Deploy GitHub Pages](https://github.com/bitkojine/CartGuard/actions/workflows/pages.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/pages.yml)
 
-## Current Status (Brutal)
+## What This Repo Contains
 
-- `Overall pitch readiness:` **5.8/10**
-- `Repo execution:` **7.6/10**
-- `Biggest weakness:` repeatable pilot-to-paid conversion proof is still limited.
+- A pnpm TypeScript monorepo with core packages for schema validation, policy evaluation, AI interface, and CLI tooling.
+- A public GitHub Pages site in `docs/` split into:
+  - sales pages (`/sales`) for external buyers
+  - ops pages (`/ops`) for operating manual content and research-backed claims
+- Guard scripts that enforce repository rules before merge.
 
-## What CartGuard Is
+## Live Site
 
-CartGuard is a spec-driven TypeScript monorepo for policy-based checks in ecommerce launch workflows.
+- Sales site: https://bitkojine.github.io/CartGuard/sales/
+- Ops manual: https://bitkojine.github.io/CartGuard/ops/
 
-For the current wedge, CartGuard helps teams detect **missing required documentation/evidence** before release steps.
+## Core Principles
 
-## What CartGuard Is Not
+- Recommendations only. No legal determinations.
+- Claims must be source-backed and confidence-labeled.
+- Repository quality gates are mandatory for commit and CI.
+- Test doubles are blocked by policy (details below).
 
-- Not legal advice.
-- Not a legal determination engine.
-- Not a replacement for qualified counsel.
-
-CartGuard provides recommendations and workflow checks only.
-
-## Who We Are Focused On Right Now
-
-- APAC marketplace-first sellers entering EU markets.
-- First beachhead: China -> Germany, Amazon.de-focused flows.
-- Team personas: Ops/compliance owner, marketplace owner, technical implementer.
-
-## Live Site Split
-
-- Buyer-facing flow: [Sales Site](https://bitkojine.github.io/CartGuard/sales/)
-- Internal operating manual: [Ops Site](https://bitkojine.github.io/CartGuard/index.html)
-
-## Product Architecture
+## Monorepo Structure
 
 ```text
-AI/Listing Input
-  -> Spec Validation (@cartguard/spec)
-  -> Policy Checks (@cartguard/engine)
-  -> Generator Interface (@cartguard/ai)
-  -> CLI Integration (@cartguard/cli)
-  -> CI Gate + Reports
+packages/
+  spec/      Domain schemas and policy contracts
+  engine/    Validation runtime and policy checks
+  ai/        Generator interface
+  cli/       cartguard CLI
+  example/   Example integration and sample inputs
+docs/
+  assets/    Research/careers data files for site rendering
+  ops/       Operations manual pages
+  sales/     Buyer-facing pages
+research/
+  entries/   Source-backed research notes
+scripts/
+  *.mts      Guard and utility scripts
 ```
 
-## Monorepo Layout
+## Requirements
 
-```text
-/packages
-  /spec      # Domain schemas + policy contracts
-  /engine    # Policy-driven validation runtime
-  /ai        # Content generator interface + mock implementation
-  /cli       # cartguard CLI
-  /example   # Reference integration and CI demo
-/docs        # GitHub Pages site (ops + sales)
-/research    # Fact-checked research docs and metadata entries
-/scripts     # Guardrails, CRM bootstrap, and repo checks
-```
+- Node.js `>=20`
+- pnpm `9.x`
 
 ## Quickstart
 
-Requirements:
-- Node `20+`
-- pnpm `9+`
-
-Install:
-
 ```bash
 pnpm install
-```
-
-Build all packages:
-
-```bash
 pnpm build
-```
-
-Run tests:
-
-```bash
 pnpm test
 ```
 
-Run full quality checks (lint + guards + tests):
+Run full repository gate (lint + all guards + tests):
 
 ```bash
 pnpm check
 ```
 
+## Command Reference
+
+- `pnpm lint`:
+  - Lints TypeScript in `packages/**/*.{ts,mts}` and `scripts/**/*.{ts,mts}`.
+- `pnpm guard`:
+  - Runs all repository guard scripts.
+- `pnpm check`:
+  - Runs `lint`, `guard`, then workspace tests.
+
+### Guard Commands
+
+- `pnpm guard:nav` checks required top-nav links.
+- `pnpm guard:warning` enforces ops warning banner presence/content.
+- `pnpm guard:css-refresh` enforces CSS refresh script/button wiring.
+- `pnpm guard:no-js` blocks tracked `.js/.mjs/.cjs` files.
+- `pnpm guard:no-any` blocks explicit `any` in tracked TypeScript files.
+- `pnpm guard:no-comments` blocks comments in tracked TypeScript code/tests.
+- `pnpm guard:research-data` validates research data schema/link integrity.
+- `pnpm guard:page-data` validates Research/Proof/Careers page data wiring.
+- `pnpm guard:test-doubles` blocks test-double usage across tracked `.ts`/`.tsx` files.
+- `pnpm guard:test-doubles-staged` blocks test-double usage in staged `.ts`/`.tsx` files only.
+
+## No Test Doubles Policy
+
+This repository blocks mocks, stubs, fakes, spies, and related patterns.
+
+### Where it is enforced
+
+- Pre-commit hook (`.husky/pre-commit`) runs:
+  - `pnpm guard:test-doubles-staged`
+- CI workflow (`.github/workflows/testdouble-block.yml`) runs:
+  - `pnpm guard:test-doubles`
+
+### Scope behavior
+
+- **Staged mode** (`guard:test-doubles-staged`): checks only staged files.
+- **Repo mode** (`guard:test-doubles`): checks all tracked files in git.
+
+### Config
+
+Use `.testdouble-block.json` to tune behavior:
+
+- `ignore`: directory prefixes to skip
+- `allow_files`: explicit file allowlist
+- `patterns`: additional regex patterns
+- `disabled_patterns`: disable built-in pattern IDs
+
+Ignored by default: `node_modules/`, `dist/`, `build/`, `coverage/`.
+
+### Required documentation if blocked
+
+If this guard blocks your commit, document intent in:
+
+- `docs/why-i-wanted-test-doubles.md`
+
 ## CLI Usage
 
-Build CLI first:
+Build and run the CLI:
 
 ```bash
 pnpm --filter @cartguard/cli build
-```
-
-Validate product content against policy:
-
-```bash
 node packages/cli/dist/src/bin/cartguard.js validate \
   packages/example/sample-product.json \
   --policy packages/example/sample-policy.json
 ```
 
-Validate with machine-readable output:
+JSON output mode:
 
 ```bash
 node packages/cli/dist/src/bin/cartguard.js validate \
@@ -117,7 +140,7 @@ node packages/cli/dist/src/bin/cartguard.js validate \
   --json
 ```
 
-Generate mock content:
+Generate output from sample input:
 
 ```bash
 node packages/cli/dist/src/bin/cartguard.js generate \
@@ -125,55 +148,27 @@ node packages/cli/dist/src/bin/cartguard.js generate \
   --out packages/example/generated-product.json
 ```
 
-Run example CI simulation:
+## CI Workflows
+
+- `quality.yml`: lint, guard, tests
+- `testdouble-block.yml`: dedicated test-double blocker
+- `secrets.yml`: secret/token scanning
+- `pages.yml`: deploys `docs/` to GitHub Pages
+
+## Contribution Checklist
+
+Before opening a PR, run:
 
 ```bash
-pnpm --filter @cartguard/example demo
+pnpm check
 ```
 
-## Validation Result Shape
+And confirm:
 
-```json
-{
-  "valid": false,
-  "errors": [
-    {
-      "code": "POLICY_MIN_CONFIDENCE",
-      "message": "Confidence 0.82 is below minConfidence 0.9",
-      "path": "claims.0.confidence"
-    }
-  ],
-  "warnings": []
-}
-```
-
-## Engineering Guardrails
-
-This repo enforces:
-- strict TypeScript
-- no tracked `.js/.mjs/.cjs` source files
-- no explicit `any` in TypeScript code
-- no code comments in TypeScript/test files (thinking goes in docs)
-- required top-nav links on every page
-- required brutal warning banner on ops pages
-- secret scanning in CI
-
-## Research Discipline
-
-We keep market claims auditable via:
-- `research/entries/*.md` for full notes
-- metadata with confidence score, source count, owner, verification date
-- website explorer at `docs/research.html`
-
-If we cannot source a claim, we do not use it in pitch or sales materials.
-
-## Near-Term Focus (30 Days)
-
-1. Run paid pilots with baseline and close-out metrics.
-2. Prove measurable reduction in missing-doc rate and review loop time.
-3. Improve pilot-to-paid conversion evidence.
-4. Tighten Germany-first rulepack and integration reliability.
+- No test doubles in `.ts/.tsx` files.
+- All guards pass.
+- Research/content changes keep data files and page wiring consistent.
 
 ## License
 
-MIT. See [LICENSE](./LICENSE).
+MIT — see `LICENSE`.
