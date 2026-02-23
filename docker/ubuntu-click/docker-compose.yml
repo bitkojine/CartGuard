@@ -1,0 +1,11 @@
+services:
+  cartguard-ubuntu-click:
+    build:
+      context: ../..
+      dockerfile: docker/ubuntu-click/Dockerfile
+    container_name: cartguard-ubuntu-click
+    ports:
+      - "6080:80"
+    shm_size: "2gb"
+    volumes:
+      - ../..:/workspace

@@ -29,7 +29,7 @@ pnpm build
 3. Package extension:
 
 ```bash
-pnpm --filter cartguard-vscode-extension exec vsce package --no-dependencies -o packages/vscode-extension/cartguard.vsix
+pnpm --filter cartguard-vscode-extension exec vsce package --no-dependencies -o cartguard.vsix
 ```
 
 4. Install extension:
@@ -77,6 +77,49 @@ How to continue slides:
 How to finish:
 - Continue through all steps until the final action (the host closes at the end), or
 - Stop from terminal with `Ctrl+C` if you want to exit early.
+
+### Literal Clicks in Fresh Ubuntu (Docker + Browser Desktop)
+
+Use this when you want to simulate a fresh Ubuntu machine and physically click every slideshow step.
+
+1. Start everything with one command (auto-play mode by default):
+
+```bash
+./scripts/run-ubuntu-click-demo.sh
+```
+
+What this script now does automatically:
+- Builds/starts the Ubuntu desktop container
+- Runs:
+  - `pnpm install --frozen-lockfile`
+  - `pnpm build`
+  - `pnpm --filter cartguard-vscode-extension test:e2e:slow:auto`
+- Auto-clicks through decision gates and `Continue` until the final close step
+
+Manual click mode (optional):
+
+```bash
+./scripts/run-ubuntu-click-demo.sh manual
+```
+
+2. Open browser desktop:
+- `http://localhost:6080`
+
+3. In the Extension Development Host window:
+- Auto mode: watch it advance all slides and close at the finish line.
+- Manual mode: click `Continue` manually for every step.
+
+4. Optional: watch demo logs from host terminal:
+
+```bash
+docker exec cartguard-ubuntu-click bash -lc 'tail -f /tmp/cartguard-slow-demo.log'
+```
+
+5. Stop container when done:
+
+```bash
+docker compose -f docker/ubuntu-click/docker-compose.yml down
+```
 
 ### Extension Commands
 
@@ -143,7 +186,7 @@ pnpm --filter cartguard-vscode-extension test:e2e:slow
     ```bash
     pnpm install --frozen-lockfile
     pnpm --filter cartguard-vscode-extension build
-    pnpm --filter cartguard-vscode-extension exec vsce package --no-dependencies -o packages/vscode-extension/cartguard.vsix
+    pnpm --filter cartguard-vscode-extension exec vsce package --no-dependencies -o cartguard.vsix
     ```
 
 - CartGuard commands not visible

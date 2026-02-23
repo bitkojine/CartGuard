@@ -34,6 +34,10 @@ const main = async (): Promise<void> => {
     await runTests({
       extensionDevelopmentPath,
       extensionTestsPath,
+      extensionTestsEnv: {
+        ...process.env,
+        CARTGUARD_DEMO_CLOSE_WINDOW: process.env.CARTGUARD_DEMO_CLOSE_WINDOW ?? "0"
+      },
       launchArgs: [
         demoWorkspacePath,
         "--disable-extensions",

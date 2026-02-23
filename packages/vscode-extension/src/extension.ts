@@ -469,6 +469,14 @@ const statusClass = (status: string): string => {
   return "bad";
 };
 
+const toPositiveInt = (value: string | undefined, fallback: number): number => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return fallback;
+  }
+  return Math.floor(parsed);
+};
+
 const evidenceTypeClass = (evidenceType: DemoSlide["evidenceType"]): string => {
   if (evidenceType === "legal") {
     return "bad";
@@ -548,7 +556,9 @@ const renderDemoHtml = (
   rulesPath: string,
   applicabilityPath: string,
   run: EvaluationBundle | undefined,
-  workflowData: WorkflowData | undefined
+  workflowData: WorkflowData | undefined,
+  autoplayEnabled: boolean,
+  autoplayStepMs: number
 ): string => {
   const fallbackSlide: DemoSlide = {
     title: "Step",
@@ -909,6 +919,9 @@ const renderDemoHtml = (
       <script>
         const vscode = acquireVsCodeApi();
         const button = document.getElementById("continue");
+        const autoplayEnabled = ${autoplayEnabled ? "true" : "false"};
+        const autoplayStepMs = ${autoplayStepMs};
+        const autoplayRecommendedDecision = ${JSON.stringify(gate?.recommended ?? "")};
         if (button) {
           button.addEventListener("click", () => {
             vscode.postMessage({ type: "continue" });
@@ -920,6 +933,25 @@ const renderDemoHtml = (
             vscode.postMessage({ type: "gateDecision", decision });
           });
         });
+        if (autoplayEnabled) {
+          setTimeout(() => {
+            const continueButton = document.getElementById("continue");
+            if (continueButton && !continueButton.disabled) {
+              continueButton.click();
+              return;
+            }
+
+            const decisionButtons = Array.from(document.querySelectorAll(".decision"));
+            if (decisionButtons.length === 0) {
+              return;
+            }
+            const recommendedButton = decisionButtons.find((decisionButton) => {
+              return decisionButton.getAttribute("data-decision") === autoplayRecommendedDecision;
+            });
+            const targetButton = recommendedButton ?? decisionButtons[0];
+            targetButton.click();
+          }, autoplayStepMs);
+        }
       </script>
     </body>
   </html>
@@ -1061,6 +1093,9 @@ const renderProcessHtml = (
 
 export const activate = (context: vscode.ExtensionContext): void => {
   const output = vscode.window.createOutputChannel("CartGuard");
+  const shouldCloseWindowOnDone = process.env.CARTGUARD_DEMO_CLOSE_WINDOW !== "0";
+  const autoplayEnabled = process.env.CARTGUARD_DEMO_AUTOPLAY === "1";
+  const autoplayStepMs = toPositiveInt(process.env.CARTGUARD_DEMO_AUTOPLAY_STEP_MS, 1500);
   const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
   const actionsProvider = new CartGuardActionsProvider();
   let demoPanel: vscode.WebviewPanel | undefined;
@@ -1087,12 +1122,14 @@ export const activate = (context: vscode.ExtensionContext): void => {
       rulesPath,
       applicabilityPath,
       demoRun,
-      workflowData
+      workflowData,
+      autoplayEnabled,
+      autoplayStepMs
     );
   };
 
   const closeDemoIfDone = async (): Promise<void> => {
-    if (!demoState?.done) {
+    if (!demoState?.done || !shouldCloseWindowOnDone) {
       return;
     }
 
