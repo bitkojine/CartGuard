@@ -1,6 +1,5 @@
 import { ProductContentSchema, type ProductContent } from "@cartguard/spec";
 
-/** Contract for content generation adapters. */
 export interface ContentGenerator {
   generate(input: unknown): Promise<ProductContent>;
 }
@@ -17,10 +16,6 @@ const assertProductContent = (data: unknown): ProductContent => {
   return parsed.data;
 };
 
-/**
- * Deterministic mock generator for development, demos, and tests.
- * Real LLM/RAG adapters should implement the same ContentGenerator contract.
- */
 export class MockContentGenerator implements ContentGenerator {
   generate(input: unknown): Promise<ProductContent> {
     const seed = input as {
@@ -53,6 +48,5 @@ export class MockContentGenerator implements ContentGenerator {
   }
 }
 
-/** Validate arbitrary generated payloads against ProductContentSchema. */
 export const ensureGeneratedContent = (content: unknown): ProductContent =>
   assertProductContent(content);

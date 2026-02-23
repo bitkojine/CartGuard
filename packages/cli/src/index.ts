@@ -104,7 +104,6 @@ const runGenerate = async (args: string[]): Promise<number> => {
   return 0;
 };
 
-/** Entry point for cartguard CLI command dispatch. */
 export const runCli = async (argv: string[]): Promise<number> => {
   const [command, ...args] = argv;
 

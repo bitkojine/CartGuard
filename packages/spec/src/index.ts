@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-/** Allowed claim categories in CartGuard product content. */
 export const ClaimCategoryValues = [
   "sustainability",
   "health",
@@ -8,13 +7,10 @@ export const ClaimCategoryValues = [
   "general"
 ] as const;
 
-/** Schema for claim category values. */
 export const ClaimCategorySchema = z.enum(ClaimCategoryValues);
 
-/** Type for claim category values. */
 export type ClaimCategory = z.infer<typeof ClaimCategorySchema>;
 
-/** Schema for a single source-linked product claim. */
 export const ClaimSchema = z.object({
   id: z.string().uuid(),
   statement: z.string().min(1),
@@ -24,7 +20,6 @@ export const ClaimSchema = z.object({
   createdAt: z.string().datetime()
 });
 
-/** Type for a single source-linked product claim. */
 export type Claim = z.infer<typeof ClaimSchema>;
 
 const ProductContentSchemaBase = z.object({
@@ -34,10 +29,6 @@ const ProductContentSchemaBase = z.object({
   claims: z.array(ClaimSchema).min(1)
 });
 
-/**
- * Product content payload with schema-level integrity checks.
- * Duplicate claims are rejected by normalized statement + source URL + category.
- */
 export const ProductContentSchema = ProductContentSchemaBase.superRefine(
   (content, ctx) => {
     const seen = new Set<string>();
@@ -62,10 +53,8 @@ export const ProductContentSchema = ProductContentSchemaBase.superRefine(
   }
 );
 
-/** Type for product content payload. */
 export type ProductContent = z.infer<typeof ProductContentSchema>;
 
-/** Schema for policy objects that drive validation behavior. */
 export const ValidationPolicySchema = z.object({
   minConfidence: z.number().min(0).max(1),
   allowedCategories: z.array(ClaimCategorySchema),
@@ -73,5 +62,4 @@ export const ValidationPolicySchema = z.object({
   maxClaimsPerProduct: z.number().int().positive()
 });
 
-/** Type for validation policy objects. */
 export type ValidationPolicy = z.infer<typeof ValidationPolicySchema>;

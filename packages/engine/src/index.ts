@@ -6,14 +6,12 @@ import {
   type ValidationPolicy
 } from "@cartguard/spec";
 
-/** Validation issue emitted by the CartGuard engine. */
 export interface ValidationIssue {
   code: string;
   message: string;
   path?: string;
 }
 
-/** Engine output for product content validation. */
 export interface ValidationResult {
   valid: boolean;
   errors: ValidationIssue[];
@@ -92,10 +90,6 @@ const enforcePolicy = (
   };
 };
 
-/**
- * Validate product content against schemas and explicit policy inputs.
- * The result is deterministic and traceable to spec + policy constraints.
- */
 export const validateProductContent = (
   contentInput: unknown,
   policyInput: unknown
