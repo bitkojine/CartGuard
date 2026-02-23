@@ -1,110 +1,72 @@
 # CartGuard
 
-**Flag missing evidence before AI product claims go live.**
+**CartGuard flags missing launch evidence for APAC ecommerce teams entering EU marketplaces before listings go live.**
 
-CartGuard is a TypeScript SDK that turns AI-generated ecommerce content into source-linked, policy-checked claims and flags missing required evidence/documents at build time.
+[![Quality Gates](https://github.com/bitkojine/CartGuard/actions/workflows/quality.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/quality.yml)
+[![Secret and Token Scan](https://github.com/bitkojine/CartGuard/actions/workflows/secrets.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/secrets.yml)
+[![Deploy GitHub Pages](https://github.com/bitkojine/CartGuard/actions/workflows/pages.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/pages.yml)
 
-[Live Site](https://bitkojine.github.io/CartGuard/) • [Sales Backlog](./BACKLOG.md)
+## Current Status (Brutal)
 
-## Build Battle Script (Use This Live)
+- `Overall pitch readiness:` **5.8/10**
+- `Repo execution:` **7.6/10**
+- `Biggest weakness:` repeatable pilot-to-paid conversion proof is still limited.
 
-1. "We are building developer-first compliance infrastructure for AI-generated ecommerce content."
-2. "CartGuard checks source-linked claims in CI and flags missing required evidence before release."
-3. "We enter through engineering teams first, then expand to compliance and operations. This is a Stripe-style go-to-market path."
-4. "If cosmetics does not validate fast, we pivot into adjacent regulated claim workflows."
-5. "Tonight we can show a working CLI and policy engine, not slides-only vapor."
+## What CartGuard Is
 
-## Event Win Readiness (Brutal)
+CartGuard is a spec-driven TypeScript monorepo for policy-based checks in ecommerce launch workflows.
 
-Context: `Make Kaunas Great Again` build/pitch event on **February 22, 2026**.
+For the current wedge, CartGuard helps teams detect **missing required documentation/evidence** before release steps.
 
-Overall chance to stand out tonight: `6.6/10`
+## What CartGuard Is Not
 
-Why this is not higher:
-- No customer proof yet (biggest weakness in front of judges)
-- Business urgency is still argued, not proven
-- Message can still drift into technical language if not tightly delivered
+- Not legal advice.
+- Not a legal determination engine.
+- Not a replacement for qualified counsel.
 
-Scoring for tonight (0-10):
-- Clear problem statement: `8.0`
-- Live demo reliability: `8.1`
-- Product quality for MVP stage: `7.3`
-- Commercial proof: `3.8`
-- Memorability of pitch: `6.7`
-- Team readiness to answer hard questions: `6.4`
+CartGuard provides recommendations and workflow checks only.
 
-Likely judge reaction:
-- "Strong technical execution."
-- "Interesting market pain."
-- "Show me proof that buyers pay and this is urgent now."
+## Who We Are Focused On Right Now
 
-Highest ROI moves before/at the event:
-1. Lead with one sentence: "We stop risky AI cosmetics claims before they go live."
-2. Show the working CLI in under 60 seconds.
-3. Admit unknowns directly: no pilot proof yet, currently validating buyer urgency.
-4. Ask for 3 pilot intros from the room instead of pretending traction.
-5. End with a concrete next step and timeline (first pilot in 30 days).
+- APAC marketplace-first sellers entering EU markets.
+- First beachhead: China -> Germany, Amazon.de-focused flows.
+- Team personas: Ops/compliance owner, marketplace owner, technical implementer.
 
-## Current Status
+## Live Site Split
 
-- Pitch-readiness score (brutal): `5.4/10`
-- Repo execution score: `7.3/10`
-- Current wedge: `EU cosmetics ecommerce` (build-time claim gating)
+- Buyer-facing flow: [Sales Site](https://bitkojine.github.io/CartGuard/sales.html)
+- Internal operating manual: [Ops Site](https://bitkojine.github.io/CartGuard/index.html)
 
-## Who This Is For
+## Product Architecture
 
-CartGuard is currently built and positioned for teams that:
-- Operate EU cosmetics ecommerce listings
-- Use headless TypeScript/Node workflows
-- Need compliance and engineering to collaborate in CI
-- Want machine-readable, auditable claim validation
+```text
+AI/Listing Input
+  -> Spec Validation (@cartguard/spec)
+  -> Policy Checks (@cartguard/engine)
+  -> Generator Interface (@cartguard/ai)
+  -> CLI Integration (@cartguard/cli)
+  -> CI Gate + Reports
+```
 
-Primary converting visitors:
-- Head of Engineering
-- Compliance / Legal lead
-- Platform operations lead
-
-## Why Teams Use CartGuard
-
-- Flag missing required evidence before products reach production
-- Enforce documentation checks in CI, not after legal escalation
-- Keep claim decisions traceable to sources and policy configuration
-- Do not provide legal advice or legal determinations
-- Produce deterministic pass/fail outputs for internal and external audit trails
-
-## What CartGuard Includes
-
-- `@cartguard/spec`: domain schemas + policy contracts (source of truth)
-- `@cartguard/engine`: policy-driven validation runtime
-- `@cartguard/ai`: generator interfaces + mock adapter
-- `@cartguard/cli`: build-time command interface
-- `@cartguard/example`: reference sample content + CI simulation
-
-## Fact-Checked Research Area
-
-- Repo research docs: `research/`
-- Research entries: `research/entries/`
-- Website research explorer: `docs/research.html`
-- Website metadata index: `docs/assets/research/index.json`
-
-Each research entry should include metadata (confidence score, source links, created date, last verified date, owner, and status) so market claims remain auditable.
-
-Monorepo layout:
+## Monorepo Layout
 
 ```text
 /packages
-  /spec
-  /engine
-  /ai
-  /cli
-  /example
+  /spec      # Domain schemas + policy contracts
+  /engine    # Policy-driven validation runtime
+  /ai        # Content generator interface + mock implementation
+  /cli       # cartguard CLI
+  /example   # Reference integration and CI demo
+/docs        # GitHub Pages site (ops + sales)
+/research    # Fact-checked research docs and metadata entries
+/scripts     # Guardrails, CRM bootstrap, and repo checks
 ```
 
 ## Quickstart
 
 Requirements:
-- Node 20+
-- pnpm 9+
+- Node `20+`
+- pnpm `9+`
 
 Install:
 
@@ -112,19 +74,31 @@ Install:
 pnpm install
 ```
 
-Build:
+Build all packages:
 
 ```bash
 pnpm build
 ```
 
-Test:
+Run tests:
 
 ```bash
 pnpm test
 ```
 
+Run full quality checks (lint + guards + tests):
+
+```bash
+pnpm check
+```
+
 ## CLI Usage
+
+Build CLI first:
+
+```bash
+pnpm --filter @cartguard/cli build
+```
 
 Validate product content against policy:
 
@@ -134,15 +108,7 @@ node packages/cli/dist/src/bin/cartguard.js validate \
   --policy packages/example/sample-policy.json
 ```
 
-Generate mock AI content:
-
-```bash
-node packages/cli/dist/src/bin/cartguard.js generate \
-  packages/example/sample-input.json \
-  --out packages/example/generated-product.json
-```
-
-Machine-readable output:
+Validate with machine-readable output:
 
 ```bash
 node packages/cli/dist/src/bin/cartguard.js validate \
@@ -151,7 +117,21 @@ node packages/cli/dist/src/bin/cartguard.js validate \
   --json
 ```
 
-## Example Failing Output
+Generate mock content:
+
+```bash
+node packages/cli/dist/src/bin/cartguard.js generate \
+  packages/example/sample-input.json \
+  --out packages/example/generated-product.json
+```
+
+Run example CI simulation:
+
+```bash
+pnpm --filter @cartguard/example demo
+```
+
+## Validation Result Shape
 
 ```json
 {
@@ -167,83 +147,32 @@ node packages/cli/dist/src/bin/cartguard.js validate \
 }
 ```
 
-## Demo CI Simulation
+## Engineering Guardrails
 
-```bash
-pnpm --filter @cartguard/example demo
-```
+This repo enforces:
+- strict TypeScript
+- no tracked `.js/.mjs/.cjs` source files
+- no explicit `any` in TypeScript code
+- no code comments in TypeScript/test files (thinking goes in docs)
+- required top-nav links on every page
+- required brutal warning banner on ops pages
+- secret scanning in CI
 
-The demo intentionally exits with code `1` when strict policy fails.
+## Research Discipline
 
-## Spec-Driven Model
+We keep market claims auditable via:
+- `research/entries/*.md` for full notes
+- metadata with confidence score, source count, owner, verification date
+- website explorer at `docs/research.html`
 
-Core contracts in `@cartguard/spec`:
-- `ClaimSchema`
-- `ProductContentSchema`
-- `ValidationPolicySchema`
+If we cannot source a claim, we do not use it in pitch or sales materials.
 
-Engine behavior in `@cartguard/engine`:
-- Validate schemas first
-- Enforce policy constraints second
-- Return structured `ValidationResult`
+## Near-Term Focus (30 Days)
 
-## GitHub Pages Deployment
-
-This repository deploys static site content from `docs/` using GitHub Actions workflow:
-- `/.github/workflows/pages.yml`
-
-Deployment trigger:
-- Push to `main`
-
-Site URL:
-- [https://bitkojine.github.io/CartGuard/](https://bitkojine.github.io/CartGuard/)
-
-## Top Product Weakness (Brutal)
-
-The biggest weakness is not product architecture. It is missing market proof.
-
-Today CartGuard has no public evidence that target teams will pay now for this workflow over internal tooling, manual compliance review, or agency processes. Until that proof exists, the product is credible but commercially unproven.
-
-## Re-Rating (Brutal)
-
-Pitch/business scores (0-10):
-- Problem severity: `9.0`
-- Willingness to pay now: `5.0`
-- Differentiation in buyer eyes: `5.2`
-- GTM readiness: `4.3`
-- Investability at this stage: `4.8`
-
-Updated pitch-readiness score: `5.4/10`
-
-Repo/product scores (0-10):
-- Codebase quality and structure: `8.2`
-- Spec-driven integrity: `8.1`
-- CLI and developer usability: `7.0`
-- Test confidence for MVP scope: `7.1`
-- Production maturity: `6.0`
-
-Updated repo execution score: `7.3/10`
-
-Hard truth:
-- If pilot evidence is not captured soon, this remains a strong technical project with weak buying urgency.
-- The next real upgrade is customer proof, not more internal engineering polish.
-
-## If Current Wedge Fails
-
-Pivot options:
-- EU supplements / nutraceutical claim compliance
-- Sustainability claim enforcement across DTC
-- Marketplace seller listing compliance gate
-- Pricing and promotion claim compliance engine
-- Cross-border localization compliance validation
-- Enterprise policy engine API
-
-## Roadmap (Near-Term)
-
-- Secure design-partner pilots in EU cosmetics
-- Add jurisdiction-aware cosmetics policy adapters
-- Add first real platform integration adapter
-- Publish measurable pilot outcomes
+1. Run paid pilots with baseline and close-out metrics.
+2. Prove measurable reduction in missing-doc rate and review loop time.
+3. Improve pilot-to-paid conversion evidence.
+4. Tighten Germany-first rulepack and integration reliability.
 
 ## License
 
