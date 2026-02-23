@@ -1,6 +1,6 @@
 # CartGuard
 
-Policy-driven TypeScript tooling and public operations docs for launch-readiness checks in ecommerce workflows.
+Spec-driven compliance-check tooling for cross-border ecommerce launches, with a VSCode demo extension and public docs.
 
 [![Quality Gates](https://github.com/bitkojine/CartGuard/actions/workflows/quality.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/quality.yml)
 [![Block Test Doubles](https://github.com/bitkojine/CartGuard/actions/workflows/testdouble-block.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/testdouble-block.yml)
@@ -9,11 +9,9 @@ Policy-driven TypeScript tooling and public operations docs for launch-readiness
 
 ## What This Repo Contains
 
-- A pnpm TypeScript monorepo with core packages for schema validation, policy evaluation, AI interface, and CLI tooling.
-- A public GitHub Pages site in `docs/` split into:
-  - sales pages (`/sales`) for external buyers
-  - ops pages (`/ops`) for operating manual content and research-backed claims
-- Guard scripts that enforce repository rules before merge.
+- TypeScript monorepo packages for domain schemas, rule evaluation, AI scaffolding, CLI tooling, and a VSCode extension.
+- A public GitHub Pages site in `docs/` for sales and ops/research content.
+- Guard scripts and CI gates that enforce repo policy before merge.
 
 ## Live Site
 
@@ -36,6 +34,7 @@ packages/
   ai/        Generator interface
   cli/       cartguard CLI
   example/   Example integration and sample inputs
+  vscode-extension/ VSCode extension for demo + visualization
 docs/
   assets/    Research/careers data files for site rendering
   ops/       Operations manual pages
@@ -63,6 +62,57 @@ Run full repository gate (lint + all guards + tests):
 
 ```bash
 pnpm check
+```
+
+## VSCode Extension Demo
+
+The extension is currently the fastest way to demo CartGuard end-to-end.
+
+### Commands exposed by the extension
+
+- `CartGuard: Run Demo`
+- `CartGuard: Validate JSON Files`
+- `CartGuard: Open Process View`
+- `CartGuard: Open Slideshow Demo`
+- `CartGuard: Demo Next Step`
+
+### Run automated E2E demo
+
+From repo root:
+
+```bash
+pnpm --filter cartguard-vscode-extension test:e2e
+```
+
+What it does:
+
+- launches an Extension Development Host
+- runs the demo commands
+- verifies outputs
+- closes the VSCode test window after slideshow completion
+
+### Run slow/manual slideshow demo
+
+From repo root:
+
+```bash
+pnpm --filter cartguard-vscode-extension test:e2e:slow
+```
+
+Slow mode behavior:
+
+- step delays are enabled
+- slideshow waits for manual Continue clicks
+- host remains open for a hold window (`CARTGUARD_E2E_HOLD_OPEN_MS`)
+- once final slideshow step is completed, the window closes automatically
+
+You can override timing:
+
+```bash
+CARTGUARD_E2E_STEP_MS=1800 \
+CARTGUARD_E2E_HOLD_OPEN_MS=180000 \
+CARTGUARD_E2E_MANUAL_CONTINUE=1 \
+pnpm --filter cartguard-vscode-extension test:e2e
 ```
 
 ## Command Reference
@@ -146,6 +196,12 @@ Generate output from sample input:
 node packages/cli/dist/src/bin/cartguard.js generate \
   packages/example/sample-input.json \
   --out packages/example/generated-product.json
+```
+
+Run extension-only tests:
+
+```bash
+pnpm --filter cartguard-vscode-extension test:e2e
 ```
 
 ## CI Workflows

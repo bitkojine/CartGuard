@@ -23,7 +23,7 @@
 From repo root:
 
 ```bash
-pnpm --filter @cartguard/vscode-extension build
+pnpm --filter cartguard-vscode-extension build
 ```
 
 In VSCode, open this repo and run extension host from `packages/vscode-extension` using the default extension debug launch config.
