@@ -303,9 +303,17 @@ main > * + * {
   line-height: 1.45;
 }
 
-.warning-banner ul {
-  margin: 0.7rem 0 0;
+.warning-banner .priority-list > li {
+  margin-top: 0.25rem;
+}
+
+.warning-banner .priority-list > li > ul {
+  margin: 0.45rem 0 0;
   padding-left: 1.2rem;
+}
+
+.warning-banner .priority-list > li > ul > li {
+  margin-top: 0.2rem;
 }
 
 .hero .warning-banner + .eyebrow {
