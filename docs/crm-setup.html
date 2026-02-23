@@ -44,6 +44,28 @@
         </ul>
       </section>
 
+      <section class="architecture" aria-label="Public vs private boundary">
+        <h2>What Is Public vs Private</h2>
+        <div class="table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Public (GitHub)</th>
+                <th>Private (Airtable / Secrets)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>CRM schema</td><td>`crm/schema.json`</td><td>None</td></tr>
+              <tr><td>Automation scripts</td><td>`scripts/*.mts`</td><td>None</td></tr>
+              <tr><td>Customer records</td><td>Never committed</td><td>All rows in Airtable tables</td></tr>
+              <tr><td>Credentials</td><td>Never committed</td><td>`AIRTABLE_TOKEN`, `AIRTABLE_BASE_ID` in local env / GitHub secrets</td></tr>
+              <tr><td>CI output</td><td>Pass/fail status</td><td>No secret values</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section class="architecture" aria-label="Repo structure">
         <h2>Suggested Repo Structure</h2>
         <pre><code>crm/
@@ -73,6 +95,16 @@ pnpm crm:check
 pnpm crm:seed-demo</code></pre>
       </section>
 
+      <section class="pricing" aria-label="Required token scopes">
+        <h2>Required Airtable Token Scope</h2>
+        <ul>
+          <li>Required: `schema.bases:read`</li>
+          <li>Required for bootstrap apply: `schema.bases:write`</li>
+          <li>Recommended only if needed later: `data.records:read`, `data.records:write`</li>
+          <li>Restrict token access to one base only (CartGuard CRM base).</li>
+        </ul>
+      </section>
+
       <section class="architecture" aria-label="Schema example">
         <h2>Schema Spec Example (`crm/schema.json`)</h2>
         <pre><code>{
@@ -89,7 +121,6 @@ pnpm crm:seed-demo</code></pre>
     {
       "name": "Deals",
       "fields": [
-        { "name": "Account", "type": "linkToRecord", "table": "Accounts" },
         { "name": "Stage", "type": "singleSelect", "options": ["Lead", "Qualified", "Discovery Done", "Pilot Proposed", "Pilot Active", "Won", "Lost"] },
         { "name": "Value EUR", "type": "currency", "precision": 2 },
         { "name": "Next Step", "type": "multilineText" },
@@ -110,7 +141,7 @@ pnpm crm:seed-demo</code></pre>
       </section>
 
       <section class="architecture" aria-label="CI example">
-        <h2>CI Check Example (`.github/workflows/crm-schema-check.yml`)</h2>
+        <h2>CI Security + Quality Checks</h2>
         <pre><code>name: CRM Schema Check
 
 on:
@@ -125,31 +156,51 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 9.15.4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm tsx scripts/check-airtable-schema.ts
+      - run: pnpm crm:check
         env:
           AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
-          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}</code></pre>
+          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+
+# separate workflow: gitleaks secrets scan
+# fails if credentials are committed</code></pre>
+      </section>
+
+      <section class="pricing" aria-label="Safe protocol">
+        <h2>Safe Protocol (Non-Negotiable)</h2>
+        <ol>
+          <li>Never paste tokens in chat, issues, PR comments, or docs.</li>
+          <li>Store `AIRTABLE_TOKEN` only in local shell or GitHub Secrets.</li>
+          <li>Run `pnpm crm:check` before and after schema changes.</li>
+          <li>Use least privilege scope and one-base-only access.</li>
+          <li>Rotate tokens immediately after suspected exposure.</li>
+        </ol>
       </section>
 
       <section class="pricing" aria-label="Privacy rules">
-        <h2>Privacy Rules (Non-Negotiable)</h2>
+        <h2>Data Safety Rules</h2>
         <ul>
           <li>No customer rows in GitHub.</li>
           <li>No API keys in files or commits.</li>
-          <li>Use least-privilege Airtable token scope.</li>
-          <li>Rotate secrets after team/member changes.</li>
+          <li>Secret scanning is enforced in CI with gitleaks.</li>
+          <li>Rotate secrets after team/member changes and any leak event.</li>
         </ul>
       </section>
 
-      <section class="pricing" aria-label="Current status">
-        <h2>Current Status</h2>
-        <p>This page is public technical documentation. Production Airtable base remains private.</p>
+      <section class="pricing" aria-label="Leak response protocol">
+        <h2>Leak Response Protocol</h2>
+        <ol>
+          <li>Revoke exposed token immediately in Airtable.</li>
+          <li>Create new token with minimal scopes.</li>
+          <li>Update local env and GitHub Secrets.</li>
+          <li>Re-run `pnpm crm:check` and CI scans.</li>
+          <li>Document incident in internal notes and continue.</li>
+        </ol>
       </section>
     </main>
 
