@@ -1,56 +1,47 @@
 # CartGuard
 
-Spec-driven compliance-check tooling for cross-border ecommerce launches, with a VSCode demo extension and public docs.
+Spec-driven compliance-check tooling for cross-border ecommerce launches.
 
 [![Quality Gates](https://github.com/bitkojine/CartGuard/actions/workflows/quality.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/quality.yml)
 [![Block Test Doubles](https://github.com/bitkojine/CartGuard/actions/workflows/testdouble-block.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/testdouble-block.yml)
 [![Secret and Token Scan](https://github.com/bitkojine/CartGuard/actions/workflows/secrets.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/secrets.yml)
 [![Deploy GitHub Pages](https://github.com/bitkojine/CartGuard/actions/workflows/pages.yml/badge.svg)](https://github.com/bitkojine/CartGuard/actions/workflows/pages.yml)
 
-## What This Repo Contains
+## What CartGuard Is
 
-- TypeScript monorepo packages for domain schemas, rule evaluation, AI scaffolding, CLI tooling, and a VSCode extension.
-- A public GitHub Pages site in `docs/` for sales and ops/research content.
-- Guard scripts and CI gates that enforce repo policy before merge.
+CartGuard provides deterministic, source-backed compliance preflight checks for ecommerce product launches.
 
-## Live Site
+Current repository focus:
+- TypeScript monorepo for spec, engine, AI interface, CLI, and VSCode demo extension.
+- Data-driven VSCode slideshow demo for internal/external launch workflows.
+- Strict repository quality controls (lint/guards/tests) in pre-commit and CI.
 
-- Sales site: https://bitkojine.github.io/CartGuard/sales/
-- Ops manual: https://bitkojine.github.io/CartGuard/ops/
+Operating principles:
+- Recommendation system, not legal determination.
+- Traceable evidence and confidence-labeled outputs.
+- Deterministic builds and reproducible setup (`pnpm`, lockfile-driven).
 
-## Core Principles
-
-- Recommendations only. No legal determinations.
-- Claims must be source-backed and confidence-labeled.
-- Repository quality gates are mandatory for commit and CI.
-- Test doubles are blocked by policy (details below).
-
-## Monorepo Structure
+## Monorepo Layout
 
 ```text
 packages/
-  spec/      Domain schemas and policy contracts
-  engine/    Validation runtime and policy checks
-  ai/        Generator interface
-  cli/       cartguard CLI
-  example/   Example integration and sample inputs
-  vscode-extension/ VSCode extension for demo + visualization
-docs/
-  assets/    Research/careers data files for site rendering
-  ops/       Operations manual pages
-  sales/     Buyer-facing pages
-research/
-  entries/   Source-backed research notes
-scripts/
-  *.mts      Guard and utility scripts
+  spec/              Domain schemas and policy contracts
+  engine/            Rule evaluation runtime
+  ai/                Generator interface
+  cli/               cartguard CLI
+  example/           Example integration + sample inputs
+  vscode-extension/  VSCode extension demo + E2E
+scripts/             Guard and utility scripts
+docs/                Public GitHub Pages content
+research/            Source-backed research notes
 ```
 
 ## Requirements
 
 - Node.js `>=20`
-- pnpm `9.x`
+- pnpm `9.15.4` (pinned in `packageManager`)
 
-## Quickstart
+## Quickstart (Deterministic)
 
 ```bash
 pnpm install --frozen-lockfile
@@ -58,145 +49,75 @@ pnpm build
 pnpm test
 ```
 
-Run full repository gate (lint + all guards + tests):
+Run full repository gate:
 
 ```bash
 pnpm check
 ```
 
-## VSCode Extension Demo
+## VSCode Demo (Primary Product Demo Path)
 
-The extension is currently the fastest way to demo CartGuard end-to-end.
+The extension is the fastest way to demo CartGuard end-to-end.
 
-### Commands exposed by the extension
+### Commands
 
 - `CartGuard: Run Demo`
 - `CartGuard: Validate JSON Files`
 - `CartGuard: Open Process View`
 - `CartGuard: Open Slideshow Demo`
 - `CartGuard: Demo Next Step`
+- `CartGuard: Reopen Slideshow Demo`
 
-### Run automated E2E demo
-
-From repo root:
+### Automated E2E
 
 ```bash
 pnpm --filter cartguard-vscode-extension test:e2e
 ```
 
-What it does:
-
-- launches an Extension Development Host
-- runs the demo commands
-- verifies outputs
-- closes the VSCode test window after slideshow completion
-- reads slideshow/runtime data from `packages/vscode-extension/demo/*.json`
-
-### Run slow/manual slideshow demo
-
-From repo root:
+### Slow/manual slideshow E2E
 
 ```bash
 pnpm --filter cartguard-vscode-extension test:e2e:slow
 ```
 
-Slow mode behavior:
+Behavior:
+- opens Extension Development Host
+- runs demo flow
+- waits for manual `Continue` clicks
+- closes VSCode at final step
 
-- step delays are enabled
-- slideshow waits for manual Continue clicks
-- host remains open for a hold window (`CARTGUARD_E2E_HOLD_OPEN_MS`)
-- once final slideshow step is completed, the window closes automatically
+### Demo runtime data files
 
-You can override timing:
+The slideshow and scenario model are file-driven (not hardcoded):
+- `packages/vscode-extension/demo/slideshow.json`
+- `packages/vscode-extension/demo/workflow-batch.json`
+- `packages/vscode-extension/demo/sample-listing.json`
+- `packages/vscode-extension/demo/rules.json`
+- `packages/vscode-extension/demo/applicability.json`
 
-```bash
-CARTGUARD_E2E_STEP_MS=1800 \
-CARTGUARD_E2E_HOLD_OPEN_MS=180000 \
-CARTGUARD_E2E_MANUAL_CONTINUE=1 \
-pnpm --filter cartguard-vscode-extension test:e2e
-```
+## Browser VS Code (Codespaces) for Internal Team Demos
 
-### Run in browser VS Code (Codespaces, internal team)
-
-This repo includes a ready-to-use devcontainer at:
-
-- `/Users/name/trusted-git/public-repos/CartGuard/.devcontainer/devcontainer.json`
+This repo includes a ready devcontainer at `.devcontainer/devcontainer.json`.
 
 What it does:
+- opens workspace in `packages/vscode-extension/demo`
+- installs dependencies with lockfile
+- builds and packages extension deterministically
+- installs extension into Codespaces VS Code
 
-- opens workspace at `packages/vscode-extension/demo`
-- installs dependencies
-- builds the extension
-- packages and installs the extension into VS Code web
-
-Manual setup command (if you need to rerun in Codespaces terminal):
+Manual rerun in Codespaces terminal:
 
 ```bash
 pnpm demo:web:setup
 ```
 
-Then run in Command Palette:
+Then in Command Palette run:
 
 - `CartGuard: Open Slideshow Demo`
 
-## Command Reference
+## CLI Quick Usage
 
-- `pnpm lint`:
-  - Lints TypeScript in `packages/**/*.{ts,mts}` and `scripts/**/*.{ts,mts}`.
-- `pnpm guard`:
-  - Runs all repository guard scripts.
-- `pnpm check`:
-  - Runs `lint`, `guard`, then workspace tests.
-
-### Guard Commands
-
-- `pnpm guard:nav` checks required top-nav links.
-- `pnpm guard:warning` enforces ops warning banner presence/content.
-- `pnpm guard:css-refresh` enforces CSS refresh script/button wiring.
-- `pnpm guard:no-js` blocks tracked `.js/.mjs/.cjs` files.
-- `pnpm guard:no-any` blocks explicit `any` in tracked TypeScript files.
-- `pnpm guard:no-comments` blocks comments in tracked TypeScript code/tests.
-- `pnpm guard:research-data` validates research data schema/link integrity.
-- `pnpm guard:page-data` validates Research/Proof/Careers page data wiring.
-- `pnpm guard:test-doubles` blocks test-double usage across tracked `.ts`/`.tsx` files.
-- `pnpm guard:test-doubles-staged` blocks test-double usage in staged `.ts`/`.tsx` files only.
-
-## No Test Doubles Policy
-
-This repository blocks mocks, stubs, fakes, spies, and related patterns.
-
-### Where it is enforced
-
-- Pre-commit hook (`.husky/pre-commit`) runs:
-  - `pnpm guard:test-doubles-staged`
-- CI workflow (`.github/workflows/testdouble-block.yml`) runs:
-  - `pnpm guard:test-doubles`
-
-### Scope behavior
-
-- **Staged mode** (`guard:test-doubles-staged`): checks only staged files.
-- **Repo mode** (`guard:test-doubles`): checks all tracked files in git.
-
-### Config
-
-Use `.testdouble-block.json` to tune behavior:
-
-- `ignore`: directory prefixes to skip
-- `allow_files`: explicit file allowlist
-- `patterns`: additional regex patterns
-- `disabled_patterns`: disable built-in pattern IDs
-
-Ignored by default: `node_modules/`, `dist/`, `build/`, `coverage/`.
-
-### Required documentation if blocked
-
-If this guard blocks your commit, document intent in:
-
-- `docs/why-i-wanted-test-doubles.md`
-
-## CLI Usage
-
-Build and run the CLI:
+Validate sample product:
 
 ```bash
 pnpm --filter @cartguard/cli build
@@ -205,7 +126,7 @@ node packages/cli/dist/src/bin/cartguard.js validate \
   --policy packages/example/sample-policy.json
 ```
 
-JSON output mode:
+JSON output:
 
 ```bash
 node packages/cli/dist/src/bin/cartguard.js validate \
@@ -214,40 +135,53 @@ node packages/cli/dist/src/bin/cartguard.js validate \
   --json
 ```
 
-Generate output from sample input:
+## Quality and Policy Gates
 
-```bash
-node packages/cli/dist/src/bin/cartguard.js generate \
-  packages/example/sample-input.json \
-  --out packages/example/generated-product.json
-```
+Repository gate scripts:
+- `pnpm lint`
+- `pnpm guard`
+- `pnpm check`
 
-Run extension-only tests:
+Guard highlights:
+- no tracked `.js/.mjs/.cjs` sources
+- no explicit `any`
+- no TypeScript code comments
+- no test doubles (mocks/stubs/fakes/spies)
+- page and research data integrity checks
 
-```bash
-pnpm --filter cartguard-vscode-extension test:e2e
-```
+No-test-doubles enforcement:
+- pre-commit: `pnpm guard:test-doubles-staged`
+- CI: `pnpm guard:test-doubles`
+- config: `.testdouble-block.json`
+
+If blocked by test-double policy, document intent in:
+- `docs/why-i-wanted-test-doubles.md`
 
 ## CI Workflows
 
-- `quality.yml`: lint, guard, tests
-- `testdouble-block.yml`: dedicated test-double blocker
-- `secrets.yml`: secret/token scanning
-- `pages.yml`: deploys `docs/` to GitHub Pages
+- `quality.yml` (lint + guards + tests)
+- `testdouble-block.yml` (policy enforcement)
+- `secrets.yml` (secret/token scan)
+- `pages.yml` (GitHub Pages deploy)
 
-## Contribution Checklist
+## Live Docs
 
-Before opening a PR, run:
+- Sales: https://bitkojine.github.io/CartGuard/sales/
+- Ops: https://bitkojine.github.io/CartGuard/ops/
+
+## Contributing
+
+Before opening a PR:
 
 ```bash
 pnpm check
 ```
 
-And confirm:
-
-- No test doubles in `.ts/.tsx` files.
-- All guards pass.
-- Research/content changes keep data files and page wiring consistent.
+Expected:
+- all guards pass
+- tests pass
+- no policy violations
+- docs/data changes remain wired and validated
 
 ## License
 
