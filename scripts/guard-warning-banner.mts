@@ -3,6 +3,17 @@ import { join } from "node:path";
 
 const docsDir = "docs";
 const stylesPath = join(docsDir, "styles.css");
+const opsPages = [
+  "index.html",
+  "beachhead.html",
+  "paid-pilots.html",
+  "crm-setup.html",
+  "roadmap.html",
+  "research.html",
+  "technical.html",
+  "careers.html",
+  "404.html"
+];
 
 const htmlFiles = readdirSync(docsDir).filter((file) => file.endsWith(".html"));
 const violations: string[] = [];
@@ -20,6 +31,9 @@ if (!existsSync(stylesPath)) {
 }
 
 for (const file of htmlFiles) {
+  if (!opsPages.includes(file)) {
+    continue;
+  }
   const fullPath = join(docsDir, file);
   const content = readFileSync(fullPath, "utf8");
 

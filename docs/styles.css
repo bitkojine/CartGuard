@@ -177,6 +177,26 @@ footer {
   content: "◈";
 }
 
+.nav-links a[href="./sales.html"]::before {
+  content: "◌";
+}
+
+.nav-links a[href="./sales-problem.html"]::before {
+  content: "◍";
+}
+
+.nav-links a[href="./sales-solution.html"]::before {
+  content: "◎";
+}
+
+.nav-links a[href="./sales-proof.html"]::before {
+  content: "◐";
+}
+
+.nav-links a[href="./sales-pilot.html"]::before {
+  content: "◑";
+}
+
 .hero {
   max-width: var(--max);
   margin: 0 auto;

@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 const docsDir = "docs";
 const stylesPath = join(docsDir, "styles.css");
-const requiredPages = [
+const opsRequiredPages = [
   "./index.html",
   "./beachhead.html",
   "./paid-pilots.html",
@@ -13,8 +13,17 @@ const requiredPages = [
   "./technical.html",
   "./careers.html"
 ];
+const opsPages = [...opsRequiredPages, "./404.html"];
+const salesPages = [
+  "./sales.html",
+  "./sales-problem.html",
+  "./sales-solution.html",
+  "./sales-proof.html",
+  "./sales-pilot.html"
+];
+const allRequiredPages = [...opsRequiredPages, ...salesPages];
 
-for (const page of requiredPages) {
+for (const page of allRequiredPages) {
   const relative = page.replace("./", "");
   const fullPath = join(docsDir, relative);
   if (!existsSync(fullPath)) {
@@ -64,6 +73,7 @@ if (!existsSync(stylesPath)) {
 for (const file of htmlFiles) {
   const fullPath = join(docsDir, file);
   const content = readFileSync(fullPath, "utf8");
+  const normalizedFile = `./${file}`;
 
   const navMatch = content.match(/<nav class="top-nav"[\s\S]*?<\/nav>/);
   if (!navMatch) {
@@ -72,11 +82,14 @@ for (const file of htmlFiles) {
   }
 
   const navContent = navMatch[0];
-  if (!/href="\.\/index\.html"[^>]*>\s*Home\s*</.test(navContent)) {
-    violations.push(`${fullPath}: nav must include explicit Home link`);
+  const expectedPages = opsPages.includes(normalizedFile) ? opsRequiredPages : salesPages;
+  const expectedHomeHref = opsPages.includes(normalizedFile) ? "./index.html" : "./sales.html";
+  const homePattern = new RegExp(`href="${expectedHomeHref.replace(".", "\\.")}"[^>]*>\\s*Home\\s*<`);
+  if (!homePattern.test(navContent)) {
+    violations.push(`${fullPath}: nav must include explicit Home link to ${expectedHomeHref}`);
   }
 
-  for (const page of requiredPages) {
+  for (const page of expectedPages) {
     const linkPattern = new RegExp(`href="${page.replace(".", "\\.")}"`);
     if (!linkPattern.test(navContent)) {
       violations.push(`${fullPath}: missing nav link ${page}`);
