@@ -81,6 +81,7 @@ interface DemoControlState {
   stepIndex: number;
   done: boolean;
   title: string;
+  decisions: Record<string, string>;
 }
 
 interface DemoSlide {
@@ -125,6 +126,15 @@ interface WorkflowRoleOutput {
   summary: string;
   fields: string[];
   actions: string[];
+}
+
+interface DecisionGate {
+  gateId: string;
+  checkId: string;
+  context: string;
+  businessTradeoff: string;
+  options: string[];
+  recommended: string;
 }
 
 interface RuleEvaluationRow {
@@ -395,6 +405,52 @@ const evidenceTypeClass = (evidenceType: DemoSlide["evidenceType"]): string => {
   return "ok";
 };
 
+const decisionGates: DecisionGate[] = [
+  {
+    gateId: "GATE_WIFI_BASIC",
+    checkId: "check_red_applicability",
+    context: "Radio SKU missing RED-aligned evidence.",
+    businessTradeoff: "Ship is fast but risky; hold avoids likely compliance rework.",
+    options: ["ship", "hold", "escalate"],
+    recommended: "hold"
+  },
+  {
+    gateId: "GATE_MAINS_EU",
+    checkId: "check_lvd_doc_presence",
+    context: "Mains SKU missing DoC and local-language readiness.",
+    businessTradeoff: "Shipping now saves time but creates high compliance risk.",
+    options: ["ship", "hold", "escalate"],
+    recommended: "hold"
+  },
+  {
+    gateId: "GATE_RP_CONFLICT",
+    checkId: "check_traceability_consistency",
+    context: "RP/importer identity mismatch across artifacts.",
+    businessTradeoff: "Proceeding without alignment can break authority-response flow.",
+    options: ["ship", "hold", "escalate"],
+    recommended: "escalate"
+  },
+  {
+    gateId: "GATE_FALSE_ALARM_OK",
+    checkId: "false_alarm_avoided",
+    context: "Messy evidence appears valid after cross-check.",
+    businessTradeoff: "Holding creates avoidable delay; shipping may be acceptable.",
+    options: ["ship", "hold"],
+    recommended: "ship"
+  },
+  {
+    gateId: "GATE_UNKNOWN_SCOPE",
+    checkId: "unknown_scope_escalation",
+    context: "Applicability confidence is too low for automated decision.",
+    businessTradeoff: "Escalation slows launch but avoids incorrect compliance claims.",
+    options: ["ship", "hold", "escalate"],
+    recommended: "escalate"
+  }
+];
+
+const getGateForSlide = (slide: DemoSlide): DecisionGate | undefined =>
+  decisionGates.find((entry) => entry.checkId === slide.checkId);
+
 const demoSlides: DemoSlide[] = [
   {
     title: "Step 1 of 11: Dashboard - Today's Launch Batch",
@@ -658,6 +714,9 @@ const renderDemoHtml = (
     inputArtifact: "unknown"
   };
   const slide = demoSlides[state.stepIndex] ?? demoSlides[0] ?? fallbackSlide;
+  const gate = getGateForSlide(slide);
+  const currentDecision = gate ? state.decisions[gate.gateId] : undefined;
+  const decisionRequired = Boolean(gate && !currentDecision && !state.done);
   const nextSlide =
     state.stepIndex < demoSlides.length - 1 ? demoSlides[state.stepIndex + 1] : undefined;
   const summary = run?.evaluation.result?.summary;
@@ -706,6 +765,16 @@ const renderDemoHtml = (
         `
       )
       .join("") ?? "";
+  const decisionRows = Object.entries(state.decisions)
+    .map(
+      ([gateId, decision]) => `
+      <tr>
+        <td><code>${escapeHtml(gateId)}</code></td>
+        <td>${escapeHtml(decision)}</td>
+      </tr>
+    `
+    )
+    .join("");
 
   const nextText = nextSlide ? nextSlide.title : "Demo completed.";
   const isFinalClick = !state.done && state.stepIndex === demoSlides.length - 2;
@@ -714,7 +783,7 @@ const renderDemoHtml = (
     : isFinalClick
       ? "Continue (closes VSCode)"
       : "Continue";
-  const buttonDisabled = state.done ? "disabled" : "";
+  const buttonDisabled = state.done || decisionRequired ? "disabled" : "";
 
   return `
   <!doctype html>
@@ -889,6 +958,53 @@ const renderDemoHtml = (
       `
           : ""
       }
+      ${
+        gate
+          ? `
+      <div class="card">
+        <h3>Decision Gate: ${escapeHtml(gate.gateId)}</h3>
+        <div class="label">Context</div>
+        <div class="value">${escapeHtml(gate.context)}</div>
+        <div class="label" style="margin-top:10px;">Business tradeoff</div>
+        <div class="value">${escapeHtml(gate.businessTradeoff)}</div>
+        <div class="label" style="margin-top:10px;">Recommended</div>
+        <div class="value">${escapeHtml(gate.recommended)}</div>
+        <div class="controls" style="margin-top:10px;">
+          ${gate.options
+            .map(
+              (option) =>
+                `<button class="decision" data-decision="${escapeHtml(option)}">${escapeHtml(option)}</button>`
+            )
+            .join("")}
+          <span>Selected: ${escapeHtml(currentDecision ?? "none")}</span>
+        </div>
+        ${
+          decisionRequired
+            ? `<div class="value" style="margin-top:10px;">Select a decision before continuing.</div>`
+            : ""
+        }
+      </div>
+      `
+          : ""
+      }
+      ${
+        decisionRows
+          ? `
+      <div class="card">
+        <h3>Gate Decisions</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Decision</th>
+            </tr>
+          </thead>
+          <tbody>${decisionRows}</tbody>
+        </table>
+      </div>
+      `
+          : ""
+      }
       <div class="card">
         <h3>Inputs in this demo</h3>
         <div class="path">Listing: ${escapeHtml(listingPath)}</div>
@@ -935,6 +1051,12 @@ const renderDemoHtml = (
             vscode.postMessage({ type: "continue" });
           });
         }
+        Array.from(document.querySelectorAll(".decision")).forEach((decisionButton) => {
+          decisionButton.addEventListener("click", () => {
+            const decision = decisionButton.getAttribute("data-decision");
+            vscode.postMessage({ type: "gateDecision", decision });
+          });
+        });
       </script>
     </body>
   </html>
@@ -1116,13 +1238,15 @@ export const activate = (context: vscode.ExtensionContext): void => {
   const advanceDemo = async (
     listingPath: string,
     rulesPath: string,
-    applicabilityPath: string
+    applicabilityPath: string,
+    autoDecideGate: boolean
   ): Promise<DemoControlState> => {
     if (!demoState) {
       demoState = {
         stepIndex: 0,
         done: false,
-        title: demoSlides[0]?.title ?? "Step 1"
+        title: demoSlides[0]?.title ?? "Step 1",
+        decisions: {}
       };
       return demoState;
     }
@@ -1131,11 +1255,29 @@ export const activate = (context: vscode.ExtensionContext): void => {
       return demoState;
     }
 
+    const currentSlide = demoSlides[demoState.stepIndex] ?? demoSlides[0];
+    if (currentSlide) {
+      const gate = getGateForSlide(currentSlide);
+      if (gate && !demoState.decisions[gate.gateId]) {
+        if (!autoDecideGate) {
+          return demoState;
+        }
+        demoState = {
+          ...demoState,
+          decisions: {
+            ...demoState.decisions,
+            [gate.gateId]: gate.recommended
+          }
+        };
+      }
+    }
+
     const nextIndex = Math.min(demoState.stepIndex + 1, demoSlides.length - 1);
     demoState = {
       stepIndex: nextIndex,
       done: nextIndex === demoSlides.length - 1,
-      title: demoSlides[nextIndex]?.title ?? "Step"
+      title: demoSlides[nextIndex]?.title ?? "Step",
+      decisions: demoState.decisions
     };
 
     if (nextIndex >= 2 && !demoRun) {
@@ -1281,7 +1423,8 @@ export const activate = (context: vscode.ExtensionContext): void => {
         demoState = {
           stepIndex: 0,
           done: false,
-          title: demoSlides[0]?.title ?? "Step 1"
+          title: demoSlides[0]?.title ?? "Step 1",
+          decisions: {}
         };
 
         demoPanel = vscode.window.createWebviewPanel(
@@ -1304,12 +1447,31 @@ export const activate = (context: vscode.ExtensionContext): void => {
           if (
             typeof message === "object" &&
             message !== null &&
-            "type" in message &&
-            (message as { type?: unknown }).type === "continue"
+            "type" in message
           ) {
-            await advanceDemo(listingPath, rulesPath, applicabilityPath);
-            updateDemoPanel(listingPath, rulesPath, applicabilityPath);
-            await closeDemoIfDone();
+            const typedMessage = message as { type?: unknown; decision?: unknown };
+            if (typedMessage.type === "gateDecision" && typeof typedMessage.decision === "string") {
+              const currentSlide = demoState
+                ? demoSlides[demoState.stepIndex] ?? demoSlides[0]
+                : undefined;
+              const gate = currentSlide ? getGateForSlide(currentSlide) : undefined;
+              if (gate && demoState) {
+                demoState = {
+                  ...demoState,
+                  decisions: {
+                    ...demoState.decisions,
+                    [gate.gateId]: typedMessage.decision
+                  }
+                };
+                updateDemoPanel(listingPath, rulesPath, applicabilityPath);
+              }
+              return;
+            }
+            if (typedMessage.type === "continue") {
+              await advanceDemo(listingPath, rulesPath, applicabilityPath, false);
+              updateDemoPanel(listingPath, rulesPath, applicabilityPath);
+              await closeDemoIfDone();
+            }
           }
         });
 
@@ -1333,7 +1495,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
         await vscode.commands.executeCommand("cartguard.openDemoSlideshow", args);
       }
 
-      const state = await advanceDemo(listingPath, rulesPath, applicabilityPath);
+      const state = await advanceDemo(listingPath, rulesPath, applicabilityPath, true);
       updateDemoPanel(listingPath, rulesPath, applicabilityPath);
       await closeDemoIfDone();
       return state;
