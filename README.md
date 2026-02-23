@@ -53,7 +53,7 @@ scripts/
 ## Quickstart
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm build
 pnpm test
 ```
@@ -115,6 +115,29 @@ CARTGUARD_E2E_HOLD_OPEN_MS=180000 \
 CARTGUARD_E2E_MANUAL_CONTINUE=1 \
 pnpm --filter cartguard-vscode-extension test:e2e
 ```
+
+### Run in browser VS Code (Codespaces, internal team)
+
+This repo includes a ready-to-use devcontainer at:
+
+- `/Users/name/trusted-git/public-repos/CartGuard/.devcontainer/devcontainer.json`
+
+What it does:
+
+- opens workspace at `packages/vscode-extension/demo`
+- installs dependencies
+- builds the extension
+- packages and installs the extension into VS Code web
+
+Manual setup command (if you need to rerun in Codespaces terminal):
+
+```bash
+pnpm demo:web:setup
+```
+
+Then run in Command Palette:
+
+- `CartGuard: Open Slideshow Demo`
 
 ## Command Reference
 

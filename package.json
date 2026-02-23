@@ -29,7 +29,8 @@
     "guard:research-data": "tsx scripts/guard-research-data.mts",
     "guard:page-data": "tsx scripts/guard-page-data-wiring.mts",
     "guard:test-doubles": "tsx scripts/guard-no-test-doubles.mts",
-    "guard:test-doubles-staged": "tsx scripts/guard-no-test-doubles.mts --staged"
+    "guard:test-doubles-staged": "tsx scripts/guard-no-test-doubles.mts --staged",
+    "demo:web:setup": "bash scripts/setup-vscode-web-demo.sh \"$(pwd)\""
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.46.1",
