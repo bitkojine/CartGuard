@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   ApplicabilityCatalogSchema,
+  ListingInputSchema,
   ProductContentSchema,
   RuleCatalogSchema,
   ValidationPolicySchema
@@ -102,4 +103,56 @@ void test("ApplicabilityCatalogSchema rejects invalid date", () => {
   });
 
   assert.equal(result.success, false);
+});
+
+void test("ListingInputSchema accepts listing evidence payload", () => {
+  const result = ListingInputSchema.safeParse({
+    listing_id: "amz-de-001",
+    product_id: "sku-123",
+    product_version: "v1",
+    product_archetype: "non-radio mains electronics",
+    jurisdiction: "EU",
+    channel: "AmazonDE",
+    is_radio_equipment: false,
+    voltage_ac: 230,
+    evidence_documents: [
+      {
+        document_key: "eu_doc_lvd",
+        document_name: "LVD declaration",
+        status: "present",
+        last_verified_at: "2026-02-23"
+      }
+    ]
+  });
+
+  assert.equal(result.success, true);
+});
+
+void test("RuleCatalogSchema defaults required_evidence_keys", () => {
+  const result = RuleCatalogSchema.safeParse({
+    rules: [
+      {
+        rule_id: "rule-1",
+        jurisdiction: "EU",
+        channel: "All",
+        requirement_type: "legal",
+        trigger: "x",
+        required_evidence: ["evidence"],
+        validation_checks: ["check"],
+        submission_metadata: {
+          path: "",
+          deadline: "",
+          enforcement_if_missed: ""
+        },
+        source_url: "https://example.com/rule",
+        source_type: "eurlex",
+        last_verified_at: "2026-02-23",
+        confidence: "high",
+        unknown_reason: ""
+      }
+    ]
+  });
+
+  assert.equal(result.success, true);
+  assert.deepEqual(result.success ? result.data.rules[0]?.required_evidence_keys : [], []);
 });

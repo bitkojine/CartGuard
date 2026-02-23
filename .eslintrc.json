@@ -50,5 +50,16 @@
         "varsIgnorePattern": "^_"
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "packages/vscode-extension/src/extension.ts"
+      ],
+      "rules": {
+        "no-implied-eval": "off",
+        "@typescript-eslint/no-implied-eval": "off"
+      }
+    }
+  ]
 }

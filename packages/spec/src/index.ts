@@ -116,6 +116,7 @@ export const RuleRecordSchema = z.object({
   requirement_type: RequirementTypeSchema,
   trigger: z.string().min(1),
   required_evidence: z.array(z.string().min(1)).min(1),
+  required_evidence_keys: z.array(z.string().min(1)).default([]),
   validation_checks: z.array(z.string().min(1)).min(1),
   submission_metadata: SubmissionMetadataSchema,
   source_url: z.string().url(),
@@ -150,3 +151,66 @@ export const ApplicabilityCatalogSchema = z.object({
 });
 
 export type ApplicabilityCatalog = z.infer<typeof ApplicabilityCatalogSchema>;
+
+export const EvidenceDocumentSchema = z.object({
+  document_key: z.string().min(1),
+  document_name: z.string().min(1),
+  status: ValidationStatusSchema.default("present"),
+  last_verified_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  source_url: z.string().url().optional()
+});
+
+export type EvidenceDocument = z.infer<typeof EvidenceDocumentSchema>;
+
+export const ListingInputSchema = z.object({
+  listing_id: z.string().min(1),
+  product_id: z.string().min(1),
+  product_version: z.string().min(1),
+  product_archetype: z.string().min(1),
+  jurisdiction: z.string().min(1),
+  channel: z.string().min(1),
+  is_radio_equipment: z.boolean(),
+  is_red_excluded: z.boolean().default(false),
+  is_lvd_annex_ii_excluded: z.boolean().default(false),
+  is_emc_equipment: z.boolean().default(true),
+  is_emc_relevant: z.boolean().default(true),
+  voltage_ac: z.number().nonnegative().nullable().optional(),
+  voltage_dc: z.number().nonnegative().nullable().optional(),
+  evidence_documents: z.array(EvidenceDocumentSchema).default([])
+});
+
+export type ListingInput = z.infer<typeof ListingInputSchema>;
+
+export const RuleEvaluationSchema = z.object({
+  rule_id: z.string().min(1),
+  status: ValidationStatusSchema,
+  blocking: z.boolean(),
+  message: z.string().min(1),
+  requirement_type: RequirementTypeSchema,
+  source_type: SourceTypeSchema,
+  confidence: ConfidenceLevelSchema
+});
+
+export type RuleEvaluation = z.infer<typeof RuleEvaluationSchema>;
+
+export const ListingEvaluationSummarySchema = z.object({
+  total_rules: z.number().int().nonnegative(),
+  blocking_issues: z.number().int().nonnegative(),
+  missing: z.number().int().nonnegative(),
+  stale: z.number().int().nonnegative(),
+  mismatched: z.number().int().nonnegative(),
+  warnings: z.number().int().nonnegative(),
+  unknown: z.number().int().nonnegative(),
+  not_applicable: z.number().int().nonnegative(),
+  present: z.number().int().nonnegative()
+});
+
+export type ListingEvaluationSummary = z.infer<typeof ListingEvaluationSummarySchema>;
+
+export const ListingEvaluationResultSchema = z.object({
+  listing_id: z.string().min(1),
+  evaluations: z.array(RuleEvaluationSchema),
+  summary: ListingEvaluationSummarySchema
+});
+
+export type ListingEvaluationResult = z.infer<typeof ListingEvaluationResultSchema>;

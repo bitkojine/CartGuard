@@ -1,0 +1,61 @@
+{
+  "name": "cartguard-vscode-extension",
+  "displayName": "CartGuard",
+  "publisher": "cartguard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CartGuard VSCode extension for compliance rule demos and validation",
+  "license": "MIT",
+  "main": "./dist/src/extension.js",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "activationEvents": [
+    "onCommand:cartguard.runDemo",
+    "onCommand:cartguard.validateJsonFiles",
+    "onCommand:cartguard.openProcessView",
+    "onCommand:cartguard.openDemoSlideshow",
+    "onCommand:cartguard.demoNextStep"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "cartguard.runDemo",
+        "title": "CartGuard: Run Demo"
+      },
+      {
+        "command": "cartguard.validateJsonFiles",
+        "title": "CartGuard: Validate JSON Files"
+      },
+      {
+        "command": "cartguard.openProcessView",
+        "title": "CartGuard: Open Process View"
+      },
+      {
+        "command": "cartguard.openDemoSlideshow",
+        "title": "CartGuard: Open Slideshow Demo"
+      },
+      {
+        "command": "cartguard.demoNextStep",
+        "title": "CartGuard: Demo Next Step"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "pnpm run build",
+    "test:e2e": "pnpm run build && node ./dist/test/runTest.js",
+    "test:e2e:slow": "CARTGUARD_E2E_STEP_MS=1800 CARTGUARD_E2E_HOLD_OPEN_MS=180000 CARTGUARD_E2E_MANUAL_CONTINUE=1 pnpm run test:e2e",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@cartguard/engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/vscode": "^1.96.0",
+    "@vscode/test-electron": "^2.5.2",
+    "mocha": "^11.7.2",
+    "vscode": "^1.1.37"
+  }
+}

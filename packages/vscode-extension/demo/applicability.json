@@ -1,0 +1,66 @@
+{
+  "applicability_rules": [
+    {
+      "rule_id": "APPL-RED-001",
+      "if": [
+        "equipment_intentionally_emits_or_receives_radio_waves_for_radio_communication_or_radiodetermination",
+        "equipment_not_excluded_under_RED_Article1_or_Annex"
+      ],
+      "then_applies": [
+        "RED_2014_53_EU"
+      ],
+      "then_not_applies": [
+        "LVD_2014_35_EU_for_safety",
+        "EMC_2014_30_EU_for_EMC"
+      ],
+      "source_url": "https://www.legislation.gov.uk/eudr/2014/53/body",
+      "confidence": "high",
+      "last_verified_at": "2026-02-23"
+    },
+    {
+      "rule_id": "APPL-LVD-002",
+      "if": [
+        "equipment_not_radio_equipment_under_RED",
+        "equipment_designed_voltage_between_50_and_1000_V_AC_or_between_75_and_1500_V_DC",
+        "equipment_not_listed_in_LVD_Annex_II_exclusions"
+      ],
+      "then_applies": [
+        "LVD_2014_35_EU"
+      ],
+      "then_not_applies": [],
+      "source_url": "https://www.legislation.gov.uk/eudr/2014/35/chapter/1",
+      "confidence": "high",
+      "last_verified_at": "2026-02-23"
+    },
+    {
+      "rule_id": "APPL-EMC-003",
+      "if": [
+        "equipment_not_radio_equipment_under_RED",
+        "equipment_meets_definition_of_equipment_in_EMC_Article2",
+        "equipment_liable_to_generate_electromagnetic_disturbance_or_performance_liable_to_be_affected"
+      ],
+      "then_applies": [
+        "EMC_2014_30_EU"
+      ],
+      "then_not_applies": [],
+      "source_url": "https://www.legislation.gov.uk/eudr/2014/30/chapter/1",
+      "confidence": "high",
+      "last_verified_at": "2026-02-23"
+    },
+    {
+      "rule_id": "APPL-EMC-RED-NO-004",
+      "if": [
+        "equipment_radio_equipment_under_RED"
+      ],
+      "then_applies": [
+        "RED_2014_53_EU_safety_and_EMC"
+      ],
+      "then_not_applies": [
+        "EMC_2014_30_EU_separate"
+      ],
+      "source_url": "https://www.legislation.gov.uk/eudr/2014/53/body",
+      "confidence": "high",
+      "last_verified_at": "2026-02-23"
+    }
+  ]
+}
