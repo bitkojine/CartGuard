@@ -287,6 +287,15 @@ main > * + * {
   color: #5f2637;
 }
 
+.warning-banner ol {
+  margin: 0.55rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.warning-banner li + li {
+  margin-top: 0.35rem;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
