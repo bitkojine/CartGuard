@@ -10,7 +10,8 @@ const requiredPages = [
   "./crm-setup.html",
   "./roadmap.html",
   "./research.html",
-  "./technical.html"
+  "./technical.html",
+  "./careers.html"
 ];
 
 for (const page of requiredPages) {

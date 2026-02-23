@@ -173,6 +173,10 @@ footer {
   content: "◇";
 }
 
+.nav-links a[href="./careers.html"]::before {
+  content: "◈";
+}
+
 .hero {
   max-width: var(--max);
   margin: 0 auto;
