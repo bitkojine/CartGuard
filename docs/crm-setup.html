@@ -79,7 +79,8 @@
 scripts/
   crm-types.mts
   check-airtable-crm-schema.mts
-  bootstrap-airtable-crm.mts</code></pre>
+  bootstrap-airtable-crm.mts
+  seed-airtable-crm-demo.mts</code></pre>
       </section>
 
       <section class="architecture" aria-label="Run now">
@@ -120,17 +121,19 @@ pnpm crm:seed-demo</code></pre>
       "name": "Accounts",
       "fields": [
         { "name": "Account Name", "type": "singleLineText" },
+        { "name": "Pilot Priority", "type": "singleSelect", "options": { "choices": ["High", "Medium", "Low"] } },
         { "name": "ICP Fit", "type": "number" },
-        { "name": "Status", "type": "singleSelect", "options": ["Target", "Contacted", "Qualified", "Disqualified"] }
+        { "name": "Status", "type": "singleSelect", "options": { "choices": ["Target", "Contacted", "Qualified", "Disqualified"] } }
       ]
     },
     {
-      "name": "Deals",
+      "name": "Pilots",
       "fields": [
-        { "name": "Stage", "type": "singleSelect", "options": ["Lead", "Qualified", "Discovery Done", "Pilot Proposed", "Pilot Active", "Won", "Lost"] },
-        { "name": "Value EUR", "type": "currency", "precision": 2 },
-        { "name": "Next Step", "type": "multilineText" },
-        { "name": "Next Step Due", "type": "date" }
+        { "name": "Pilot ID", "type": "singleLineText" },
+        { "name": "Stage", "type": "singleSelect", "options": { "choices": ["Candidate", "Qualified", "Scoped", "Commercial Proposed", "Active", "Completed Won", "Completed Lost", "On Hold"] } },
+        { "name": "Pilot Fee EUR", "type": "currency" },
+        { "name": "Baseline Missing Doc Rate", "type": "number" },
+        { "name": "Current Missing Doc Rate", "type": "number" }
       ]
     }
   ]
@@ -141,8 +144,10 @@ pnpm crm:seed-demo</code></pre>
         <h2>Current Implementation Status</h2>
         <ul>
           <li>`crm/schema.json` is the source of truth for table/field structure.</li>
+          <li>Core tables are `Accounts`, `Pilots`, `Pilot Reviews`, `Pilot Risks`, and `Pilot Evidence`.</li>
           <li>`crm:bootstrap` creates missing tables/fields from schema.</li>
           <li>`crm:check` fails when Airtable drifts from schema.</li>
+          <li>`crm:seed-demo` inserts pilot-focused demo rows for team training and testing.</li>
         </ul>
       </section>
 

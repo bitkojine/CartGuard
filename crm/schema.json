@@ -3,13 +3,16 @@
   "tables": [
     {
       "name": "Accounts",
-      "description": "Target customer accounts for APAC to EU expansion",
+      "description": "Target customer accounts and pilot readiness",
       "fields": [
         { "name": "Account Name", "type": "singleLineText" },
         { "name": "Country Origin", "type": "singleSelect", "options": { "choices": ["China", "Hong Kong", "India", "Other"] } },
         { "name": "Target EU Market", "type": "singleSelect", "options": { "choices": ["Germany", "France", "Netherlands", "Poland", "Other"] } },
         { "name": "Vertical", "type": "singleSelect", "options": { "choices": ["Consumer Electronics", "Accessories", "Home Goods", "Other"] } },
         { "name": "ICP Fit", "type": "number" },
+        { "name": "Pilot Priority", "type": "singleSelect", "options": { "choices": ["High", "Medium", "Low"] } },
+        { "name": "Pilot Readiness", "type": "singleSelect", "options": { "choices": ["Not Ready", "Discovery", "Ready To Scope", "Ready To Start"] } },
+        { "name": "Current Pilot ID", "type": "singleLineText" },
         { "name": "Website", "type": "url" },
         { "name": "Status", "type": "singleSelect", "options": { "choices": ["Target", "Contacted", "Qualified", "Disqualified"] } },
         { "name": "Owner", "type": "singleLineText" },
@@ -17,30 +20,76 @@
       ]
     },
     {
-      "name": "Deals",
-      "description": "Pipeline and pilot deal tracking",
+      "name": "Pilots",
+      "description": "Pilot execution and conversion tracking",
       "fields": [
-        { "name": "Deal Name", "type": "singleLineText" },
-        { "name": "Stage", "type": "singleSelect", "options": { "choices": ["Lead", "Qualified", "Discovery Done", "Pilot Proposed", "Pilot Active", "Won", "Lost"] } },
-        { "name": "Value EUR", "type": "currency" },
+        { "name": "Pilot ID", "type": "singleLineText" },
+        { "name": "Account Name", "type": "singleLineText" },
+        { "name": "Stage", "type": "singleSelect", "options": { "choices": ["Candidate", "Qualified", "Scoped", "Commercial Proposed", "Active", "Completed Won", "Completed Lost", "On Hold"] } },
+        { "name": "Pilot Fee EUR", "type": "currency" },
+        { "name": "Pilot Start Date", "type": "date" },
+        { "name": "Pilot Target End Date", "type": "date" },
         { "name": "Budget Owner", "type": "singleLineText" },
+        { "name": "Champion", "type": "singleLineText" },
+        { "name": "Success Plan Signed", "type": "singleSelect", "options": { "choices": ["Yes", "No"] } },
+        { "name": "Baseline Missing Doc Rate", "type": "number" },
+        { "name": "Current Missing Doc Rate", "type": "number" },
+        { "name": "Baseline Review Hours", "type": "number" },
+        { "name": "Current Review Hours", "type": "number" },
+        { "name": "Baseline Rework Loops", "type": "number" },
+        { "name": "Current Rework Loops", "type": "number" },
+        { "name": "Renewal Likelihood", "type": "singleSelect", "options": { "choices": ["High", "Medium", "Low"] } },
+        { "name": "Pilot Exit Status", "type": "singleSelect", "options": { "choices": ["Open", "Converted", "Lost", "Extended"] } },
         { "name": "Main Pain", "type": "multilineText" },
-        { "name": "Current Workaround", "type": "multilineText" },
-        { "name": "Next Step", "type": "multilineText" },
-        { "name": "Next Step Due", "type": "date" },
+        { "name": "Pilot Scope", "type": "multilineText" },
+        { "name": "Next Exec Step", "type": "multilineText" },
+        { "name": "Next Exec Due", "type": "date" },
         { "name": "Risk Level", "type": "singleSelect", "options": { "choices": ["Low", "Medium", "High"] } },
         { "name": "Outcome Score", "type": "number" }
       ]
     },
     {
-      "name": "Activities",
-      "description": "Outreach, calls, and pilot reviews",
+      "name": "Pilot Reviews",
+      "description": "Weekly pilot review metrics and decisions",
       "fields": [
-        { "name": "Activity Name", "type": "singleLineText" },
-        { "name": "Type", "type": "singleSelect", "options": { "choices": ["Outreach", "Call", "Follow-up", "Pilot Review"] } },
-        { "name": "Date", "type": "dateTime" },
+        { "name": "Review ID", "type": "singleLineText" },
+        { "name": "Pilot ID", "type": "singleLineText" },
+        { "name": "Review Date", "type": "dateTime" },
+        { "name": "Week Number", "type": "number" },
+        { "name": "Missing Doc Delta", "type": "number" },
+        { "name": "Review Hours Delta", "type": "number" },
+        { "name": "Rework Delta", "type": "number" },
+        { "name": "Customer Present", "type": "singleSelect", "options": { "choices": ["Yes", "No"] } },
+        { "name": "Blockers", "type": "multilineText" },
+        { "name": "Decisions", "type": "multilineText" },
+        { "name": "Owner", "type": "singleLineText" }
+      ]
+    },
+    {
+      "name": "Pilot Risks",
+      "description": "Pilot risk register and mitigation tracking",
+      "fields": [
+        { "name": "Risk ID", "type": "singleLineText" },
+        { "name": "Pilot ID", "type": "singleLineText" },
+        { "name": "Risk Category", "type": "singleSelect", "options": { "choices": ["Value Proof", "Budget Owner", "Integration", "False Positive", "Scope Drift", "Timing"] } },
+        { "name": "Severity", "type": "singleSelect", "options": { "choices": ["Low", "Medium", "High", "Critical"] } },
+        { "name": "Status", "type": "singleSelect", "options": { "choices": ["Open", "Monitoring", "Closed"] } },
+        { "name": "Mitigation", "type": "multilineText" },
+        { "name": "Due Date", "type": "date" },
+        { "name": "Owner", "type": "singleLineText" }
+      ]
+    },
+    {
+      "name": "Pilot Evidence",
+      "description": "Evidence artifacts used to prove pilot outcomes",
+      "fields": [
+        { "name": "Evidence ID", "type": "singleLineText" },
+        { "name": "Pilot ID", "type": "singleLineText" },
+        { "name": "Evidence Type", "type": "singleSelect", "options": { "choices": ["Before Snapshot", "After Snapshot", "Customer Quote", "Decision Log", "Export"] } },
+        { "name": "Evidence Link", "type": "url" },
+        { "name": "Confidence", "type": "singleSelect", "options": { "choices": ["High", "Medium", "Low"] } },
         { "name": "Summary", "type": "multilineText" },
-        { "name": "Decision", "type": "multilineText" },
+        { "name": "Collected At", "type": "dateTime" },
         { "name": "Owner", "type": "singleLineText" }
       ]
     }
