@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 const docsDir = "docs";
 const stylesPath = join(docsDir, "styles.css");
-const opsRequiredPages = [
+const opsAllPages = [
   "./index.html",
   "./beachhead.html",
   "./paid-pilots.html",
@@ -13,15 +13,25 @@ const opsRequiredPages = [
   "./technical.html",
   "./careers.html"
 ];
-const opsPages = [...opsRequiredPages, "./404.html"];
+const opsNavPages = [
+  "./index.html",
+  "./beachhead.html",
+  "./paid-pilots.html",
+  "./research.html",
+  "./technical.html",
+  "./careers.html",
+  "./sales.html"
+];
+const opsPages = [...opsAllPages, "./404.html"];
 const salesPages = [
   "./sales.html",
   "./sales-problem.html",
   "./sales-solution.html",
   "./sales-proof.html",
-  "./sales-pilot.html"
+  "./sales-pilot.html",
+  "./index.html"
 ];
-const allRequiredPages = [...opsRequiredPages, ...salesPages];
+const allRequiredPages = [...opsAllPages, ...salesPages];
 
 for (const page of allRequiredPages) {
   const relative = page.replace("./", "");
@@ -82,7 +92,7 @@ for (const file of htmlFiles) {
   }
 
   const navContent = navMatch[0];
-  const expectedPages = opsPages.includes(normalizedFile) ? opsRequiredPages : salesPages;
+  const expectedPages = opsPages.includes(normalizedFile) ? opsNavPages : salesPages;
   const expectedHomeHref = opsPages.includes(normalizedFile) ? "./index.html" : "./sales.html";
   const homePattern = new RegExp(`href="${expectedHomeHref.replace(".", "\\.")}"[^>]*>\\s*Home\\s*<`);
   if (!homePattern.test(navContent)) {
