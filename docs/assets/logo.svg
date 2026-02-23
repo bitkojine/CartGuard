@@ -1,24 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1220" height="320" viewBox="0 0 1220 320" role="img" aria-label="CartGuard wordmark">
   <defs>
-    <linearGradient id="word-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="word-accent" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#d64f8f" />
       <stop offset="100%" stop-color="#8a2f5b" />
     </linearGradient>
   </defs>
 
   <rect x="20" y="20" width="280" height="280" rx="64" fill="#ffffff" stroke="#f3d8e6" stroke-width="10" />
-  <path d="M160 70l74 22v69c0 56-37 86-74 104-37-18-74-48-74-104V92l74-22z"
+  <path d="M160 68l76 23v74c0 59-40 91-76 109-36-18-76-50-76-109V91l76-23z"
         fill="none"
         stroke="#1f1a23"
         stroke-width="14"
         stroke-linejoin="round" />
-  <path d="M190 125c-8-10-19-16-32-16-22 0-41 19-41 42s19 42 41 42c13 0 24-6 32-15"
+  <path d="M108 122h20l12 62h64l14-42h-84"
         fill="none"
-        stroke="url(#word-stroke)"
+        stroke="url(#word-accent)"
         stroke-width="12"
-        stroke-linecap="round" />
-  <path d="M191 151h-26" fill="none" stroke="#1f1a23" stroke-width="10" stroke-linecap="round" />
-  <path d="M191 151v26" fill="none" stroke="#1f1a23" stroke-width="10" stroke-linecap="round" />
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+  <circle cx="150" cy="206" r="8" fill="#1f1a23" />
+  <circle cx="198" cy="206" r="8" fill="#1f1a23" />
+  <path d="M182 123l12 14 20-23" fill="none" stroke="#1f1a23" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
 
   <text x="350" y="170"
         fill="#1f1a23"
