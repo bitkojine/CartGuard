@@ -265,7 +265,8 @@ main > * + * {
   background: #fff1f4;
   border-radius: 14px;
   padding: 1rem;
-  margin: 0.85rem 0 0.25rem;
+  margin: 1rem 0 1.05rem;
+  box-shadow: 0 1px 0 rgba(178, 31, 68, 0.08);
 }
 
 .warning-label {
@@ -300,6 +301,15 @@ main > * + * {
 .warning-banner li {
   color: #5f2637;
   line-height: 1.45;
+}
+
+.warning-banner ul {
+  margin: 0.7rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.hero .warning-banner + .eyebrow {
+  margin-top: 0.85rem;
 }
 
 .grid {
