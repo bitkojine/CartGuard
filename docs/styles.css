@@ -164,7 +164,6 @@ footer {
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  gap: 0.34rem;
 }
 
 .nav-refresh-btn {
@@ -185,64 +184,6 @@ footer {
   color: #ffffff;
   background: linear-gradient(100deg, var(--accent), var(--active-end));
   border-color: transparent;
-}
-
-.nav-links a::before {
-  font-size: 0.72rem;
-  line-height: 1;
-  opacity: 0.9;
-}
-
-.nav-links a[href="./index.html"]::before {
-  content: "⌂";
-}
-
-.nav-links a[href="./beachhead.html"]::before {
-  content: "◉";
-}
-
-.nav-links a[href="./paid-pilots.html"]::before {
-  content: "◍";
-}
-
-.nav-links a[href="./crm-setup.html"]::before {
-  content: "▣";
-}
-
-.nav-links a[href="./roadmap.html"]::before {
-  content: "◬";
-}
-
-.nav-links a[href="./research.html"]::before {
-  content: "◎";
-}
-
-.nav-links a[href="./technical.html"]::before {
-  content: "◇";
-}
-
-.nav-links a[href="./careers.html"]::before {
-  content: "◈";
-}
-
-.nav-links a[href="./sales.html"]::before {
-  content: "◌";
-}
-
-.nav-links a[href="./sales-problem.html"]::before {
-  content: "◍";
-}
-
-.nav-links a[href="./sales-solution.html"]::before {
-  content: "◎";
-}
-
-.nav-links a[href="./sales-proof.html"]::before {
-  content: "◐";
-}
-
-.nav-links a[href="./sales-pilot.html"]::before {
-  content: "◑";
 }
 
 .hero {
@@ -425,46 +366,7 @@ main > * + * {
 }
 
 .link-card h2 {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
-}
-
-.link-card h2::before {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.2rem;
-  height: 1.2rem;
-  border-radius: 999px;
-  background: rgba(214, 79, 143, 0.12);
-  color: #8a2f5b;
-  font-size: 0.7rem;
-  line-height: 1;
-}
-
-.link-card:nth-child(1) h2::before {
-  content: "◉";
-}
-
-.link-card:nth-child(2) h2::before {
-  content: "◎";
-}
-
-.link-card:nth-child(3) h2::before {
-  content: "◍";
-}
-
-.link-card:nth-child(4) h2::before {
-  content: "▣";
-}
-
-.link-card:nth-child(5) h2::before {
-  content: "◬";
-}
-
-.link-card:nth-child(6) h2::before {
-  content: "◇";
+  display: block;
 }
 
 .card,
@@ -492,31 +394,7 @@ h2 {
 
 .pricing h2,
 .architecture h2 {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
-}
-
-.pricing h2::before,
-.architecture h2::before {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.22rem;
-  height: 1.22rem;
-  border-radius: 999px;
-  background: rgba(214, 79, 143, 0.12);
-  color: #8a2f5b;
-  font-size: 0.72rem;
-  line-height: 1;
-}
-
-.pricing h2::before {
-  content: "◈";
-}
-
-.architecture h2::before {
-  content: "◎";
+  display: block;
 }
 
 h3 {
