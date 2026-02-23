@@ -614,6 +614,11 @@ footer {
 }
 
 @media (max-width: 1024px) {
+  .warning-banner {
+    border: 2px solid #b21f44;
+    background: #fff1f4;
+  }
+
   .hero {
     padding-top: calc(var(--safe-top) + 1rem);
   }
@@ -665,6 +670,11 @@ footer {
 }
 
 @media (max-width: 680px) {
+  .warning-banner {
+    border: 2px solid #b21f44;
+    background: #fff1f4;
+  }
+
   .top-nav {
     position: static;
   }
