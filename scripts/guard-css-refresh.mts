@@ -17,6 +17,10 @@ for (const file of htmlFiles) {
     violations.push(`${fullPath}: missing css refresh script block`);
   }
 
+  if (!/const applyStampToStylesheets = \(stamp\) =>/.test(content)) {
+    violations.push(`${fullPath}: css refresh script must define stylesheet stamp applier`);
+  }
+
   if (!/document\.getElementById\("css-hard-refresh"\)/.test(content)) {
     violations.push(`${fullPath}: css refresh script must select button by id`);
   }
@@ -27,6 +31,10 @@ for (const file of htmlFiles) {
 
   if (!/searchParams\.set\("css_refresh",\s*stamp\)/.test(content)) {
     violations.push(`${fullPath}: css refresh script must set css_refresh cache-buster`);
+  }
+
+  if (!/window\.location\.replace\(nextUrl\.toString\(\)\)/.test(content)) {
+    violations.push(`${fullPath}: css refresh script must force page reload with cache-buster url`);
   }
 
   if (!/button\.addEventListener\("click",\s*refreshCss\)/.test(content)) {

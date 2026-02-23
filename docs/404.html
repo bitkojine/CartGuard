@@ -68,12 +68,7 @@
   </script>
   <script id="css-refresh-script">
     (() => {
-      const button = document.getElementById("css-hard-refresh");
-      if (!(button instanceof HTMLButtonElement)) {
-        return;
-      }
-      const refreshCss = () => {
-        const stamp = Date.now().toString();
+      const applyStampToStylesheets = (stamp) => {
         const links = document.querySelectorAll('link[rel="stylesheet"]');
         links.forEach((node) => {
           if (!(node instanceof HTMLLinkElement)) {
@@ -84,6 +79,30 @@
           node.href = url.toString();
         });
       };
+
+      const pageUrl = new URL(window.location.href);
+      const urlStamp = pageUrl.searchParams.get("css_refresh");
+      const storedStamp = window.sessionStorage.getItem("cartguard_css_refresh");
+      if (urlStamp) {
+        applyStampToStylesheets(urlStamp);
+      } else if (storedStamp) {
+        applyStampToStylesheets(storedStamp);
+      }
+
+      const button = document.getElementById("css-hard-refresh");
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      const refreshCss = () => {
+        const stamp = Date.now().toString();
+        window.sessionStorage.setItem("cartguard_css_refresh", stamp);
+        applyStampToStylesheets(stamp);
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set("css_refresh", stamp);
+        window.location.replace(nextUrl.toString());
+      };
+
       button.addEventListener("click", refreshCss);
     })();
   </script>
