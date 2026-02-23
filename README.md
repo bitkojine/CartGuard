@@ -63,6 +63,30 @@ Option B (UI):
 - `CartGuard: Demo Next Step`
 - `CartGuard: Reopen Slideshow Demo`
 
+### What each command does
+
+1. `CartGuard: Run Demo`
+- Runs evaluation with default demo inputs.
+- Opens JSON results in the editor.
+
+2. `CartGuard: Validate JSON Files`
+- Validates selected listing/rules/applicability JSON files.
+- Opens JSON validation results.
+
+3. `CartGuard: Open Process View`
+- Runs evaluation and opens a process webview with summary + rule outcomes.
+
+4. `CartGuard: Open Slideshow Demo`
+- Opens the interactive step-by-step demo webview.
+- Uses runtime data from `packages/vscode-extension/demo/slideshow.json` and `packages/vscode-extension/demo/workflow-batch.json`.
+
+5. `CartGuard: Demo Next Step`
+- Advances the slideshow one step.
+- Auto-applies recommended gate decisions when needed in command-driven flow.
+
+6. `CartGuard: Reopen Slideshow Demo`
+- Resets and reopens the slideshow from step 1.
+
 ## Demo Data Files (Runtime)
 
 The slideshow is file-driven:
