@@ -100,12 +100,15 @@ suite("CartGuard Extension E2E", () => {
     }
 
     let state = { stepIndex: 0, done: false };
-    for (let i = 1; i <= 10; i += 1) {
+    for (let i = 1; i <= 20; i += 1) {
       console.log(`[CartGuard E2E] Slide advance: ${i - 1} -> ${i}.`);
       const next = await vscode.commands.executeCommand("cartguard.demoNextStep");
       state = next as { stepIndex: number; done: boolean };
       assert.equal(state.stepIndex, i);
       await pause(stepMs);
+      if (state.done) {
+        break;
+      }
     }
 
     assert.equal(state.done, true);

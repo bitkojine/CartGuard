@@ -74,6 +74,53 @@
         "Aligned manufacturer/importer label fields",
         "Consistent RP identity across records"
       ]
+    },
+    {
+      "id": "false_alarm_pass",
+      "symptom": "Document bundle looks noisy with duplicates but still maps cleanly to the product.",
+      "rootCause": "Multiple supplier uploads created clutter without introducing contradictions.",
+      "firstOwner": "Compliance during review",
+      "businessImpact": "No launch blocker; demonstrates over-block prevention.",
+      "missingEvidence": [
+        "None - evidence set is complete and consistent"
+      ]
+    },
+    {
+      "id": "unknown_scope",
+      "symptom": "Borderline product function cannot be classified with high confidence from available metadata.",
+      "rootCause": "Insufficient technical detail to determine directive scope automatically.",
+      "firstOwner": "Compliance",
+      "businessImpact": "Requires manual decision before submission to avoid incorrect claims.",
+      "missingEvidence": [
+        "Detailed feature specification",
+        "Clarified product-function declaration"
+      ]
+    }
+  ],
+  "roleOutputs": [
+    {
+      "role": "Ops",
+      "summary": "Prioritize blocked SKUs and submit only listing-ready products.",
+      "fields": ["sku", "asin", "status", "top_issues", "next_actions"],
+      "actions": ["Route blocked SKUs to compliance", "Submit green SKUs", "Track risk queue daily"]
+    },
+    {
+      "role": "Compliance",
+      "summary": "Resolve directive-linked evidence gaps with source-backed checks.",
+      "fields": ["directive_scope", "missing_evidence", "mismatch_fields", "legal_basis"],
+      "actions": ["Approve only complete evidence sets", "Escalate unknown scope", "Sign off listing-ready state"]
+    },
+    {
+      "role": "Engineering",
+      "summary": "Align feed attributes and document metadata to avoid mismatch flags.",
+      "fields": ["listing_attributes", "model_revision", "feed_field_diffs", "sync_targets"],
+      "actions": ["Patch feed mappings", "Sync model identifiers", "Regenerate listing payload"]
+    },
+    {
+      "role": "Responsible Person",
+      "summary": "Validate traceability identity and documentation handoff readiness.",
+      "fields": ["manufacturer_identity", "importer_identity", "rp_identity", "label_alignment"],
+      "actions": ["Confirm entity consistency", "Request corrected labels", "Prepare authority-response packet"]
     }
   ]
 }

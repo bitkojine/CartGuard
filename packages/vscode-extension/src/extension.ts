@@ -92,7 +92,7 @@ interface DemoSlide {
   cartGuardChecks: string;
   ownerRole: string;
   fixAction: string;
-  evidenceType: "legal" | "marketplace" | "best_practice";
+  evidenceType: "legal" | "marketplace" | "best_practice" | "unknown";
   checkId: string;
   inputArtifact: string;
   scenarioId?: string;
@@ -117,6 +117,14 @@ interface WorkflowScenario {
 interface WorkflowData {
   products: WorkflowProduct[];
   scenarios: WorkflowScenario[];
+  roleOutputs?: WorkflowRoleOutput[];
+}
+
+interface WorkflowRoleOutput {
+  role: "Ops" | "Compliance" | "Engineering" | "Responsible Person";
+  summary: string;
+  fields: string[];
+  actions: string[];
 }
 
 interface RuleEvaluationRow {
@@ -313,6 +321,45 @@ const parseWorkflowData = (input: unknown): WorkflowData | undefined => {
       missingEvidence: entry.missingEvidence
     }));
 
+  const roleOutputsRaw =
+    "roleOutputs" in input ? (input as { roleOutputs?: unknown }).roleOutputs : undefined;
+  const roleOutputs: WorkflowRoleOutput[] | undefined = Array.isArray(roleOutputsRaw)
+    ? roleOutputsRaw
+        .filter(
+          (entry): entry is WorkflowRoleOutput => {
+            if (typeof entry !== "object" || entry === null) {
+              return false;
+            }
+            const role = (entry as { role?: unknown }).role;
+            return (
+              role === "Ops" ||
+              role === "Compliance" ||
+              role === "Engineering" ||
+              role === "Responsible Person"
+            );
+          }
+        )
+        .map((entry) => {
+          const typed = entry as {
+            role: WorkflowRoleOutput["role"];
+            summary?: unknown;
+            fields?: unknown;
+            actions?: unknown;
+          };
+          return {
+            role: typed.role,
+            summary: typeof typed.summary === "string" ? typed.summary : "",
+            fields: Array.isArray(typed.fields) ? typed.fields.filter((v) => typeof v === "string") : [],
+            actions: Array.isArray(typed.actions)
+              ? typed.actions.filter((v) => typeof v === "string")
+              : []
+          };
+        })
+    : undefined;
+
+  if (roleOutputs) {
+    return { products, scenarios, roleOutputs };
+  }
   return { products, scenarios };
 };
 
@@ -333,6 +380,19 @@ const statusClass = (status: string): string => {
     return "unknown";
   }
   return "bad";
+};
+
+const evidenceTypeClass = (evidenceType: DemoSlide["evidenceType"]): string => {
+  if (evidenceType === "legal") {
+    return "bad";
+  }
+  if (evidenceType === "marketplace") {
+    return "unknown";
+  }
+  if (evidenceType === "unknown") {
+    return "na";
+  }
+  return "ok";
 };
 
 const demoSlides: DemoSlide[] = [
@@ -478,12 +538,44 @@ const demoSlides: DemoSlide[] = [
     scenarioId: "rp_identity_mismatch"
   },
   {
-    title: "Step 10 of 11: Amazon Readiness Summary",
+    title: "Step 10 of 13: False Alarm Avoided",
+    now: "Show a messy document bundle that still passes because identifiers and scope align.",
+    next: "Move to a gray-area case where the correct result is UNKNOWN and human review.",
+    customerImpact: "Builds trust that CartGuard does not over-block noisy but valid evidence.",
+    whatUserSees:
+      "Complex SKU with multiple files marked as pass and rationale trace.",
+    cartGuardChecks:
+      "Cross-document consistency checks confirm no critical mismatch.",
+    ownerRole: "Compliance",
+    fixAction: "Proceed with submission and keep evidence links attached.",
+    evidenceType: "best_practice",
+    checkId: "false_alarm_avoided",
+    inputArtifact: "workflow-batch.json scenario false_alarm_pass",
+    scenarioId: "false_alarm_pass"
+  },
+  {
+    title: "Step 11 of 13: Unknown - Escalate to Human Review",
+    now: "Present a borderline scope case where automation cannot safely decide applicability.",
+    next: "Show Amazon readiness with clear heuristic labels and non-deterministic disclaimer.",
+    customerImpact: "Prevents overconfident automation and keeps compliance ownership where required.",
+    whatUserSees:
+      "Issue state marked UNKNOWN with escalation owner and reason.",
+    cartGuardChecks:
+      "Scope confidence below threshold routes case to manual compliance review.",
+    ownerRole: "Compliance",
+    fixAction: "Escalate with context package and wait for directive decision.",
+    evidenceType: "unknown",
+    checkId: "unknown_scope_escalation",
+    inputArtifact: "workflow-batch.json scenario unknown_scope",
+    scenarioId: "unknown_scope"
+  },
+  {
+    title: "Step 12 of 13: Amazon Readiness Summary",
     now: "Present SKU-level readiness and likely documentation-request risk before submission.",
-    next: "Close with KPI impact to show operational value over time.",
+    next: "Close with KPI impact and role-specific output cards.",
     customerImpact: "Ops gets a clear submit-or-fix decision instead of surprise dashboard escalations.",
     whatUserSees:
-      "Readiness board with likely compliance request risk labels per SKU.",
+      "Readiness board with likely compliance request risk labels per SKU plus disclaimer.",
     cartGuardChecks:
       "Heuristic mapping from legal evidence gaps to marketplace-risk signal.",
     ownerRole: "Ops",
@@ -493,12 +585,12 @@ const demoSlides: DemoSlide[] = [
     inputArtifact: "evaluation summary + workflow scenarios"
   },
   {
-    title: "Step 11 of 11: Before vs After KPI Impact",
+    title: "Step 13 of 13: Before vs After KPI Impact",
     now: "Show illustrative improvements in blocker rate, review time, and rework loops.",
     next: "End demo and close VSCode host.",
     customerImpact: "Connects compliance preflight work directly to launch velocity and reliability.",
     whatUserSees:
-      "Illustrative KPI deltas for internal workflow improvement.",
+      "Illustrative KPI deltas for internal workflow improvement and role-specific outputs.",
     cartGuardChecks:
       "No legal determination; internal operational analytics and trend framing.",
     ownerRole: "Ops",
@@ -596,6 +688,21 @@ const renderDemoHtml = (
             <td>${row.blocking ? "Yes" : "No"}</td>
             <td>${escapeHtml(row.message)}</td>
           </tr>
+        `
+      )
+      .join("") ?? "";
+  const roleCards =
+    workflowData?.roleOutputs
+      ?.map(
+        (roleOutput) => `
+          <div class="card">
+            <h3>${escapeHtml(roleOutput.role)} Output</h3>
+            <div class="value">${escapeHtml(roleOutput.summary)}</div>
+            <div class="label" style="margin-top:10px;">Fields</div>
+            <div class="value">${escapeHtml(roleOutput.fields.join(", "))}</div>
+            <div class="label" style="margin-top:10px;">Actions</div>
+            <div class="value">${escapeHtml(roleOutput.actions.join(" | "))}</div>
+          </div>
         `
       )
       .join("") ?? "";
@@ -729,9 +836,14 @@ const renderDemoHtml = (
         <div class="meta-grid">
           <div><strong>Role</strong><div>${escapeHtml(slide.ownerRole)}</div></div>
           <div><strong>Check ID</strong><div><code>${escapeHtml(slide.checkId)}</code></div></div>
-          <div><strong>Evidence Type</strong><div><span class="pill ${slide.evidenceType === "legal" ? "bad" : slide.evidenceType === "marketplace" ? "unknown" : "na"}">${escapeHtml(slide.evidenceType)}</span></div></div>
+          <div><strong>Evidence Type</strong><div><span class="pill ${evidenceTypeClass(slide.evidenceType)}">${escapeHtml(slide.evidenceType)}</span></div></div>
           <div><strong>Input Artifact</strong><div>${escapeHtml(slide.inputArtifact)}</div></div>
         </div>
+        ${
+          slide.evidenceType === "marketplace"
+            ? `<div class="value" style="margin-top:10px;">Marketplace risk is CartGuard heuristic guidance, not an Amazon decision.</div>`
+            : ""
+        }
       </div>
       ${
         scenario
@@ -767,6 +879,13 @@ const renderDemoHtml = (
           <tbody>${productRows}</tbody>
         </table>
       </div>
+      `
+          : ""
+      }
+      ${
+        roleCards
+          ? `
+      <div class="grid">${roleCards}</div>
       `
           : ""
       }

@@ -18,7 +18,7 @@ This document explains every file used in the VSCode extension demo workspace.
 
 - `workflow-batch.json`
   - Real-workflow slideshow data pack (3 SKUs + scenario metadata).
-  - Drives symptom-first manual demo steps, role ownership, and fix actions.
+  - Drives symptom-first manual demo steps, role ownership, fix actions, unknown escalation, false-alarm pass case, and role-specific output cards.
 
 ## Demo output folder
 
