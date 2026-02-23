@@ -108,6 +108,31 @@ Slow/manual:
 pnpm --filter cartguard-vscode-extension test:e2e:slow
 ```
 
+### Run the manual click-to-continue demo (new machine)
+
+Use this when you want the slideshow to wait for your clicks at each step.
+
+From repo root:
+
+```bash
+pnpm --filter cartguard-vscode-extension test:e2e:slow
+```
+
+What this does:
+- Builds the extension
+- Opens an Extension Development Host window
+- Opens the slideshow demo
+- Waits for manual `Continue` clicks
+- Keeps VS Code open for live walkthrough
+
+How to continue slides:
+- Click `Continue` inside the slideshow webview, or
+- Use command palette command: `CartGuard: Demo Next Step`
+
+How to finish:
+- Continue through all steps until the final action (the host closes at the end), or
+- Stop from terminal with `Ctrl+C` if you want to exit early.
+
 ### Troubleshooting
 
 - `code: command not found`
