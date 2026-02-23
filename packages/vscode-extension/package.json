@@ -11,13 +11,32 @@
     "vscode": "^1.96.0"
   },
   "activationEvents": [
+    "onView:cartguardActionsView",
     "onCommand:cartguard.runDemo",
     "onCommand:cartguard.validateJsonFiles",
     "onCommand:cartguard.openProcessView",
     "onCommand:cartguard.openDemoSlideshow",
-    "onCommand:cartguard.demoNextStep"
+    "onCommand:cartguard.demoNextStep",
+    "onCommand:cartguard.reopenDemoSlideshow"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "cartguardSidebar",
+          "title": "CartGuard",
+          "icon": "media/cartguard.svg"
+        }
+      ]
+    },
+    "views": {
+      "cartguardSidebar": [
+        {
+          "id": "cartguardActionsView",
+          "name": "Demo Controls"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "cartguard.runDemo",
@@ -38,6 +57,10 @@
       {
         "command": "cartguard.demoNextStep",
         "title": "CartGuard: Demo Next Step"
+      },
+      {
+        "command": "cartguard.reopenDemoSlideshow",
+        "title": "CartGuard: Reopen Slideshow Demo"
       }
     ]
   },
@@ -45,7 +68,7 @@
     "build": "tsc -p tsconfig.json",
     "test": "pnpm run build",
     "test:e2e": "pnpm run build && node ./dist/test/runTest.js",
-    "test:e2e:slow": "CARTGUARD_E2E_STEP_MS=1800 CARTGUARD_E2E_HOLD_OPEN_MS=2147483647 CARTGUARD_E2E_MANUAL_CONTINUE=1 pnpm run test:e2e",
+    "test:e2e:slow": "CARTGUARD_E2E_STEP_MS=1800 CARTGUARD_E2E_HOLD_OPEN_MS=2147483647 CARTGUARD_E2E_MANUAL_CONTINUE=1 CARTGUARD_DEMO_WRITE_TO_DISK=1 pnpm run test:e2e",
     "clean": "rm -rf dist"
   },
   "dependencies": {

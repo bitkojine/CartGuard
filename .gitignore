@@ -30,3 +30,5 @@ yarn-error.log*
 # vscode extension local test/runtime artifacts
 packages/vscode-extension/.vscode-test/
 packages/vscode-extension/*.vsix
+packages/vscode-extension/demo/_cartguard_in_memory_showcase/*
+!packages/vscode-extension/demo/_cartguard_in_memory_showcase/README.md

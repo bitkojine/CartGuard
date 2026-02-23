@@ -5,7 +5,7 @@ import Mocha from "mocha";
 export const run = async (): Promise<void> => {
   const holdOpenMs = Number(process.env.CARTGUARD_E2E_HOLD_OPEN_MS ?? "0");
   const stepMs = Number(process.env.CARTGUARD_E2E_STEP_MS ?? "0");
-  const timeoutMs = Math.max(30000, holdOpenMs + stepMs * 20 + 30000);
+  const timeoutMs = holdOpenMs > 600000 ? 0 : Math.max(30000, holdOpenMs + stepMs * 20 + 30000);
 
   const mocha = new Mocha({
     ui: "tdd",

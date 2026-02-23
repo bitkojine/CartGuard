@@ -6,6 +6,7 @@ import * as vscode from "vscode";
 const stepMs = Number(process.env.CARTGUARD_E2E_STEP_MS ?? "0");
 const holdOpenMs = Number(process.env.CARTGUARD_E2E_HOLD_OPEN_MS ?? "0");
 const manualContinue = process.env.CARTGUARD_E2E_MANUAL_CONTINUE === "1";
+const holdChunkMs = 30000;
 
 const pause = async (ms: number): Promise<void> => {
   if (ms <= 0) {
@@ -35,7 +36,12 @@ suite("CartGuard Extension E2E", () => {
   suiteTeardown(async () => {
     if (holdOpenMs > 0) {
       console.log(`[CartGuard E2E] Holding Extension Development Host open for ${holdOpenMs}ms.`);
-      await pause(holdOpenMs);
+      let remaining = holdOpenMs;
+      while (remaining > 0) {
+        const chunk = Math.min(holdChunkMs, remaining);
+        await pause(chunk);
+        remaining -= chunk;
+      }
     }
   });
 

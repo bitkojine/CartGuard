@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as vscode from "vscode";
 
@@ -7,15 +7,38 @@ const readJsonFile = async (path: string): Promise<unknown> => {
   return JSON.parse(raw) as unknown;
 };
 
+const showcaseWriteToDisk = process.env.CARTGUARD_DEMO_WRITE_TO_DISK === "1";
+const showcaseResultsDirName = "_cartguard_in_memory_showcase";
+
+const slugify = (value: string): string =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+
 const openResult = async (
   title: string,
   payload: unknown,
-  output: vscode.OutputChannel
+  output: vscode.OutputChannel,
+  workspaceRoot: string | undefined
 ): Promise<void> => {
   const text = JSON.stringify(payload, null, 2);
   output.appendLine(`[CartGuard] ${title}`);
   output.appendLine(text);
   output.show(true);
+
+  if (showcaseWriteToDisk && workspaceRoot) {
+    const dirPath = join(workspaceRoot, showcaseResultsDirName);
+    await mkdir(dirPath, { recursive: true });
+    const fileName = `${Date.now()}-${slugify(title)}.json`;
+    const filePath = join(dirPath, fileName);
+    await writeFile(filePath, `${text}\n`, "utf8");
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(filePath));
+    await vscode.window.showTextDocument(doc, { preview: false });
+    return;
+  }
+
   const doc = await vscode.workspace.openTextDocument({
     content: text,
     language: "json"
@@ -39,6 +62,19 @@ interface ValidationCommandArgs {
   listingPath?: string;
   rulesPath?: string;
   applicabilityPath?: string;
+}
+
+interface ActionNode {
+  id: string;
+  label: string;
+  description: string;
+  commandId: string;
+}
+
+interface DemoPaths {
+  listingPath: string;
+  rulesPath: string;
+  applicabilityPath: string;
 }
 
 interface DemoControlState {
@@ -110,6 +146,56 @@ const importEngine = async (): Promise<EngineModule> => {
   return dynamicImport("@cartguard/engine");
 };
 
+const resolveDemoPaths = (
+  context: vscode.ExtensionContext,
+  args?: ValidationCommandArgs
+): DemoPaths => {
+  if (
+    typeof args?.listingPath === "string" &&
+    typeof args?.rulesPath === "string" &&
+    typeof args?.applicabilityPath === "string"
+  ) {
+    return {
+      listingPath: args.listingPath,
+      rulesPath: args.rulesPath,
+      applicabilityPath: args.applicabilityPath
+    };
+  }
+
+  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  if (workspaceRoot) {
+    return {
+      listingPath:
+        typeof args?.listingPath === "string"
+          ? args.listingPath
+          : join(workspaceRoot, "sample-listing.json"),
+      rulesPath:
+        typeof args?.rulesPath === "string"
+          ? args.rulesPath
+          : join(workspaceRoot, "rules.json"),
+      applicabilityPath:
+        typeof args?.applicabilityPath === "string"
+          ? args.applicabilityPath
+          : join(workspaceRoot, "applicability.json")
+    };
+  }
+
+  return {
+    listingPath:
+      typeof args?.listingPath === "string"
+        ? args.listingPath
+        : join(context.extensionPath, "demo", "sample-listing.json"),
+    rulesPath:
+      typeof args?.rulesPath === "string"
+        ? args.rulesPath
+        : join(context.extensionPath, "demo", "rules.json"),
+    applicabilityPath:
+      typeof args?.applicabilityPath === "string"
+        ? args.applicabilityPath
+        : join(context.extensionPath, "demo", "applicability.json")
+  };
+};
+
 const runEvaluation = async (
   listingPath: string,
   rulesPath: string,
@@ -174,6 +260,41 @@ const demoSlides: DemoSlide[] = [
   }
 ];
 
+const actionNodes: ActionNode[] = [
+  {
+    id: "reopen-slideshow",
+    label: "Reopen Slideshow Demo",
+    description: "Open the Continue flow again",
+    commandId: "cartguard.reopenDemoSlideshow"
+  },
+  {
+    id: "continue-slideshow",
+    label: "Continue Slideshow",
+    description: "Advance to the next demo slide",
+    commandId: "cartguard.demoNextStep"
+  }
+];
+
+class CartGuardActionsProvider implements vscode.TreeDataProvider<ActionNode> {
+  getTreeItem(element: ActionNode): vscode.TreeItem {
+    const item = new vscode.TreeItem(element.label, vscode.TreeItemCollapsibleState.None);
+    item.id = element.id;
+    item.description = element.description;
+    item.command = {
+      command: element.commandId,
+      title: element.label
+    };
+    return item;
+  }
+
+  getChildren(element?: ActionNode): ActionNode[] {
+    if (element) {
+      return [];
+    }
+    return actionNodes;
+  }
+}
+
 const renderDemoHtml = (
   state: DemoControlState,
   listingPath: string,
@@ -206,7 +327,12 @@ const renderDemoHtml = (
       .join("") ?? "";
 
   const nextText = nextSlide ? nextSlide.title : "Demo completed.";
-  const buttonLabel = state.done ? "Done" : "Continue";
+  const isFinalClick = !state.done && state.stepIndex === demoSlides.length - 2;
+  const buttonLabel = state.done
+    ? "Done"
+    : isFinalClick
+      ? "Continue (closes VSCode)"
+      : "Continue";
   const buttonDisabled = state.done ? "disabled" : "";
 
   return `
@@ -498,6 +624,8 @@ const renderProcessHtml = (
 
 export const activate = (context: vscode.ExtensionContext): void => {
   const output = vscode.window.createOutputChannel("CartGuard");
+  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  const actionsProvider = new CartGuardActionsProvider();
   let demoPanel: vscode.WebviewPanel | undefined;
   let demoState: DemoControlState | undefined;
   let demoRun: EvaluationBundle | undefined;
@@ -565,9 +693,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
 
   const runDemo = vscode.commands.registerCommand("cartguard.runDemo", async () => {
     try {
-      const listingPath = join(context.extensionPath, "demo", "sample-listing.json");
-      const rulesPath = join(context.extensionPath, "demo", "rules.json");
-      const applicabilityPath = join(context.extensionPath, "demo", "applicability.json");
+      const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context);
 
       const run = await runEvaluation(
         listingPath,
@@ -575,7 +701,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
         applicabilityPath,
         output
       );
-      await openResult("Demo result", run.evaluation, output);
+      await openResult("Demo result", run.evaluation, output, workspaceRoot);
       const valid = run.evaluation.valid;
 
       if (valid) {
@@ -626,7 +752,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
           applicabilityPath,
           output
         );
-        await openResult("Validation result", run.evaluation, output);
+        await openResult("Validation result", run.evaluation, output, workspaceRoot);
         const valid = run.evaluation.valid;
 
         if (valid) {
@@ -648,18 +774,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
     "cartguard.openProcessView",
     async (args?: ValidationCommandArgs) => {
       try {
-        const listingPath =
-          typeof args?.listingPath === "string"
-            ? args.listingPath
-            : join(context.extensionPath, "demo", "sample-listing.json");
-        const rulesPath =
-          typeof args?.rulesPath === "string"
-            ? args.rulesPath
-            : join(context.extensionPath, "demo", "rules.json");
-        const applicabilityPath =
-          typeof args?.applicabilityPath === "string"
-            ? args.applicabilityPath
-            : join(context.extensionPath, "demo", "applicability.json");
+        const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
 
         const run = await runEvaluation(
           listingPath,
@@ -698,18 +813,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
     "cartguard.openDemoSlideshow",
     (args?: ValidationCommandArgs) => {
       try {
-        const listingPath =
-          typeof args?.listingPath === "string"
-            ? args.listingPath
-            : join(context.extensionPath, "demo", "sample-listing.json");
-        const rulesPath =
-          typeof args?.rulesPath === "string"
-            ? args.rulesPath
-            : join(context.extensionPath, "demo", "rules.json");
-        const applicabilityPath =
-          typeof args?.applicabilityPath === "string"
-            ? args.applicabilityPath
-            : join(context.extensionPath, "demo", "applicability.json");
+        const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
 
         demoRun = undefined;
         demoState = {
@@ -760,18 +864,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
   const demoNextStep = vscode.commands.registerCommand(
     "cartguard.demoNextStep",
     async (args?: ValidationCommandArgs) => {
-      const listingPath =
-        typeof args?.listingPath === "string"
-          ? args.listingPath
-          : join(context.extensionPath, "demo", "sample-listing.json");
-      const rulesPath =
-        typeof args?.rulesPath === "string"
-          ? args.rulesPath
-          : join(context.extensionPath, "demo", "rules.json");
-      const applicabilityPath =
-        typeof args?.applicabilityPath === "string"
-          ? args.applicabilityPath
-          : join(context.extensionPath, "demo", "applicability.json");
+      const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
 
       if (!demoPanel || !demoState) {
         await vscode.commands.executeCommand("cartguard.openDemoSlideshow", args);
@@ -784,12 +877,22 @@ export const activate = (context: vscode.ExtensionContext): void => {
     }
   );
 
+  const reopenDemoSlideshow = vscode.commands.registerCommand(
+    "cartguard.reopenDemoSlideshow",
+    async () => {
+      await vscode.commands.executeCommand("cartguard.openDemoSlideshow");
+      return true;
+    }
+  );
+
   context.subscriptions.push(
+    vscode.window.registerTreeDataProvider("cartguardActionsView", actionsProvider),
     runDemo,
     validateJsonFiles,
     openProcessView,
     openDemoSlideshow,
     demoNextStep,
+    reopenDemoSlideshow,
     output
   );
 };
