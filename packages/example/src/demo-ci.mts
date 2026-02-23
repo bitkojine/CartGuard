@@ -8,7 +8,7 @@ const packageRoot = join(__dirname, "..");
 const repoRoot = join(packageRoot, "..", "..");
 const cliEntry = join(repoRoot, "packages", "cli", "dist", "src", "bin", "cartguard.js");
 
-const run = (args) => {
+const run = (args: string[]): number => {
   const result = spawnSync(process.execPath, [cliEntry, ...args], {
     cwd: packageRoot,
     stdio: "inherit"

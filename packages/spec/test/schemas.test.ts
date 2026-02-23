@@ -6,7 +6,7 @@ import {
   ValidationPolicySchema
 } from "../src/index.js";
 
-test("ProductContentSchema rejects empty claims array", () => {
+void test("ProductContentSchema rejects empty claims array", () => {
   const result = ProductContentSchema.safeParse({
     productId: "sku-1",
     title: "Title",
@@ -17,7 +17,7 @@ test("ProductContentSchema rejects empty claims array", () => {
   assert.equal(result.success, false);
 });
 
-test("ProductContentSchema rejects duplicate claims", () => {
+void test("ProductContentSchema rejects duplicate claims", () => {
   const result = ProductContentSchema.safeParse({
     productId: "sku-1",
     title: "Reusable bottle",
@@ -45,7 +45,7 @@ test("ProductContentSchema rejects duplicate claims", () => {
   assert.equal(result.success, false);
 });
 
-test("ValidationPolicySchema enforces confidence bounds", () => {
+void test("ValidationPolicySchema enforces confidence bounds", () => {
   const result = ValidationPolicySchema.safeParse({
     minConfidence: 1.2,
     allowedCategories: ["general"],

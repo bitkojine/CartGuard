@@ -22,7 +22,7 @@ const assertProductContent = (data: unknown): ProductContent => {
  * Real LLM/RAG adapters should implement the same ContentGenerator contract.
  */
 export class MockContentGenerator implements ContentGenerator {
-  async generate(input: unknown): Promise<ProductContent> {
+  generate(input: unknown): Promise<ProductContent> {
     const seed = input as {
       productId?: string;
       title?: string;
@@ -49,7 +49,7 @@ export class MockContentGenerator implements ContentGenerator {
       ]
     };
 
-    return assertProductContent(generated);
+    return Promise.resolve(assertProductContent(generated));
   }
 }
 

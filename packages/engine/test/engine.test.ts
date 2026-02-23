@@ -26,7 +26,7 @@ const basePolicy = {
   maxClaimsPerProduct: 2
 } as const;
 
-test("fails when claim confidence is below policy threshold", () => {
+void test("fails when claim confidence is below policy threshold", () => {
   const result = validateProductContent(
     {
       ...baseContent,
@@ -47,7 +47,7 @@ test("fails when claim confidence is below policy threshold", () => {
   );
 });
 
-test("fails when category is not allowed by policy", () => {
+void test("fails when category is not allowed by policy", () => {
   const result = validateProductContent(
     {
       ...baseContent,
@@ -68,7 +68,7 @@ test("fails when category is not allowed by policy", () => {
   );
 });
 
-test("fails when claims exceed policy max", () => {
+void test("fails when claims exceed policy max", () => {
   const result = validateProductContent(
     {
       ...baseContent,
@@ -96,7 +96,7 @@ test("fails when claims exceed policy max", () => {
   );
 });
 
-test("returns schema errors for duplicate claims", () => {
+void test("returns schema errors for duplicate claims", () => {
   const result = validateProductContent(
     {
       ...baseContent,

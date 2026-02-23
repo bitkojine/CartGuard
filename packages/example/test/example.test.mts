@@ -8,10 +8,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const packageRoot = join(__dirname, "..");
 
-test("sample-product.json has claims", async () => {
+void test("sample-product.json has claims", async () => {
   const raw = await readFile(join(packageRoot, "sample-product.json"), "utf8");
-  const data = JSON.parse(raw);
+  const parsed = JSON.parse(raw) as { claims?: unknown };
+  const claims = parsed.claims;
 
-  assert.equal(Array.isArray(data.claims), true);
-  assert.equal(data.claims.length > 0, true);
+  assert.equal(Array.isArray(claims), true);
+  assert.equal((claims as unknown[]).length > 0, true);
 });

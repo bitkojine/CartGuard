@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { MockContentGenerator } from "../src/index.js";
 
-test("MockContentGenerator returns ProductContent-compatible payload", async () => {
+void test("MockContentGenerator returns ProductContent-compatible payload", async () => {
   const generator = new MockContentGenerator();
   const product = await generator.generate({ productId: "sku-ai-1" });
 

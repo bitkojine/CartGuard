@@ -12,16 +12,24 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "clean": "pnpm -r clean",
+    "prepare": "husky",
+    "lint": "eslint \"packages/**/*.{ts,mts}\" \"scripts/**/*.{ts,mts}\" --max-warnings=0",
+    "lint:fix": "eslint \"packages/**/*.{ts,mts}\" \"scripts/**/*.{ts,mts}\" --fix",
     "crm:check": "tsx scripts/check-airtable-crm-schema.mts",
     "crm:bootstrap": "tsx scripts/bootstrap-airtable-crm.mts",
     "crm:seed-demo": "tsx scripts/seed-airtable-crm-demo.mts",
     "guard:nav": "tsx scripts/guard-nav-links.mts",
     "guard:no-js": "tsx scripts/guard-no-js-files.mts",
     "guard:no-any": "tsx scripts/guard-no-explicit-any.mts",
-    "guard": "pnpm guard:nav && pnpm guard:no-js && pnpm guard:no-any"
+    "guard": "pnpm guard:nav && pnpm guard:no-js && pnpm guard:no-any",
+    "check": "pnpm lint && pnpm guard && pnpm test"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
     "@types/node": "^22.14.0",
+    "eslint": "^8.57.1",
+    "husky": "^9.1.7",
     "tsx": "^4.20.5",
     "typescript": "^5.8.2"
   }
