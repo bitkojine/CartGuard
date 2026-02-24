@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import type { DemoManager } from "./demo-manager";
 import { renderProcessHtml } from "./renderers/process-renderer";
-import { type DemoControlState, type DemoMode, type DecisionGate } from "./types";
+import { type DemoControlState, type DemoMode, type DecisionGate, webviewMessageSchema, type WebviewMessage } from "./types";
 import {
     type ValidationCommandArgs,
     resolveDemoPaths,
@@ -13,6 +13,11 @@ import {
 } from "./extension-logic";
 import { openResult, pickJsonFile } from "./utils";
 import { readJsonFile } from "./pure";
+
+const parseWebviewMessage = (data: unknown): WebviewMessage | null => {
+    const parsed = webviewMessageSchema.safeParse(data);
+    return parsed.success ? parsed.data : null;
+};
 
 export const registerCommands = (
     context: vscode.ExtensionContext,
@@ -146,34 +151,37 @@ export const registerCommands = (
                     demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
 
                     panel.webview.onDidReceiveMessage(async (message: unknown) => {
-                        if (message !== null && typeof message === "object" && "type" in message) {
-                            const typedMessage = message as { type?: unknown; decision?: unknown; gateId?: unknown };
-                            if (typedMessage.type === "gateDecision" && typeof typedMessage.decision === "string") {
-                                const currentState = demoManager.getState();
-                                if (currentState) {
-                                    const newState: DemoControlState = {
-                                        ...currentState,
-                                        decisions: {
-                                            ...currentState.decisions,
-                                            [typedMessage.gateId as string]: typedMessage.decision
-                                        }
-                                    };
-                                    demoManager.setState(newState);
-                                    demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
-                                }
-                                return;
-                            }
-                            if (typedMessage.type === "continue") {
-                                await demoManager.advance(listingPath, rulesPath, applicabilityPath, false, (l, r, a, logger) => runEvaluation(l, r, a, logger));
+                        const parsed = parseWebviewMessage(message);
+                        if (!parsed) {
+                            return;
+                        }
+
+                        if (parsed.type === "gateDecision") {
+                            const currentState = demoManager.getState();
+                            if (currentState) {
+                                const newState: DemoControlState = {
+                                    ...currentState,
+                                    decisions: {
+                                        ...currentState.decisions,
+                                        [parsed.gateId]: parsed.decision
+                                    }
+                                };
+                                demoManager.setState(newState);
                                 demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
-                                const newState = demoManager.getState();
-                                if (newState?.done && settings.shouldCloseWindowOnDone) {
-                                    setTimeout(() => {
-                                        panel.dispose();
-                                    }, 800);
-                                }
-                                return;
                             }
+                            return;
+                        }
+
+                        if (parsed.type === "continue") {
+                            await demoManager.advance(listingPath, rulesPath, applicabilityPath, false, (l, r, a, logger) => runEvaluation(l, r, a, logger));
+                            demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
+                            const newState = demoManager.getState();
+                            if (newState?.done && settings.shouldCloseWindowOnDone) {
+                                setTimeout(() => {
+                                    panel.dispose();
+                                }, 800);
+                            }
+                            return;
                         }
                     });
                     return state;

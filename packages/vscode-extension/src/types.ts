@@ -140,6 +140,27 @@ export interface EvaluationBundle {
     applicability: unknown;
 }
 
+export const webviewGateDecisionMessageSchema = z.object({
+    type: z.literal("gateDecision"),
+    decision: z.string().min(1),
+    gateId: z.string().min(1)
+});
+
+export type WebviewGateDecisionMessage = z.infer<typeof webviewGateDecisionMessageSchema>;
+
+export const webviewContinueMessageSchema = z.object({
+    type: z.literal("continue")
+});
+
+export type WebviewContinueMessage = z.infer<typeof webviewContinueMessageSchema>;
+
+export const webviewMessageSchema = z.union([
+    webviewGateDecisionMessageSchema,
+    webviewContinueMessageSchema
+]);
+
+export type WebviewMessage = z.infer<typeof webviewMessageSchema>;
+
 export const fallbackSlideshowData: SlideshowData = {
     decisionGates: [],
     slides: [

@@ -2,18 +2,18 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 7
+- **Total Open Debt Count**: 6
 - **Critical**: 0
 - **High**: 0
-- **Medium**: 4
+- **Medium**: 3
 - **Low**: 3
 - **Category Breakdown**:
   - Architecture: 2
   - Maintainability: 4
-  - Reliability: 1
+  - Reliability: 0
 - **Status Trends**:
   - **Issues Found This Pass**: 7
-  - **Issues Resolved Since Last Pass**: 1 (REL-001)
+  - **Issues Resolved Since Last Pass**: 2 (REL-001, REL-002)
   - **Critical dependency violations**: 0
   - **Circular dependency count**: 0
   - **Domain purity violations**: 0
@@ -24,8 +24,8 @@
 1. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
 2. `ARCH-016`: Dynamic Function() for imports in extension-logic (Anti-pattern).
 3. `MAIN-001`: Duplicate CSS styles in renderer components (DRY violation).
-4. `REL-002`: Type coercion in webview message handling (Reliability).
-5. `MAIN-002`: Long parameter list in renderDemoHtml (Maintainability).
+4. `MAIN-002`: Long parameter list in renderDemoHtml (Maintainability).
+5. `MAIN-003`: High complexity in getApplicabilityState (Maintainability).
 
 ---
 
@@ -38,7 +38,6 @@
 | `MAIN-001` | Duplicate CSS styles in renderers | Maintainability | `packages/vscode-extension/src/renderers/` | Medium | M | Open | 2026-02-24 |
 | `MAIN-002` | Long parameter list in renderDemoHtml | Maintainability | `packages/vscode-extension/src/renderers/demo-renderer.ts` | Low | S | Open | 2026-02-24 |
 | `MAIN-003` | High complexity in getApplicabilityState | Maintainability | `packages/engine/src/index.ts` | Low | M | Open | 2026-02-24 |
-| `REL-002` | Type coercion in webview message handling | Reliability | `packages/vscode-extension/src/commands.ts` | Medium | M | Open | 2026-02-24 |
 | `MAIN-004` | Unhandled promise in setTimeout callbacks | Maintainability | `packages/vscode-extension/src/renderers/demo-renderer.ts` | Low | S | Open | 2026-02-24 |
 
 ---
@@ -94,15 +93,6 @@
 
 ---
 
-### `REL-002`: Type coercion in webview message handling
-- **Description**: [commands.ts](packages/vscode-extension/src/commands.ts#L143) line 143: Runtime type check `if (message !== null && typeof message === "object" && "type" in message)` followed by unsafe cast to `{ type?: unknown; decision?: unknown; gateId?: unknown }`. The properties are marked `?` but code assumes they exist.
-- **Impact**: Potential runtime errors if webview sends malformed message. No type safety on message structure.
-- **Why it matters**: Webview communication is a trust boundary. Messages could be crafted to cause unexpected behavior.
-- **Last Reviewed**: 2026-02-24
-- **Effort**: M
-- **Estimated Fix**: Define strict Zod schema for webview messages; use safeParse(); validate all fields.
-
----
 
 ### `MAIN-004`: Unhandled promise in setTimeout callbacks
 - **Description**: [demo-renderer.ts](packages/vscode-extension/src/renderers/demo-renderer.ts#L108): Inside the autoplay setTimeout, `onRequireRun()` promise is called without await or .catch(). If the promise rejects, the error is silently swallowed.
@@ -116,6 +106,7 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `REL-002` | Type coercion in webview message handling | 2026-02-24 | Added webviewMessageSchema (Zod) with union types for gateDecision and continue messages. Messagevalidation via parseWebviewMessage helper. Eliminated unsafe type coercion. |
 | `REL-001` | Error swallowing in command handlers | 2026-02-24 | Added vscode.window.showErrorMessage() dialogs to 3 handlers (runDemo, validateJsonFiles, openProcessView) while preserving output channel logging. |
 | `DX-001` | Inconsistent tsconfig management | 2026-02-24 | Added `rootDir`, `outDir`, and `include` using `${configDir}` to `tsconfig.base.json`. |
 | `TEST-002` | Thin unit test coverage for extension | 2026-02-24 | Added comprehensive `node:test` unit test suite for extension utility and logical layers. |
