@@ -2,29 +2,32 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 7
+- **Total Open Debt Count**: 9
 - **Severity Breakdown**:
-  - Critical: 0
-  - High: 1
-  - Medium: 5
-  - Low: 1
+  - Critical: 1
+  - High: 2
+  - Medium: 4
+  - Low: 2
 - **Category Breakdown**:
-  - Architecture: 4
+  - Architecture: 6
   - Static Site: 1
   - Testing: 1
   - DX: 1
 - **Status Trends**:
-  - **Issues Found This Pass**: 0
+  - **Issues Found This Pass**: 2 (ARCH-014, ARCH-015)
   - **Issues Resolved Since Last Pass**: 2 (ARCH-006, ARCH-010)
-  - **Trend**: Improving. Engine complexity significantly reduced. Entry point modularized.
+  - **Critical Violations**: 1 (`ARCH-003`)
+  - **Circular Dependencies**: 0
+  - **Domain Purity Violations**: 1 (`ARCH-015`)
+  - **Trend**: Stable. Complexity resolved, but deeper architectural boundaries still need formalization.
 
 ### Top 5 Highest Impact Issues
 
-1. `ARCH-003`: Unabstracted VS Code API usage.
-2. `SITE-001`: Manual HTML duplication in static site.
-3. `TEST-002`: Thin unit test coverage for extension.
-4. `ARCH-007`: Extremely long rendering function (> 300 lines).
-5. `ARCH-008`: Large function: activate.
+1. `ARCH-003`: Unabstracted VS Code API usage (Dependency Rule Violation).
+2. `ARCH-014`: Demo state machine coupled to VS Code UI (Layer Boundary Violation).
+3. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
+4. `ARCH-015`: Non-deterministic Date usage in AI generator (Impure Domain).
+5. `TEST-002`: Thin unit test coverage for extension (Blocked by ARCH-003).
 
 ---
 
@@ -32,12 +35,14 @@
 
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
-| `ARCH-003` | Unabstracted VS Code API usage | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-24 |
-| `ARCH-007` | Large function: renderDemoHtml | Architecture | `packages/vscode-extension/src/renderers/demo-renderer.ts` | Medium | M | Open | 2026-02-24 |
-| `ARCH-008` | Large function: activate | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | S | Open | 2026-02-24 |
-| `ARCH-013` | Dead view contribution | Architecture | `packages/vscode-extension/package.json` | Low | XS | Open | 2026-02-24 |
-| `SITE-001` | Manual HTML duplication | Static Site | `docs/**/*.html` | Medium | L | Open | 2026-02-24 |
-| `TEST-002` | Thin unit test coverage for extension | Testing | `packages/vscode-extension/test` | Medium | M | Open | 2026-02-24 |
+| `ARCH-003` | Unabstracted VS Code API usage | Architecture | `vscode-extension` | Critical | L | Open | 2026-02-24 |
+| `ARCH-014` | Demo state machine coupled to UI | Architecture | `demo-manager.ts` | High | M | Open | 2026-02-24 |
+| `ARCH-015` | Impure domain (Date.now) | Architecture | `packages/ai/src` | High | S | Open | 2026-02-24 |
+| `ARCH-007` | Large function: renderDemoHtml | Architecture | `demo-renderer.ts` | Medium | M | Open | 2026-02-24 |
+| `ARCH-008` | Large function: activate | Architecture | `extension.ts` | Medium | S | Open | 2026-02-24 |
+| `SITE-001` | Manual HTML duplication | Architecture | `docs/` | Medium | L | Open | 2026-02-24 |
+| `TEST-002` | Thin unit test coverage for extension | Testing | `vscode-extension/test` | Medium | M | Open | 2026-02-24 |
+| `ARCH-013` | Dead view contribution | Architecture | `package.json` | Low | XS | Open | 2026-02-24 |
 | `DX-001` | Inconsistent tsconfig management | DX | `packages/*/tsconfig.json` | Low | S | Open | 2026-02-24 |
 
 ---
@@ -45,38 +50,34 @@
 ## Debt Details
 
 ### `ARCH-003`: Unabstracted VS Code API usage
-- **Description**: Direct calls to `vscode.commands`, `vscode.window`, and `vscode.workspace` throughout the business logic.
-- **Impact**: Blocks unit testing of command logic; requires E2E environment for all validation tests.
-- **Last Reviewed**: 2026-02-24
+- **Principle**: Dependency Rule. Outer layer (Infrastructure/VSCode) is mixed with application orchestration. Logic is untestable.
+- **Impact**: Domain logic (evaluation orchestration) is coupled to `vscode` types.
+- **Risk**: Cannot run unit tests on extension logic without mocks/electron environment.
+
+### `ARCH-014`: Demo state machine coupled to UI
+- **Principle**: Missing Layer Boundary. The `advance()` logic in `DemoManager` is pure state transition logic but lives in a class managing a `WebviewPanel`.
+- **Impact**: Hard to test the demo slideshow transitions in isolation.
+- **Risk**: Tight coupling makes porting the demo to a different platform (e.g. CLI) impossible.
+
+### `ARCH-015`: Impure domain (Date.now)
+- **Principle**: Impure Domain. `MockContentGenerator` uses `new Date()` directly.
+- **Impact**: Non-deterministic outputs.
+- **Risk**: Test assertions on generated content require brittle time-windows or flaky matchers.
 
 ### `ARCH-007`: Large function: renderDemoHtml (326 lines)
-- **Description**: `renderDemoHtml` contains massive template literals and inline mapping logic for the webview.
-- **Impact**: High cognitive load; extremely difficult to safely modify the UI structure.
+- **Principle**: High Cognitive Load. Mixed template/logic.
 - **Last Reviewed**: 2026-02-24
 
 ### `ARCH-008`: Large function: activate (240 lines)
-- **Description**: The `activate` function registers 10+ commands and complex message listeners in one block.
-- **Impact**: Hard to trace command registration and extension lifecycle; high cyclomatic complexity.
-- **Last Reviewed**: 2026-02-24
-
-### `ARCH-013`: Dead view contribution
-- **Description**: `cartguardActionsView` is contributed in `package.json` but has no corresponding TreeDataProvider registration in `activate`.
-- **Impact**: UI clutter; users see a sidebar container that does nothing.
+- **Description**: Monolithic registration block.
 - **Last Reviewed**: 2026-02-24
 
 ### `SITE-001`: Manual HTML duplication
-- **Description**: Static pages in `docs/` replicate identical `<nav>` and layout structures manually.
-- **Impact**: Maintenance burden; relies on brittle `guard-nav-links.mts` script to prevent drift.
+- **Description**: Duplicate nav/layout in docs. No shared component abstraction.
 - **Last Reviewed**: 2026-02-24
 
 ### `TEST-002`: Thin unit test coverage for extension
-- **Description**: Most extension tests are E2E; internal parsing and state transitions lack isolated unit tests.
-- **Impact**: Refactoring logic is risky without a fast feedback loop from unit tests.
-- **Last Reviewed**: 2026-02-24
-
-### `DX-001`: Inconsistent tsconfig management
-- **Description**: Shared configuration exists but package-level `tsconfig.json` files vary in `module` and `moduleResolution` (CommonJS vs NodeNext).
-- **Impact**: Slight inconsistencies in build behavior across monorepo packages.
+- **Description**: Tests are mostly E2E.
 - **Last Reviewed**: 2026-02-24
 
 ---
@@ -85,17 +86,17 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
-| `ARCH-006` | Large function: evaluateRule | 2026-02-24 | Refactored into smaller helpers (checkPresence, checkStatus). |
-| `ARCH-010` | Large file: engine index.ts (> 400 lines) | 2026-02-24 | Reduced from 432 to ~175 lines via compression and sub-modules. |
-| `ARCH-009` | Large file: extension.ts (> 400 lines) | 2026-02-24 | Extracted utilities and business logic to `utils.ts` and `extension-logic.ts`. Reduced from 478 to 257 lines. |
-| `ARCH-012` | Missing resource disposal | 2026-02-24 | Added `OutputChannel` to `context.subscriptions`. |
-| `ARCH-011` | Circular dependencies | 2026-02-24 | Moved `fallbackSlideshowData` to `types.ts` to break `extension` <-> `demo-manager` cycle. |
-| `ARCH-001` | Monolithic extension entry point | 2026-02-24 | Reduced from 1500+ lines to ~480 lines. Major complexity removed. |
-| `ARCH-005` | High function complexity | 2026-02-24 | Extracted renderers and manager. (N.B. Function size remains a secondary debt). |
-| `ARCH-002` | Global state for demo lifecycle | 2026-02-24 | Encapsulated in `DemoManager` class. |
-| `TYPE-001` | Weak input typing in generators | 2026-02-24 | Replaced casting with `GeneratorSeedSchema`. |
-| `ARCH-004` | Hardcoded rule logic tokens | 2026-02-24 | Centralized tokens in `@cartguard/spec`. |
-| `META-001` | Missing extension metadata | 2026-02-24 | Added `repository`, `LICENSE`, and `files` whitelist. |
-| `VAL-001` | Manual data validation | 2026-02-24 | Migrated research/extension data to Zod schemas in `@cartguard/spec`. |
-| `VAL-002` | Implicit any in error formatting | 2026-02-24 | Added explicit types for Zod issue mapping. |
-| `TEST-001` | Missing demo relationship checks | 2026-02-24 | Added E2E tests for slideshow/workflow consistency. |
+| `ARCH-006` | Large function: evaluateRule | 2026-02-24 | Helper functions extracted. |
+| `ARCH-010` | Large file: engine index.ts | 2026-02-24 | Split into modules. |
+| `ARCH-009` | Large file: extension.ts | 2026-02-24 | Extracted utilities and logic. |
+| `ARCH-012` | Missing resource disposal | 2026-02-24 | Added to context.subscriptions. |
+| `ARCH-011` | Circular dependencies | 2026-02-24 | Resolved via types.ts move. |
+| `ARCH-001` | Monolithic extension entry point | 2026-02-24 | Refactored. |
+| `ARCH-005` | High function complexity | 2026-02-24 | Extracted managers. |
+| `ARCH-002` | Global state for demo lifecycle | 2026-02-24 | Encapsulated in DemoManager. |
+| `TYPE-001` | Weak input typing in generators | 2026-02-24 | Zod schema validation added. |
+| `ARCH-004` | Hardcoded rule logic tokens | 2026-02-24 | Centralized in spec. |
+| `META-001` | Missing extension metadata | 2026-02-24 | Metadata added. |
+| `VAL-001` | Manual data validation | 2026-02-24 | Migrated to Zod. |
+| `VAL-002` | Implicit any in error formatting | 2026-02-24 | Types added. |
+| `TEST-001` | Missing demo relationship checks | 2026-02-24 | E2E tests added. |
