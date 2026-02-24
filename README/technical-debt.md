@@ -2,32 +2,32 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 8
+- **Total Open Debt Count**: 7
 - **Severity Breakdown**:
   - Critical: 1
-  - High: 1
+  - High: 0
   - Medium: 4
   - Low: 2
 - **Category Breakdown**:
-  - Architecture: 5
+  - Architecture: 4
   - Static Site: 1
   - Testing: 1
   - DX: 1
 - **Status Trends**:
   - **Issues Found This Pass**: 0
-  - **Issues Resolved Since Last Pass**: 3 (ARCH-006, ARCH-010, ARCH-015)
+  - **Issues Resolved Since Last Pass**: 4 (ARCH-006, ARCH-010, ARCH-015, ARCH-014)
   - **Critical Violations**: 1 (`ARCH-003`)
   - **Circular Dependencies**: 0
   - **Domain Purity Violations**: 0
-  - **Trend**: Improving. Engine complexity reduced and AI domain purity restored.
+  - **Trend**: Improving. Architecture boundaries being formalized in extension.
 
 ### Top 5 Highest Impact Issues
 
 1. `ARCH-003`: Unabstracted VS Code API usage (Dependency Rule Violation).
-2. `ARCH-014`: Demo state machine coupled to VS Code UI (Layer Boundary Violation).
-3. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
-4. `TEST-002`: Thin unit test coverage for extension (Blocked by ARCH-003).
-5. `ARCH-007`: Large function: renderDemoHtml (High Cognitive Load).
+2. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
+3. `TEST-002`: Thin unit test coverage for extension (Blocked by ARCH-003).
+4. `ARCH-007`: Large function: renderDemoHtml (High Cognitive Load).
+5. `ARCH-008`: Large function: activate (Complexity).
 
 ---
 
@@ -36,7 +36,6 @@
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
 | `ARCH-003` | Unabstracted VS Code API usage | Architecture | `vscode-extension` | Critical | L | Open | 2026-02-24 |
-| `ARCH-014` | Demo state machine coupled to UI | Architecture | `demo-manager.ts` | High | M | Open | 2026-02-24 |
 | `ARCH-007` | Large function: renderDemoHtml | Architecture | `demo-renderer.ts` | Medium | M | Open | 2026-02-24 |
 | `ARCH-008` | Large function: activate | Architecture | `extension.ts` | Medium | S | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Architecture | `docs/` | Medium | L | Open | 2026-02-24 |
@@ -52,11 +51,6 @@
 - **Principle**: Dependency Rule. Outer layer (Infrastructure/VSCode) is mixed with application orchestration. Logic is untestable.
 - **Impact**: Domain logic (evaluation orchestration) is coupled to `vscode` types.
 - **Risk**: Cannot run unit tests on extension logic without mocks/electron environment.
-
-### `ARCH-014`: Demo state machine coupled to UI
-- **Principle**: Missing Layer Boundary. The `advance()` logic in `DemoManager` is pure state transition logic but lives in a class managing a `WebviewPanel`.
-- **Impact**: Hard to test the demo slideshow transitions in isolation.
-- **Risk**: Tight coupling makes porting the demo to a different platform (e.g. CLI) impossible.
 
 ### `ARCH-007`: Large function: renderDemoHtml (326 lines)
 - **Principle**: High Cognitive Load. Mixed template/logic.
@@ -80,6 +74,7 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `ARCH-014` | Demo state machine coupled to UI | 2026-02-24 | Extracted pure state machine logic to `DemoLogic`. |
 | `ARCH-015` | Impure domain (Date.now) | 2026-02-24 | Side-effect removed; added timestamp support to GeneratorSeed. |
 | `ARCH-006` | Large function: evaluateRule | 2026-02-24 | Helper functions extracted. |
 | `ARCH-010` | Large file: engine index.ts | 2026-02-24 | Split into modules. |
