@@ -1,11 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": ".",
-    "outDir": "dist",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "types": ["node", "vscode", "mocha"]
-  },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+    "types": [
+      "node",
+      "vscode",
+      "mocha"
+    ]
+  }
 }

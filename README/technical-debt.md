@@ -2,19 +2,18 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 2
+- **Total Open Debt Count**: 1
 - **Total Architecture Debt Count**: 1
 - **Severity Breakdown**:
   - Critical: 0
   - High: 0
   - Medium: 1
-  - Low: 1
+  - Low: 0
 - **Category Breakdown**:
   - Architecture: 1
-  - DX: 1
 - **Status Trends**:
   - **Issues Found This Pass**: 0
-  - **Issues Resolved Since Last Pass**: 1 (TEST-002)
+  - **Issues Resolved Since Last Pass**: 1 (DX-001)
   - **Critical dependency violations**: 0
   - **Circular dependency count**: 0
   - **Domain purity violations**: 0
@@ -23,7 +22,6 @@
 ### Top 5 Highest Impact Issues
 
 1. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
-2. `DX-001`: Inconsistent tsconfig management (Maintenance).
 
 ---
 
@@ -32,7 +30,6 @@
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
 | `SITE-001` | Manual HTML duplication | Architecture | `docs/` | Medium | L | Open | 2026-02-24 |
-| `DX-001` | Inconsistent tsconfig management | DX | `packages/*/tsconfig.json` | Low | S | Open | 2026-02-24 |
 
 ---
 
@@ -49,6 +46,7 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `DX-001` | Inconsistent tsconfig management | 2026-02-24 | Added `rootDir`, `outDir`, and `include` using `${configDir}` to `tsconfig.base.json`. |
 | `TEST-002` | Thin unit test coverage for extension | 2026-02-24 | Added comprehensive `node:test` unit test suite for extension utility and logical layers. |
 | `ARCH-013` | Dead view contribution | 2026-02-24 | Removed unused `cartguardActionsView` and its container from VS Code package.json contributes section. |
 | `ARCH-007` | Large function: renderDemoHtml | 2026-02-24 | Decomposed into sub-renderers and helper functions in demo-renderer-components.ts. |
