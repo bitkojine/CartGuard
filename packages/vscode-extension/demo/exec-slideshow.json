@@ -1,0 +1,101 @@
+{
+  "decisionGates": [
+    {
+      "gateId": "GATE_WIFI_BASIC",
+      "checkId": "decision_gate_wifi_basic",
+      "context": "Radio SKU missing RED-aligned evidence.",
+      "businessTradeoff": "Shipping now is faster, but hold avoids likely compliance rework.",
+      "options": ["ship", "hold", "escalate"],
+      "recommended": "hold"
+    }
+  ],
+  "slides": [
+    {
+      "title": "Step 1 of 5: Launch Risk Snapshot",
+      "now": "Start with business pressure: blocked listings and launch delays in the current batch.",
+      "next": "Open one blocked SKU and show why it is blocked.",
+      "customerImpact": "Executives get immediate context on revenue risk before product detail.",
+      "whatUserSees": "Batch summary with Ready, At Risk, and Blocked SKUs.",
+      "whatUserClicks": "Open Wi-Fi Indoor Camera Basic",
+      "cartGuardChecks": "Batch triage across listing data, document presence, and scope hints.",
+      "legalBasis": "No legal determination at this step.",
+      "marketplacePolicy": "Missing compliance documentation can trigger listing impact and account-health pressure.",
+      "cartguardRecommendation": "Prioritize blocked SKUs first to prevent late-stage rework.",
+      "ownerRole": "Ops",
+      "fixAction": "Start remediation with highest-risk SKU.",
+      "evidenceType": "marketplace",
+      "checkId": "batch_overview",
+      "inputArtifact": "workflow-batch.json products[]"
+    },
+    {
+      "title": "Step 2 of 5: Blocker Found - Radio Evidence Gap",
+      "now": "Show one concrete blocker: radio-enabled SKU with non-radio documentation set.",
+      "next": "Force a clear go/no-go decision.",
+      "customerImpact": "Moves from abstract risk to a concrete launch blocker in seconds.",
+      "whatUserSees": "RED scope mismatch and missing radio-focused evidence.",
+      "whatUserClicks": "Why is this blocked?",
+      "cartGuardChecks": "Radio applicability detection plus directive/evidence alignment checks.",
+      "legalBasis": "Radio equipment requires RED-aligned conformity evidence.",
+      "marketplacePolicy": "Submitting incomplete evidence increases request/removal risk.",
+      "cartguardRecommendation": "Treat as blocked until RED-aligned evidence is attached.",
+      "ownerRole": "Compliance",
+      "fixAction": "Request RED DoC and radio test evidence from supplier.",
+      "evidenceType": "legal",
+      "checkId": "check_red_applicability",
+      "inputArtifact": "sample-listing.json + rules.json",
+      "scenarioId": "wrong_directive_radio"
+    },
+    {
+      "title": "Step 3 of 5: Decision Gate - Ship, Hold, or Escalate",
+      "now": "Convert findings into an accountable decision with explicit tradeoff.",
+      "next": "Show role-specific action outputs.",
+      "customerImpact": "Governance becomes auditable instead of ad hoc.",
+      "whatUserSees": "Decision gate with recommendation and decision capture.",
+      "whatUserClicks": "Select Hold, then continue",
+      "cartGuardChecks": "Aggregates unresolved critical gaps into one decision point.",
+      "legalBasis": "Critical conformity prerequisites remain unresolved.",
+      "marketplacePolicy": "Risk statement is guidance, not a platform prediction.",
+      "cartguardRecommendation": "HOLD and assign corrective actions with owner accountability.",
+      "ownerRole": "Compliance",
+      "fixAction": "Record decision and assign supplier/localization tasks.",
+      "evidenceType": "best_practice",
+      "checkId": "decision_gate_wifi_basic",
+      "inputArtifact": "workflow-batch.json scenario wrong_directive_radio",
+      "scenarioId": "wrong_directive_radio"
+    },
+    {
+      "title": "Step 4 of 5: Role Outputs - Who Does What Next",
+      "now": "Generate role-specific packets for Ops, Compliance, Engineering, and RP.",
+      "next": "Close with pilot metrics and paid-pilot scope.",
+      "customerImpact": "Findings become executable work queues instead of static reports.",
+      "whatUserSees": "Role output cards with actions and required fields.",
+      "whatUserClicks": "Export Ops and Compliance packets",
+      "cartGuardChecks": "Maps each issue to ownership and next-action fields.",
+      "legalBasis": "Legal references remain attached in compliance packet exports.",
+      "marketplacePolicy": "No marketplace decision at this step.",
+      "cartguardRecommendation": "Use outputs as daily handoff artifacts across teams.",
+      "ownerRole": "All",
+      "fixAction": "Distribute packets and track issue closure.",
+      "evidenceType": "best_practice",
+      "checkId": "export_role_outputs",
+      "inputArtifact": "workflow-batch.json roleOutputs"
+    },
+    {
+      "title": "Step 5 of 5: Pilot Close - Metrics and Scope",
+      "now": "Anchor the close on measurable pilot outcomes and bounded scope.",
+      "next": "End demo and move to pilot scoping.",
+      "customerImpact": "Clarifies exactly how value will be proven in 30-90 days.",
+      "whatUserSees": "Pilot metrics card: missing-doc rate, review cycle, rework loops.",
+      "whatUserClicks": "Continue to close",
+      "cartGuardChecks": "Summarizes evidence risk posture and current readiness mix.",
+      "legalBasis": "No legal determination at final summary stage.",
+      "marketplacePolicy": "Risk view is heuristic guidance and not an Amazon decision.",
+      "cartguardRecommendation": "Run a paid pilot with explicit success thresholds and owners.",
+      "ownerRole": "Ops",
+      "fixAction": "Confirm pilot scope, KPIs, cadence, and decision date.",
+      "evidenceType": "marketplace",
+      "checkId": "summarize_amazon_risk",
+      "inputArtifact": "evaluation summary + workflow scenarios"
+    }
+  ]
+}

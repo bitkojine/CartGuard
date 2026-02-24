@@ -19,10 +19,19 @@ This document explains every file used in the VSCode extension demo workspace.
 - `workflow-batch.json`
   - Live-fire slideshow data pack (6 SKUs + scenario metadata).
   - Drives product table, scenarios, and role-output cards in the slideshow.
+  - Includes optional `pilotMetrics` baseline/current KPI values for pilot close.
 
 - `slideshow.json`
   - Runtime source of truth for slideshow steps and decision gates.
   - Removes hardcoded step/gate definitions from extension code.
+
+- `exec-slideshow.json`
+  - 5-step executive storyline.
+  - Used by `CartGuard: Open Exec Demo`.
+
+- `champion-slideshow.json`
+  - Champion workflow deep-dive storyline.
+  - Used by `CartGuard: Open Champion Demo`.
 
 ## Demo output folder
 

@@ -61,7 +61,12 @@ interface ValidationCommandArgs {
   listingPath?: string;
   rulesPath?: string;
   applicabilityPath?: string;
+  workflowPath?: string;
+  slideshowPath?: string;
+  demoMode?: "default" | "exec" | "champion";
 }
+
+type DemoMode = "default" | "exec" | "champion";
 
 interface ActionNode {
   id: string;
@@ -122,6 +127,7 @@ interface WorkflowData {
   products: WorkflowProduct[];
   scenarios: WorkflowScenario[];
   roleOutputs?: WorkflowRoleOutput[];
+  pilotMetrics?: WorkflowPilotMetrics;
 }
 
 interface WorkflowRoleOutput {
@@ -129,6 +135,15 @@ interface WorkflowRoleOutput {
   summary: string;
   fields: string[];
   actions: string[];
+}
+
+interface WorkflowPilotMetrics {
+  baselineMissingDocRatePct?: number;
+  currentMissingDocRatePct?: number;
+  baselineReviewCycleDays?: number;
+  currentReviewCycleDays?: number;
+  baselineReworkLoopsPerListing?: number;
+  currentReworkLoopsPerListing?: number;
 }
 
 interface DecisionGate {
@@ -269,7 +284,13 @@ const runEvaluation = async (
   return { evaluation, listing, rules, applicability };
 };
 
-const resolveWorkflowPath = (context: vscode.ExtensionContext): string => {
+const resolveWorkflowPath = (
+  context: vscode.ExtensionContext,
+  args?: ValidationCommandArgs
+): string => {
+  if (typeof args?.workflowPath === "string") {
+    return args.workflowPath;
+  }
   const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
   if (workspaceRoot) {
     return join(workspaceRoot, "workflow-batch.json");
@@ -277,12 +298,33 @@ const resolveWorkflowPath = (context: vscode.ExtensionContext): string => {
   return join(context.extensionPath, "demo", "workflow-batch.json");
 };
 
-const resolveSlideshowPath = (context: vscode.ExtensionContext): string => {
+const resolveDefaultSlideshowPath = (context: vscode.ExtensionContext): string => {
   const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
   if (workspaceRoot) {
     return join(workspaceRoot, "slideshow.json");
   }
   return join(context.extensionPath, "demo", "slideshow.json");
+};
+
+const resolveSlideshowPath = (
+  context: vscode.ExtensionContext,
+  args?: ValidationCommandArgs
+): string => {
+  if (typeof args?.slideshowPath === "string") {
+    return args.slideshowPath;
+  }
+  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  const demoMode = args?.demoMode ?? "default";
+  const fileName =
+    demoMode === "exec"
+      ? "exec-slideshow.json"
+      : demoMode === "champion"
+        ? "champion-slideshow.json"
+        : "slideshow.json";
+  if (workspaceRoot) {
+    return join(workspaceRoot, fileName);
+  }
+  return join(context.extensionPath, "demo", fileName);
 };
 
 const parseWorkflowData = (input: unknown): WorkflowData | undefined => {
@@ -383,8 +425,49 @@ const parseWorkflowData = (input: unknown): WorkflowData | undefined => {
         })
     : undefined;
 
+  const pilotMetricsRaw =
+    "pilotMetrics" in input ? (input as { pilotMetrics?: unknown }).pilotMetrics : undefined;
+  let pilotMetrics: WorkflowPilotMetrics | undefined;
+  if (typeof pilotMetricsRaw === "object" && pilotMetricsRaw !== null) {
+    const typed = pilotMetricsRaw as Record<string, unknown>;
+    const toNumber = (value: unknown): number | undefined =>
+      typeof value === "number" && Number.isFinite(value) ? value : undefined;
+    const maybeMetrics: WorkflowPilotMetrics = {};
+    const baselineMissingDocRatePct = toNumber(typed.baselineMissingDocRatePct);
+    const currentMissingDocRatePct = toNumber(typed.currentMissingDocRatePct);
+    const baselineReviewCycleDays = toNumber(typed.baselineReviewCycleDays);
+    const currentReviewCycleDays = toNumber(typed.currentReviewCycleDays);
+    const baselineReworkLoopsPerListing = toNumber(typed.baselineReworkLoopsPerListing);
+    const currentReworkLoopsPerListing = toNumber(typed.currentReworkLoopsPerListing);
+    if (baselineMissingDocRatePct !== undefined) {
+      maybeMetrics.baselineMissingDocRatePct = baselineMissingDocRatePct;
+    }
+    if (currentMissingDocRatePct !== undefined) {
+      maybeMetrics.currentMissingDocRatePct = currentMissingDocRatePct;
+    }
+    if (baselineReviewCycleDays !== undefined) {
+      maybeMetrics.baselineReviewCycleDays = baselineReviewCycleDays;
+    }
+    if (currentReviewCycleDays !== undefined) {
+      maybeMetrics.currentReviewCycleDays = currentReviewCycleDays;
+    }
+    if (baselineReworkLoopsPerListing !== undefined) {
+      maybeMetrics.baselineReworkLoopsPerListing = baselineReworkLoopsPerListing;
+    }
+    if (currentReworkLoopsPerListing !== undefined) {
+      maybeMetrics.currentReworkLoopsPerListing = currentReworkLoopsPerListing;
+    }
+    pilotMetrics = Object.keys(maybeMetrics).length > 0 ? maybeMetrics : undefined;
+  }
+
   if (roleOutputs) {
+    if (pilotMetrics) {
+      return { products, scenarios, roleOutputs, pilotMetrics };
+    }
     return { products, scenarios, roleOutputs };
+  }
+  if (pilotMetrics) {
+    return { products, scenarios, pilotMetrics };
   }
   return { products, scenarios };
 };
@@ -514,6 +597,18 @@ const fallbackSlideshowData: SlideshowData = {
 
 const actionNodes: ActionNode[] = [
   {
+    id: "open-exec-slideshow",
+    label: "Open Exec Demo",
+    description: "Open the 5-step executive flow",
+    commandId: "cartguard.openExecDemoSlideshow"
+  },
+  {
+    id: "open-champion-slideshow",
+    label: "Open Champion Demo",
+    description: "Open the workflow deep-dive flow",
+    commandId: "cartguard.openChampionDemoSlideshow"
+  },
+  {
     id: "reopen-slideshow",
     label: "Reopen Slideshow Demo",
     description: "Open the Continue flow again",
@@ -556,6 +651,7 @@ const renderDemoHtml = (
   applicabilityPath: string,
   run: EvaluationBundle | undefined,
   workflowData: WorkflowData | undefined,
+  demoMode: DemoMode,
   autoplayEnabled: boolean,
   autoplayStepMs: number
 ): string => {
@@ -578,12 +674,32 @@ const renderDemoHtml = (
   };
   const activeSlides = slides.length > 0 ? slides : fallbackSlideshowData.slides;
   const slide = activeSlides[state.stepIndex] ?? activeSlides[0] ?? fallbackSlide;
+  const isExecMode = demoMode === "exec";
+  const isChampionMode = demoMode === "champion";
   const gate = decisionGatesByCheckId.get(slide.checkId);
   const currentDecision = gate ? state.decisions[gate.gateId] : undefined;
   const decisionRequired = Boolean(gate && !currentDecision && !state.done);
   const nextSlide =
     state.stepIndex < activeSlides.length - 1 ? activeSlides[state.stepIndex + 1] : undefined;
   const summary = run?.evaluation.result?.summary;
+  const totalProducts = workflowData?.products.length ?? 0;
+  const blockedProducts = workflowData?.products.filter((product) => product.status === "Blocked").length ?? 0;
+  const atRiskProducts = workflowData?.products.filter((product) => product.status === "At Risk").length ?? 0;
+  const readyProducts = workflowData?.products.filter((product) => product.status === "Ready").length ?? 0;
+  const inferredBaselineMissingPct =
+    totalProducts > 0 ? Math.round(((blockedProducts + atRiskProducts) / totalProducts) * 100) : 0;
+  const inferredCurrentMissingPct =
+    summary && summary.total_rules > 0 ? Math.round((summary.missing / summary.total_rules) * 100) : undefined;
+  const baselineMissingPct =
+    workflowData?.pilotMetrics?.baselineMissingDocRatePct ?? inferredBaselineMissingPct;
+  const currentMissingPct =
+    workflowData?.pilotMetrics?.currentMissingDocRatePct ??
+    inferredCurrentMissingPct ??
+    Math.max(baselineMissingPct - 8, 0);
+  const baselineReviewCycleDays = workflowData?.pilotMetrics?.baselineReviewCycleDays;
+  const currentReviewCycleDays = workflowData?.pilotMetrics?.currentReviewCycleDays;
+  const baselineReworkLoopsPerListing = workflowData?.pilotMetrics?.baselineReworkLoopsPerListing;
+  const currentReworkLoopsPerListing = workflowData?.pilotMetrics?.currentReworkLoopsPerListing;
   const scenario = slide.scenarioId
     ? workflowData?.scenarios.find((entry) => entry.id === slide.scenarioId)
     : undefined;
@@ -658,6 +774,15 @@ const renderDemoHtml = (
       <style>
         :root {
           color-scheme: light dark;
+          --bg: var(--vscode-editor-background);
+          --fg: var(--vscode-editor-foreground);
+          --muted: var(--vscode-descriptionForeground);
+          --card-bg: color-mix(in oklab, var(--bg) 94%, var(--fg) 6%);
+          --border: color-mix(in oklab, var(--fg) 22%, transparent);
+          --button-bg: color-mix(in oklab, var(--bg) 84%, var(--fg) 16%);
+          --button-hover: color-mix(in oklab, var(--bg) 72%, var(--fg) 28%);
+          --exec-accent: #005cc5;
+          --champion-accent: #0e7c3a;
           --ok: #1f8f4e;
           --bad: #b42318;
           --na: #667085;
@@ -667,21 +792,33 @@ const renderDemoHtml = (
           font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif;
           margin: 0;
           padding: 16px;
+          background: var(--bg);
+          color: var(--fg);
         }
         h1, h2, h3 {
           margin: 0 0 12px 0;
         }
         .card {
-          border: 1px solid color-mix(in oklab, currentColor 25%, transparent);
+          border: 1px solid var(--border);
+          background: var(--card-bg);
           border-radius: 12px;
           padding: 12px;
           margin-bottom: 12px;
+        }
+        .mode-banner {
+          border-left: 4px solid var(--na);
+        }
+        .mode-banner.exec {
+          border-left-color: var(--exec-accent);
+        }
+        .mode-banner.champion {
+          border-left-color: var(--champion-accent);
         }
         .label {
           font-size: 12px;
           letter-spacing: 0.04em;
           text-transform: uppercase;
-          opacity: 0.8;
+          color: var(--muted);
         }
         .value {
           margin-top: 6px;
@@ -723,9 +860,14 @@ const renderDemoHtml = (
         button {
           border-radius: 10px;
           padding: 8px 12px;
-          border: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+          border: 1px solid var(--border);
+          background: var(--button-bg);
+          color: var(--fg);
           font-weight: 600;
           cursor: pointer;
+        }
+        button:hover:enabled {
+          background: var(--button-hover);
         }
         button:disabled {
           opacity: 0.5;
@@ -737,7 +879,7 @@ const renderDemoHtml = (
           margin-top: 8px;
         }
         th, td {
-          border-bottom: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+          border-bottom: 1px solid var(--border);
           text-align: left;
           vertical-align: top;
           padding: 8px 6px;
@@ -747,16 +889,36 @@ const renderDemoHtml = (
     </head>
     <body>
       <h1>CartGuard Demo Slideshow</h1>
+      <div class="card mode-banner ${escapeHtml(demoMode)}">
+        <h3>Mode: ${
+          isExecMode
+            ? "Executive Briefing"
+            : isChampionMode
+              ? "Champion Workflow"
+              : "Default Walkthrough"
+        }</h3>
+        <div class="value">${
+          isExecMode
+            ? "Outcome-first flow: blocker -> decision -> pilot close."
+            : isChampionMode
+              ? "Operational deep dive: triage -> gates -> handoff."
+              : "Full storyline walkthrough."
+        }</div>
+      </div>
       <div class="card">
         <h2>${escapeHtml(slide.title)}</h2>
         <div class="label">Symptom</div>
         <div class="value">${escapeHtml(scenario?.symptom ?? slide.whatUserSees)}</div>
         <div class="label" style="margin-top:10px;">What we are doing now</div>
         <div class="value">${escapeHtml(slide.now)}</div>
-        <div class="label" style="margin-top:10px;">What we do next</div>
-        <div class="value">${escapeHtml(slide.next)}</div>
         <div class="label" style="margin-top:10px;">How this helps customers</div>
         <div class="value">${escapeHtml(slide.customerImpact)}</div>
+        ${
+          isExecMode
+            ? ""
+            : `
+        <div class="label" style="margin-top:10px;">What we do next</div>
+        <div class="value">${escapeHtml(slide.next)}</div>
         <div class="label" style="margin-top:10px;">What user sees</div>
         <div class="value">${escapeHtml(slide.whatUserSees)}</div>
         <div class="label" style="margin-top:10px;">What user clicks</div>
@@ -767,6 +929,8 @@ const renderDemoHtml = (
         <div class="value">${escapeHtml(slide.legalBasis)}</div>
         <div class="label" style="margin-top:10px;">Marketplace</div>
         <div class="value">${escapeHtml(slide.marketplacePolicy)}</div>
+        `
+        }
         <div class="label" style="margin-top:10px;">CartGuard recommendation</div>
         <div class="value">${escapeHtml(slide.cartguardRecommendation)}</div>
         <div class="label" style="margin-top:10px;">Fix now</div>
@@ -787,7 +951,7 @@ const renderDemoHtml = (
         }
       </div>
       ${
-        scenario
+        scenario && !isExecMode
           ? `
       <div class="card">
         <h3>Scenario Breakdown</h3>
@@ -804,7 +968,7 @@ const renderDemoHtml = (
           : ""
       }
       ${
-        productRows
+        productRows && !isExecMode
           ? `
       <div class="card">
         <h3>Batch Products</h3>
@@ -824,7 +988,7 @@ const renderDemoHtml = (
           : ""
       }
       ${
-        roleCards
+        roleCards && !isExecMode
           ? `
       <div class="grid">${roleCards}</div>
       `
@@ -860,7 +1024,7 @@ const renderDemoHtml = (
           : ""
       }
       ${
-        decisionRows
+        decisionRows && !isExecMode
           ? `
       <div class="card">
         <h3>Gate Decisions</h3>
@@ -887,6 +1051,29 @@ const renderDemoHtml = (
         <button id="continue" ${buttonDisabled}>${escapeHtml(buttonLabel)}</button>
         <span>Next: ${escapeHtml(nextText)}</span>
       </div>
+      ${
+        workflowData
+          ? `
+      <div class="card">
+        <h3>Pilot Metrics Snapshot</h3>
+        <div class="grid">
+          <div><strong>Missing-doc rate</strong><div>${baselineMissingPct}% -> ${currentMissingPct}%</div></div>
+          <div><strong>Review cycle (days)</strong><div>${
+            baselineReviewCycleDays !== undefined && currentReviewCycleDays !== undefined
+              ? `${baselineReviewCycleDays} -> ${currentReviewCycleDays}`
+              : "Track during pilot"
+          }</div></div>
+          <div><strong>Rework loops/listing</strong><div>${
+            baselineReworkLoopsPerListing !== undefined && currentReworkLoopsPerListing !== undefined
+              ? `${baselineReworkLoopsPerListing} -> ${currentReworkLoopsPerListing}`
+              : "Track during pilot"
+          }</div></div>
+          <div><strong>Batch status mix</strong><div>Ready ${readyProducts} / At Risk ${atRiskProducts} / Blocked ${blockedProducts}</div></div>
+        </div>
+      </div>
+      `
+          : ""
+      }
       ${
         summary
           ? `
@@ -990,6 +1177,10 @@ const renderProcessHtml = (
       <style>
         :root {
           color-scheme: light dark;
+          --bg: var(--vscode-editor-background);
+          --fg: var(--vscode-editor-foreground);
+          --card-bg: color-mix(in oklab, var(--bg) 94%, var(--fg) 6%);
+          --border: color-mix(in oklab, var(--fg) 22%, transparent);
           --ok: #1f8f4e;
           --bad: #b42318;
           --na: #667085;
@@ -999,6 +1190,8 @@ const renderProcessHtml = (
           font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif;
           margin: 0;
           padding: 16px;
+          background: var(--bg);
+          color: var(--fg);
         }
         h1, h2 {
           margin: 0 0 12px 0;
@@ -1010,7 +1203,8 @@ const renderProcessHtml = (
           margin-bottom: 16px;
         }
         .card {
-          border: 1px solid color-mix(in oklab, currentColor 25%, transparent);
+          border: 1px solid var(--border);
+          background: var(--card-bg);
           border-radius: 10px;
           padding: 10px;
         }
@@ -1038,7 +1232,7 @@ const renderProcessHtml = (
           margin-top: 8px;
         }
         th, td {
-          border-bottom: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+          border-bottom: 1px solid var(--border);
           text-align: left;
           vertical-align: top;
           padding: 8px 6px;
@@ -1101,6 +1295,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
   let demoState: DemoControlState | undefined;
   let demoRun: EvaluationBundle | undefined;
   let workflowData: WorkflowData | undefined;
+  let currentDemoMode: DemoMode = "default";
   let slideshowSlides: DemoSlide[] = fallbackSlideshowData.slides;
   let decisionGatesByCheckId = new Map<string, DecisionGate>();
 
@@ -1122,6 +1317,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
       applicabilityPath,
       demoRun,
       workflowData,
+      currentDemoMode,
       autoplayEnabled,
       autoplayStepMs
     );
@@ -1315,12 +1511,18 @@ export const activate = (context: vscode.ExtensionContext): void => {
       try {
         const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
 
+        if (demoPanel) {
+          demoPanel.dispose();
+        }
+        currentDemoMode = args?.demoMode ?? "default";
+
         demoRun = undefined;
         workflowData = undefined;
         slideshowSlides = fallbackSlideshowData.slides;
         decisionGatesByCheckId = new Map();
-        const workflowPath = resolveWorkflowPath(context);
-        const slideshowPath = resolveSlideshowPath(context);
+        const workflowPath = resolveWorkflowPath(context, args);
+        const slideshowPath = resolveSlideshowPath(context, args);
+        const defaultSlideshowPath = resolveDefaultSlideshowPath(context);
         try {
           const parsed = parseWorkflowData(await readJsonFile(workflowPath));
           workflowData = parsed;
@@ -1336,8 +1538,23 @@ export const activate = (context: vscode.ExtensionContext): void => {
             );
           }
         } catch {
-          slideshowSlides = fallbackSlideshowData.slides;
-          decisionGatesByCheckId = new Map();
+          try {
+            if (slideshowPath !== defaultSlideshowPath) {
+              const parsed = parseSlideshowData(await readJsonFile(defaultSlideshowPath));
+              if (parsed) {
+                slideshowSlides = parsed.slides;
+                decisionGatesByCheckId = new Map(
+                  parsed.decisionGates.map((gate) => [gate.checkId, gate])
+                );
+              }
+            } else {
+              slideshowSlides = fallbackSlideshowData.slides;
+              decisionGatesByCheckId = new Map();
+            }
+          } catch {
+            slideshowSlides = fallbackSlideshowData.slides;
+            decisionGatesByCheckId = new Map();
+          }
         }
         demoState = {
           stepIndex: 0,
@@ -1346,7 +1563,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
           decisions: {}
         };
 
-        demoPanel = vscode.window.createWebviewPanel(
+        const panel = vscode.window.createWebviewPanel(
           "cartguardDemoSlideshow",
           "CartGuard Slideshow Demo",
           vscode.ViewColumn.Active,
@@ -1354,17 +1571,22 @@ export const activate = (context: vscode.ExtensionContext): void => {
             enableScripts: true
           }
         );
+        demoPanel = panel;
 
-        demoPanel.onDidDispose(() => {
+        panel.onDidDispose(() => {
+          if (demoPanel !== panel) {
+            return;
+          }
           demoPanel = undefined;
           demoState = undefined;
           demoRun = undefined;
           workflowData = undefined;
+          currentDemoMode = "default";
           slideshowSlides = fallbackSlideshowData.slides;
           decisionGatesByCheckId = new Map();
         });
 
-        demoPanel.webview.onDidReceiveMessage(async (message: unknown) => {
+        panel.webview.onDidReceiveMessage(async (message: unknown) => {
           if (
             typeof message === "object" &&
             message !== null &&
@@ -1430,6 +1652,29 @@ export const activate = (context: vscode.ExtensionContext): void => {
     () => demoState ?? null
   );
 
+  const getDemoMode = vscode.commands.registerCommand(
+    "cartguard.getDemoMode",
+    () => currentDemoMode
+  );
+
+  const openExecDemoSlideshow = vscode.commands.registerCommand(
+    "cartguard.openExecDemoSlideshow",
+    async () => {
+      await vscode.commands.executeCommand("cartguard.openDemoSlideshow", { demoMode: "exec" });
+      return true;
+    }
+  );
+
+  const openChampionDemoSlideshow = vscode.commands.registerCommand(
+    "cartguard.openChampionDemoSlideshow",
+    async () => {
+      await vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
+        demoMode: "champion"
+      });
+      return true;
+    }
+  );
+
   const reopenDemoSlideshow = vscode.commands.registerCommand(
     "cartguard.reopenDemoSlideshow",
     async () => {
@@ -1444,8 +1689,11 @@ export const activate = (context: vscode.ExtensionContext): void => {
     validateJsonFiles,
     openProcessView,
     openDemoSlideshow,
+    openExecDemoSlideshow,
+    openChampionDemoSlideshow,
     demoNextStep,
     getDemoState,
+    getDemoMode,
     reopenDemoSlideshow,
     output
   );

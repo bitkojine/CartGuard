@@ -31,6 +31,37 @@ const waitForEditor = async (): Promise<vscode.TextEditor | undefined> => {
   return undefined;
 };
 
+const openAndAdvanceSlideshow = async (
+  openCommand:
+    | "cartguard.openDemoSlideshow"
+    | "cartguard.openExecDemoSlideshow"
+    | "cartguard.openChampionDemoSlideshow"
+    | "cartguard.reopenDemoSlideshow",
+  maxSteps: number
+): Promise<{ stepIndex: number; done: boolean; title?: string }> => {
+  await vscode.commands.executeCommand(openCommand);
+  await pause(200);
+
+  let state = (await vscode.commands.executeCommand("cartguard.getDemoState")) as
+    | { stepIndex: number; done: boolean; title?: string }
+    | null;
+  assert.ok(state);
+
+  for (let i = 0; i < maxSteps; i += 1) {
+    if (state.done) {
+      return state;
+    }
+    state = (await vscode.commands.executeCommand("cartguard.demoNextStep")) as {
+      stepIndex: number;
+      done: boolean;
+      title?: string;
+    };
+    await pause(80);
+  }
+
+  assert.fail(`Slideshow did not complete within ${maxSteps} steps.`);
+};
+
 suite("CartGuard Extension E2E", () => {
   suiteSetup(function setupSuite() {
     this.timeout(0);
@@ -142,5 +173,50 @@ suite("CartGuard Extension E2E", () => {
     }
 
     assert.equal(state.done, true);
+  });
+
+  test("exec slideshow path opens and completes", async () => {
+    const finalState = await openAndAdvanceSlideshow("cartguard.openExecDemoSlideshow", 20);
+    assert.equal(finalState.done, true);
+    assert.match(finalState.title ?? "", /Step 5 of 5/);
+  });
+
+  test("champion slideshow path opens and completes", async () => {
+    const finalState = await openAndAdvanceSlideshow("cartguard.openChampionDemoSlideshow", 30);
+    assert.equal(finalState.done, true);
+    assert.match(finalState.title ?? "", /Step 8 of 8/);
+  });
+
+  test("reopen slideshow command resets to default flow", async () => {
+    await openAndAdvanceSlideshow("cartguard.openExecDemoSlideshow", 10);
+
+    await vscode.commands.executeCommand("cartguard.reopenDemoSlideshow");
+    await pause(120);
+    const state = (await vscode.commands.executeCommand("cartguard.getDemoState")) as
+      | { stepIndex: number; done: boolean; title?: string }
+      | null;
+
+    assert.ok(state);
+    assert.equal(state.stepIndex, 0);
+    assert.equal(state.done, false);
+    assert.match(state.title ?? "", /Step 1 of 14/);
+  });
+
+  test("slideshow commands switch demo mode as expected", async () => {
+    await vscode.commands.executeCommand("cartguard.openDemoSlideshow");
+    let mode = (await vscode.commands.executeCommand("cartguard.getDemoMode")) as string;
+    assert.equal(mode, "default");
+
+    await vscode.commands.executeCommand("cartguard.openExecDemoSlideshow");
+    mode = (await vscode.commands.executeCommand("cartguard.getDemoMode")) as string;
+    assert.equal(mode, "exec");
+
+    await vscode.commands.executeCommand("cartguard.openChampionDemoSlideshow");
+    mode = (await vscode.commands.executeCommand("cartguard.getDemoMode")) as string;
+    assert.equal(mode, "champion");
+
+    await vscode.commands.executeCommand("cartguard.reopenDemoSlideshow");
+    mode = (await vscode.commands.executeCommand("cartguard.getDemoMode")) as string;
+    assert.equal(mode, "default");
   });
 });

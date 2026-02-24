@@ -48,6 +48,22 @@ Option B (VS Code UI):
 - `CartGuard: Run Demo`
 - `CartGuard: Open Process View`
 - `CartGuard: Open Slideshow Demo`
+- `CartGuard: Open Exec Demo`
+- `CartGuard: Open Champion Demo`
+
+## One-Command Local Release + Install
+
+From repo root:
+
+```bash
+pnpm vscode:release-local
+```
+
+What this does:
+- Bumps the extension patch version
+- Builds the extension
+- Packages `cartguard.vsix`
+- Installs the VSIX into local VS Code
 
 ## Primary Demo Mode: Manual Click-to-Continue
 
@@ -78,6 +94,8 @@ How to finish:
 - `CartGuard: Validate JSON Files`
 - `CartGuard: Open Process View`
 - `CartGuard: Open Slideshow Demo`
+- `CartGuard: Open Exec Demo`
+- `CartGuard: Open Champion Demo`
 - `CartGuard: Demo Next Step`
 - `CartGuard: Reopen Slideshow Demo`
 
@@ -102,12 +120,22 @@ How to finish:
 - Advances slideshow by one step.
 - Auto-applies recommended gate decisions for command-driven flow.
 
-6. `CartGuard: Reopen Slideshow Demo`
+6. `CartGuard: Open Exec Demo`
+- Opens the 5-step executive storyline.
+- Uses `exec-slideshow.json` when present.
+
+7. `CartGuard: Open Champion Demo`
+- Opens the workflow deep-dive storyline.
+- Uses `champion-slideshow.json` when present.
+
+8. `CartGuard: Reopen Slideshow Demo`
 - Resets and reopens slideshow from step 1.
 
 ## Runtime Demo Files
 
 - `packages/vscode-extension/demo/slideshow.json`
+- `packages/vscode-extension/demo/exec-slideshow.json`
+- `packages/vscode-extension/demo/champion-slideshow.json`
 - `packages/vscode-extension/demo/workflow-batch.json`
 - `packages/vscode-extension/demo/sample-listing.json`
 - `packages/vscode-extension/demo/rules.json`
@@ -152,3 +180,8 @@ pnpm lint
 pnpm guard
 pnpm check
 ```
+
+## Stabilization Notes
+
+- Known technical debt and cleanup priorities are tracked in:
+  - `README/technical-debt.md`

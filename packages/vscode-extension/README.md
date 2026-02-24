@@ -18,6 +18,14 @@
   - Opens a guided, step-by-step demo webview.
   - Each slide explains what CartGuard is doing now, what comes next, and customer impact.
 
+- `CartGuard: Open Exec Demo`
+  - Opens the 5-step executive demo flow.
+  - Focuses on outcome-first story and pilot-close framing.
+
+- `CartGuard: Open Champion Demo`
+  - Opens the champion workflow deep-dive flow.
+  - Focuses on triage, decision gates, and role handoffs.
+
 ## Local development
 
 From repo root:

@@ -105,6 +105,14 @@
       ]
     }
   ],
+  "pilotMetrics": {
+    "baselineMissingDocRatePct": 42,
+    "currentMissingDocRatePct": 18,
+    "baselineReviewCycleDays": 6.5,
+    "currentReviewCycleDays": 3.2,
+    "baselineReworkLoopsPerListing": 2.8,
+    "currentReworkLoopsPerListing": 1.4
+  },
   "roleOutputs": [
     {
       "role": "Ops",
