@@ -1,5 +1,15 @@
 # CartGuard: Spec-Driven AI Compliance Infrastructure for Ecommerce
 
+---
+
+**⚠️ Domain Model Assessment: 3/10** — Spec-driven CRUD, not rich DDD. [Full assessment →](DOMAIN_MODEL_INDEX.md)
+
+**🔴 Top 2 Priority Fixes:**
+1. **No Evidence Lifecycle Aggregate** — Evidence expiry/re-verification is unmanaged; stale docs will silently pass compliance checks in production. *Estimate: 2–3 weeks.*
+2. **Applicability Logic Is Unmaintainable** — `getApplicabilityState()` function (cyclomatic complexity ~8) makes adding rules slow and error-prone. *Estimate: 1 week.*
+
+---
+
 ## The Problem
 
 **Marketplace sellers lose revenue because compliance verification is broken.**
