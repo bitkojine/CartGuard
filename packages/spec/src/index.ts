@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+export const RuleIdSchema = z.string().min(1).brand("RuleId");
+export type RuleId = z.infer<typeof RuleIdSchema>;
+
+export const ProductIdSchema = z.string().min(1).brand("ProductId");
+export type ProductId = z.infer<typeof ProductIdSchema>;
+
+export const ListingIdSchema = z.string().min(1).brand("ListingId");
+export type ListingId = z.infer<typeof ListingIdSchema>;
+
+export const DocumentKeySchema = z.string().min(1).brand("DocumentKey");
+export type DocumentKey = z.infer<typeof DocumentKeySchema>;
+
 export const ComplianceTokens = {
   RED_RADIO_INTENTIONAL:
     "equipment_intentionally_emits_or_receives_radio_waves_for_radio_communication_or_radiodetermination",
@@ -39,7 +51,7 @@ export const ClaimSchema = z.object({
 export type Claim = z.infer<typeof ClaimSchema>;
 
 const ProductContentSchemaBase = z.object({
-  productId: z.string().min(1),
+  productId: ProductIdSchema,
   title: z.string().min(1),
   description: z.string().min(1),
   claims: z.array(ClaimSchema).min(1)
@@ -126,13 +138,13 @@ export const SubmissionMetadataSchema = z.object({
 export type SubmissionMetadata = z.infer<typeof SubmissionMetadataSchema>;
 
 export const RuleRecordSchema = z.object({
-  rule_id: z.string().min(1),
+  rule_id: RuleIdSchema,
   jurisdiction: z.string().min(1),
   channel: z.string().min(1),
   requirement_type: RequirementTypeSchema,
   trigger: z.string().min(1),
-  required_evidence: z.array(z.string().min(1)).min(1),
-  required_evidence_keys: z.array(z.string().min(1)).default([]),
+  required_evidence: z.array(DocumentKeySchema).min(1),
+  required_evidence_keys: z.array(DocumentKeySchema).default([]),
   validation_checks: z.array(z.string().min(1)).min(1),
   submission_metadata: SubmissionMetadataSchema,
   source_url: z.string().url(),
@@ -151,7 +163,7 @@ export const RuleCatalogSchema = z.object({
 export type RuleCatalog = z.infer<typeof RuleCatalogSchema>;
 
 export const ApplicabilityRuleSchema = z.object({
-  rule_id: z.string().min(1),
+  rule_id: RuleIdSchema,
   if: z.array(z.string().min(1)).min(1),
   then_applies: z.array(z.string().min(1)),
   then_not_applies: z.array(z.string().min(1)),
@@ -168,23 +180,28 @@ export const ApplicabilityCatalogSchema = z.object({
 
 export type ApplicabilityCatalog = z.infer<typeof ApplicabilityCatalogSchema>;
 
+export const EvidenceVerificationEventSchema = z.object({
+  event_type: z.enum(["verified", "rejected", "expired"]),
+  verifier: z.string().min(1).optional(),
+  timestamp: z.string().datetime()
+});
+
+export type EvidenceVerificationEvent = z.infer<typeof EvidenceVerificationEventSchema>;
+
 export const EvidenceDocumentSchema = z.object({
-  document_key: z.string().min(1),
+  document_key: DocumentKeySchema,
   document_name: z.string().min(1),
   status: ValidationStatusSchema.default("present"),
+  verification_events: z.array(EvidenceVerificationEventSchema).default([]),
   last_verified_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   source_url: z.string().url().optional()
 });
-
 export type EvidenceDocument = z.infer<typeof EvidenceDocumentSchema>;
 
-export const ListingInputSchema = z.object({
-  listing_id: z.string().min(1),
-  product_id: z.string().min(1),
+export const ProductSchema = z.object({
+  product_id: ProductIdSchema,
   product_version: z.string().min(1),
   product_archetype: z.string().min(1),
-  jurisdiction: z.string().min(1),
-  channel: z.string().min(1),
   is_radio_equipment: z.boolean(),
   is_red_excluded: z.boolean().default(false),
   is_lvd_annex_ii_excluded: z.boolean().default(false),
@@ -195,10 +212,19 @@ export const ListingInputSchema = z.object({
   evidence_documents: z.array(EvidenceDocumentSchema).default([])
 });
 
+export type Product = z.infer<typeof ProductSchema>;
+
+export const ListingInputSchema = z.object({
+  listing_id: ListingIdSchema,
+  product: ProductSchema,
+  jurisdiction: z.string().min(1),
+  channel: z.string().min(1)
+});
+
 export type ListingInput = z.infer<typeof ListingInputSchema>;
 
 export const RuleEvaluationSchema = z.object({
-  rule_id: z.string().min(1),
+  rule_id: RuleIdSchema,
   status: ValidationStatusSchema,
   blocking: z.boolean(),
   message: z.string().min(1),
@@ -224,7 +250,7 @@ export const ListingEvaluationSummarySchema = z.object({
 export type ListingEvaluationSummary = z.infer<typeof ListingEvaluationSummarySchema>;
 
 export const ListingEvaluationResultSchema = z.object({
-  listing_id: z.string().min(1),
+  listing_id: ListingIdSchema,
   evaluations: z.array(RuleEvaluationSchema),
   summary: ListingEvaluationSummarySchema
 });

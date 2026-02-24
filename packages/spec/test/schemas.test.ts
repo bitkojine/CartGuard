@@ -108,21 +108,23 @@ void test("ApplicabilityCatalogSchema rejects invalid date", () => {
 void test("ListingInputSchema accepts listing evidence payload", () => {
   const result = ListingInputSchema.safeParse({
     listing_id: "amz-de-001",
-    product_id: "sku-123",
-    product_version: "v1",
-    product_archetype: "non-radio mains electronics",
+    product: {
+      product_id: "sku-123",
+      product_version: "v1",
+      product_archetype: "non-radio mains electronics",
+      is_radio_equipment: false,
+      voltage_ac: 230,
+      evidence_documents: [
+        {
+          document_key: "eu_doc_lvd",
+          document_name: "LVD declaration",
+          status: "present",
+          last_verified_at: "2026-02-23"
+        }
+      ]
+    },
     jurisdiction: "EU",
-    channel: "AmazonDE",
-    is_radio_equipment: false,
-    voltage_ac: 230,
-    evidence_documents: [
-      {
-        document_key: "eu_doc_lvd",
-        document_name: "LVD declaration",
-        status: "present",
-        last_verified_at: "2026-02-23"
-      }
-    ]
+    channel: "AmazonDE"
   });
 
   assert.equal(result.success, true);

@@ -173,18 +173,20 @@ void test("rejects malformed applicability catalog payloads", () => {
 
 const baseListing = {
   listing_id: "amz-de-100",
-  product_id: "sku-100",
-  product_version: "v1",
-  product_archetype: "non-radio mains electronics",
+  product: {
+    product_id: "sku-100",
+    product_version: "v1",
+    product_archetype: "non-radio mains electronics",
+    is_radio_equipment: false,
+    is_red_excluded: false,
+    is_lvd_annex_ii_excluded: false,
+    is_emc_equipment: true,
+    is_emc_relevant: true,
+    voltage_ac: 230,
+    evidence_documents: []
+  },
   jurisdiction: "EU",
-  channel: "AmazonDE",
-  is_radio_equipment: false,
-  is_red_excluded: false,
-  is_lvd_annex_ii_excluded: false,
-  is_emc_equipment: true,
-  is_emc_relevant: true,
-  voltage_ac: 230,
-  evidence_documents: []
+  channel: "AmazonDE"
 } as const;
 
 const evaluationRules = {

@@ -82,18 +82,18 @@ export const validateApplicabilityCatalog = (c: unknown): ValidationResult & { c
 };
 
 const tokenValue = (l: ListingInput, t: string): boolean | undefined => {
-  if (t === ComplianceTokens.RED_RADIO_INTENTIONAL) return l.is_radio_equipment;
-  if (t === ComplianceTokens.RED_NOT_EXCLUDED) return !l.is_red_excluded;
-  if (t === ComplianceTokens.RED_NOT_RADIO) return !l.is_radio_equipment;
+  if (t === ComplianceTokens.RED_RADIO_INTENTIONAL) return l.product.is_radio_equipment;
+  if (t === ComplianceTokens.RED_NOT_EXCLUDED) return !l.product.is_red_excluded;
+  if (t === ComplianceTokens.RED_NOT_RADIO) return !l.product.is_radio_equipment;
   if (t === ComplianceTokens.LVD_VOLTAGE_MATCH) {
-    const ac = typeof l.voltage_ac === "number" && l.voltage_ac >= 50 && l.voltage_ac <= 1000;
-    const dc = typeof l.voltage_dc === "number" && l.voltage_dc >= 75 && l.voltage_dc <= 1500;
+    const ac = typeof l.product.voltage_ac === "number" && l.product.voltage_ac >= 50 && l.product.voltage_ac <= 1000;
+    const dc = typeof l.product.voltage_dc === "number" && l.product.voltage_dc >= 75 && l.product.voltage_dc <= 1500;
     return ac || dc;
   }
-  if (t === ComplianceTokens.LVD_NOT_EXCLUDED) return !l.is_lvd_annex_ii_excluded;
-  if (t === ComplianceTokens.EMC_MEETS_DEF) return l.is_emc_equipment;
-  if (t === ComplianceTokens.EMC_LIABLE_DISTURBANCE) return l.is_emc_relevant;
-  if (t === ComplianceTokens.RED_RADIO_EQUIPMENT) return l.is_radio_equipment;
+  if (t === ComplianceTokens.LVD_NOT_EXCLUDED) return !l.product.is_lvd_annex_ii_excluded;
+  if (t === ComplianceTokens.EMC_MEETS_DEF) return l.product.is_emc_equipment;
+  if (t === ComplianceTokens.EMC_LIABLE_DISTURBANCE) return l.product.is_emc_relevant;
+  if (t === ComplianceTokens.RED_RADIO_EQUIPMENT) return l.product.is_radio_equipment;
   return undefined;
 };
 
@@ -127,7 +127,7 @@ const evaluateRule = (listing: ListingInput, rule: RuleRecord, applicability: Ap
   if (state === "unknown") return { ...base, status: "unknown", blocking: false, message: "Applicability unknown." };
 
   if (rule.required_evidence_keys.length === 0) return { ...base, status: "unknown", blocking: false, message: "No evidence keys." };
-  const byKey = new Map(listing.evidence_documents.map((doc) => [normalize(doc.document_key), doc]));
+  const byKey = new Map(listing.product.evidence_documents.map((doc) => [normalize(doc.document_key), doc]));
   const missing = rule.required_evidence_keys.filter((key) => !byKey.has(normalize(key)));
   if (missing.length > 0) return { ...base, status: "missing", blocking: blockable(rule), message: `Missing keys: ${missing.join(", ")}` };
 
