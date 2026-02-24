@@ -37,7 +37,7 @@ export class MockContentGenerator implements ContentGenerator {
           sourceUrl: seed.sourceUrl ?? "https://example.com/recycled-packaging-report",
           category: seed.category ?? "sustainability",
           confidence: 0.82,
-          createdAt: new Date().toISOString()
+          createdAt: seed.timestamp ?? "2026-02-24T00:00:00.000Z"
         }
       ]
     };

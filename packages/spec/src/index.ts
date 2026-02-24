@@ -294,7 +294,8 @@ export const GeneratorSeedSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   sourceUrl: z.string().url().optional(),
-  category: ClaimCategorySchema.optional()
+  category: ClaimCategorySchema.optional(),
+  timestamp: z.string().datetime().optional()
 });
 
 export type GeneratorSeed = z.infer<typeof GeneratorSeedSchema>;
