@@ -2,32 +2,31 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 5
+- **Total Open Debt Count**: 4
 - **Severity Breakdown**:
   - Critical: 0
   - High: 0
-  - Medium: 3
+  - Medium: 2
   - Low: 2
 - **Category Breakdown**:
-  - Architecture: 2
+  - Architecture: 1
   - Static Site: 1
   - Testing: 1
   - DX: 1
 - **Status Trends**:
   - **Issues Found This Pass**: 0
-  - **Issues Resolved Since Last Pass**: 6 (ARCH-006, ARCH-010, ARCH-015, ARCH-014, ARCH-008, ARCH-003)
+  - **Issues Resolved Since Last Pass**: 7 (ARCH-007, ARCH-006, ARCH-010, ARCH-015, ARCH-014, ARCH-008, ARCH-003)
   - **Critical Violations**: 0
   - **Circular Dependencies**: 0
   - **Domain Purity Violations**: 0
-  - **Trend**: Improving. Extension logic decoupled from VS Code API, unblocking unit testing.
+  - **Trend**: Improving. Extension logic decoupled from VS Code API, and complex demo rendering logic decomposed into maintainable components.
 
 ### Top 5 Highest Impact Issues
 
 1. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
 2. `TEST-002`: Thin unit test coverage for extension (Unblocked by ARCH-003).
-3. `ARCH-007`: Large function: renderDemoHtml (High Cognitive Load).
-4. `ARCH-013`: Dead view contribution (UI Clutter).
-5. `DX-001`: Inconsistent tsconfig management (Maintenance).
+3. `ARCH-013`: Dead view contribution (UI Clutter).
+4. `DX-001`: Inconsistent tsconfig management (Maintenance).
 
 ---
 
@@ -35,7 +34,6 @@
 
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
-| `ARCH-007` | Large function: renderDemoHtml | Architecture | `demo-renderer.ts` | Medium | M | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Architecture | `docs/` | Medium | L | Open | 2026-02-24 |
 | `TEST-002` | Thin unit test coverage for extension | Testing | `vscode-extension/test` | Medium | M | Open | 2026-02-24 |
 | `ARCH-013` | Dead view contribution | Architecture | `package.json` | Low | XS | Open | 2026-02-24 |
@@ -45,9 +43,6 @@
 
 ## Debt Details
 
-### `ARCH-007`: Large function: renderDemoHtml (326 lines)
-- **Principle**: High Cognitive Load. Mixed template/logic.
-- **Last Reviewed**: 2026-02-24
 
 ### `SITE-001`: Manual HTML duplication
 - **Description**: Duplicate nav/layout in docs. No shared component abstraction.
@@ -63,6 +58,7 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `ARCH-007` | Large function: renderDemoHtml | 2026-02-24 | Decomposed into sub-renderers and helper functions in demo-renderer-components.ts. |
 | `ARCH-003` | Unabstracted VS Code API usage | 2026-02-24 | Abstracted Logger and path resolution in extension-logic.ts. |
 | `ARCH-008` | Large function: activate | 2026-02-24 | Extracted command registration to separate module. |
 | `ARCH-014` | Demo state machine coupled to UI | 2026-02-24 | Extracted pure state machine logic to `DemoLogic`. |
