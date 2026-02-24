@@ -180,19 +180,19 @@ export const ApplicabilityCatalogSchema = z.object({
 
 export type ApplicabilityCatalog = z.infer<typeof ApplicabilityCatalogSchema>;
 
-export const EvidenceVerificationEventSchema = z.object({
+export const EvidenceVerificationEventSchemaLegacy = z.object({
   event_type: z.enum(["verified", "rejected", "expired"]),
   verifier: z.string().min(1).optional(),
   timestamp: z.string().datetime()
 });
 
-export type EvidenceVerificationEvent = z.infer<typeof EvidenceVerificationEventSchema>;
+export type EvidenceVerificationEventLegacy = z.infer<typeof EvidenceVerificationEventSchemaLegacy>;
 
 export const EvidenceDocumentSchema = z.object({
   document_key: DocumentKeySchema,
   document_name: z.string().min(1),
   status: ValidationStatusSchema.default("present"),
-  verification_events: z.array(EvidenceVerificationEventSchema).default([]),
+  verification_events: z.array(EvidenceVerificationEventSchemaLegacy).default([]),
   last_verified_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   source_url: z.string().url().optional()
 });
@@ -325,3 +325,16 @@ export const GeneratorSeedSchema = z.object({
 });
 
 export type GeneratorSeed = z.infer<typeof GeneratorSeedSchema>;
+export {
+  Evidence,
+  EvidenceVerificationEvent,
+  VerificationTimestamp,
+  deserializeEvidence,
+  serializeEvidence,
+  type EvidenceStatus,
+  type SerializedEvidence,
+  type SerializedEvidenceVerificationEvent,
+  EvidenceSchema,
+  EvidenceVerificationDecisionSchema,
+  type EvidenceVerificationDecision
+} from "./evidence.js";
