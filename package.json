@@ -17,6 +17,7 @@
     "prepare": "husky",
     "lint": "eslint \"packages/**/*.{ts,mts}\" \"scripts/**/*.{ts,mts}\" --max-warnings=0",
     "lint:fix": "eslint \"packages/**/*.{ts,mts}\" \"scripts/**/*.{ts,mts}\" --fix",
+    "format:check": "eslint \"packages/**/*.{ts,mts}\" \"scripts/**/*.{ts,mts}\" --max-warnings=0",
     "crm:check": "tsx scripts/check-airtable-crm-schema.mts",
     "crm:bootstrap": "tsx scripts/bootstrap-airtable-crm.mts",
     "crm:seed-demo": "tsx scripts/seed-airtable-crm-demo.mts",
