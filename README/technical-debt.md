@@ -2,26 +2,30 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 1
-- **Total Architecture Debt Count**: 1
-- **Severity Breakdown**:
-  - Critical: 0
-  - High: 0
-  - Medium: 1
-  - Low: 0
+- **Total Open Debt Count**: 8
+- **Critical**: 0
+- **High**: 1
+- **Medium**: 4
+- **Low**: 3
 - **Category Breakdown**:
-  - Architecture: 1
+  - Architecture: 2
+  - Maintainability: 4
+  - Reliability: 2
 - **Status Trends**:
-  - **Issues Found This Pass**: 0
-  - **Issues Resolved Since Last Pass**: 1 (DX-001)
+  - **Issues Found This Pass**: 7
+  - **Issues Resolved Since Last Pass**: 0
   - **Critical dependency violations**: 0
   - **Circular dependency count**: 0
   - **Domain purity violations**: 0
-  - **Trend**: Stable. The codebase adheres strictly to Clean Architecture principles. Minimal adapter drift and UI clutter remain.
+  - **Trend**: Stable. Codebase maintains Clean Architecture. New issues are localized to VSCode extension renderer layer and dynamic imports.
 
 ### Top 5 Highest Impact Issues
 
 1. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
+2. `REL-001`: Error swallowing in command handlers (Reliability).
+3. `ARCH-016`: Dynamic Function() for imports in extension-logic (Anti-pattern).
+4. `MAIN-001`: Duplicate CSS styles in renderer components (DRY violation).
+5. `MAIN-002`: Long parameter list in renderDemoHtml (Maintainability).
 
 ---
 
@@ -30,6 +34,13 @@
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
 | `SITE-001` | Manual HTML duplication | Architecture | `docs/` | Medium | L | Open | 2026-02-24 |
+| `REL-001` | Error swallowing in command handlers | Reliability | `packages/vscode-extension/src/commands.ts` | High | M | Open | 2026-02-24 |
+| `ARCH-016` | Dynamic Function() for imports | Architecture | `packages/vscode-extension/src/extension-logic.ts` | Medium | M | Open | 2026-02-24 |
+| `MAIN-001` | Duplicate CSS styles in renderers | Maintainability | `packages/vscode-extension/src/renderers/` | Medium | M | Open | 2026-02-24 |
+| `MAIN-002` | Long parameter list in renderDemoHtml | Maintainability | `packages/vscode-extension/src/renderers/demo-renderer.ts` | Low | S | Open | 2026-02-24 |
+| `MAIN-003` | High complexity in getApplicabilityState | Maintainability | `packages/engine/src/index.ts` | Low | M | Open | 2026-02-24 |
+| `REL-002` | Type coercion in webview message handling | Reliability | `packages/vscode-extension/src/commands.ts` | Medium | M | Open | 2026-02-24 |
+| `MAIN-004` | Unhandled promise in setTimeout callbacks | Maintainability | `packages/vscode-extension/src/renderers/demo-renderer.ts` | Low | S | Open | 2026-02-24 |
 
 ---
 
@@ -37,10 +48,80 @@
 
 
 ### `SITE-001`: Manual HTML duplication
-- **Description**: Duplicate nav/layout in docs. No shared component abstraction.
+- **Description**: Duplicate nav/layout structures in 17 docs HTML files. Each page manually duplicates head metadata, navigation markup, and styling. No shared template or component system.
+- **Impact**: Maintenance burden. Updating nav links requires changing 17 files. Risk of inconsistency.
+- **Why it matters**: Manual duplication increases defect risk and slows feature updates across the static site.
 - **Last Reviewed**: 2026-02-24
 
 ---
+
+### `REL-001`: Error swallowing in command handlers
+- **Description**: Multiple command handlers in [commands.ts](packages/vscode-extension/src/commands.ts#L37) catch exceptions (lines 37, 67, 90, 174) but only log to output channel without re-throwing or recovery actions. Errors are silently swallowed from user perspective if panel is not visible.
+- **Impact**: Silent failures. Users may not see errors if output panel is closed. No way to propagate failures to caller.
+- **Why it matters**: Unpredictable error recovery and difficult debugging for users. VSCode commands should fail visibly.
+- **Last Reviewed**: 2026-02-24
+- **Effort**: M
+- **Estimated Fix**: Add error dialog display for critical errors; preserve user-facing notifications.
+
+---
+
+### `ARCH-016`: Dynamic Function() for imports
+- **Description**: [extension-logic.ts](packages/vscode-extension/src/extension-logic.ts#L40) uses `new Function("specifier", "return import(specifier);")` to dynamically import the engine module. This pattern is an anti-pattern and circumvents static module resolution.
+- **Impact**: Harder to tree-shake; makes dependencies opaque to bundlers; potential security concern; non-standard pattern.
+- **Why it matters**: Makes code harder to understand and optimize. Standard dynamic import() should be used instead.
+- **Last Reviewed**: 2026-02-24
+- **Effort**: M
+- **Estimated Fix**: Replace with native `import()` dynamic import; update bundler config if needed.
+
+---
+
+### `MAIN-001`: Duplicate CSS styles in renderers
+- **Description**: CSS styles are duplicated across [demo-renderer-components.ts](packages/vscode-extension/src/renderers/demo-renderer-components.ts#L1) and [process-renderer.ts](packages/vscode-extension/src/renderers/process-renderer.ts#L1). Both files define similar color schemes, grid layouts, table styles, and button styles inline in template literals.
+- **Impact**: DRY violation. Updating color or layout requires changes in multiple places. Risk of inconsistency between demo and process views.
+- **Why it matters**: Maintainability. Shared styles should live in one place.
+- **Last Reviewed**: 2026-02-24
+- **Effort**: M
+- **Estimated Fix**: Extract shared CSS into a separate `shared-styles.ts` file and import in both renderers.
+
+---
+
+### `MAIN-002`: Long parameter list in renderDemoHtml
+- **Description**: [demo-renderer.ts](packages/vscode-extension/src/renderers/demo-renderer.ts#L6) `renderDemoHtml` function has 10 parameters: `state, slides, decisionGatesByCheckId, listingPath, rulesPath, applicabilityPath, run, workflowData, demoMode, autoplayEnabled, autoplayStepMs`. Exceeds recommended 4-parameter limit.
+- **Impact**: Harder to call and extend. Hard to remember parameter order. Makes function signature brittle.
+- **Why it matters**: Reduced readability and maintainability. Future callers must carefully order arguments.
+- **Last Reviewed**: 2026-02-24
+- **Effort**: S
+- **Estimated Fix**: Group parameters into config objects: `{ state, slides, gates, paths: { listing, rules, applicability }, run, workflow, mode, autoplay: { enabled, stepMs } }`.
+
+---
+
+### `MAIN-003`: High complexity in getApplicabilityState
+- **Description**: [engine/src/index.ts](packages/engine/src/index.ts#L100) `getApplicabilityState` function has nested loops and multiple conditions evaluating token applicability. Cyclomatic complexity is high (~8+).
+- **Impact**: Hard to test all branches. Risk of logic errors in rule applicability evaluation, which directly affects compliance checking.
+- **Why it matters**: Core business logic. High complexity creates defect risk and slows feature changes.
+- **Last Reviewed**: 2026-02-24
+- **Effort**: M
+- **Estimated Fix**: Extract token evaluation into separate helper; use early returns to flatten nesting; add focused unit tests for each token type.
+
+---
+
+### `REL-002`: Type coercion in webview message handling
+- **Description**: [commands.ts](packages/vscode-extension/src/commands.ts#L143) line 143: Runtime type check `if (message !== null && typeof message === "object" && "type" in message)` followed by unsafe cast to `{ type?: unknown; decision?: unknown; gateId?: unknown }`. The properties are marked `?` but code assumes they exist.
+- **Impact**: Potential runtime errors if webview sends malformed message. No type safety on message structure.
+- **Why it matters**: Webview communication is a trust boundary. Messages could be crafted to cause unexpected behavior.
+- **Last Reviewed**: 2026-02-24
+- **Effort**: M
+- **Estimated Fix**: Define strict Zod schema for webview messages; use safeParse(); validate all fields.
+
+---
+
+### `MAIN-004`: Unhandled promise in setTimeout callbacks
+- **Description**: [demo-renderer.ts](packages/vscode-extension/src/renderers/demo-renderer.ts#L108): Inside the autoplay setTimeout, `onRequireRun()` promise is called without await or .catch(). If the promise rejects, the error is silently swallowed.
+- **Impact**: Autoplay can fail without user notification. Demo may hang.
+- **Why it matters**: Unhandled promise rejection can crash the extension or leave it in inconsistent state.
+- **Last Reviewed**: 2026-02-24
+- **Effort**: S
+- **Estimated Fix**: Wrap in try-catch; add error handling for autoplay promise failures.
 
 ## Resolved Debt
 
