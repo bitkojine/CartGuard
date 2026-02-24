@@ -17,14 +17,14 @@
         "document_key": "eu_doc_lvd",
         "document_name": "LVD EU declaration of conformity",
         "status": "present",
-        "last_verified_at": "2024-02-23",
+        "last_verified_at": "2026-02-23",
         "source_url": "https://example.com/lvd-doc"
       },
       {
         "document_key": "eu_doc_emc",
         "document_name": "EMC EU declaration of conformity",
         "status": "present",
-        "last_verified_at": "2024-02-23",
+        "last_verified_at": "2026-02-23",
         "source_url": "https://example.com/emc-doc"
       }
     ]

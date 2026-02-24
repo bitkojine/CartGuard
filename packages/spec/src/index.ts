@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { EvidenceVerificationEventSchema } from "./evidence.js";
 
 export const RuleIdSchema = z.string().min(1).brand("RuleId");
 export type RuleId = z.infer<typeof RuleIdSchema>;
@@ -123,10 +122,7 @@ export const ValidationStatusValues = [
   "stale",
   "mismatched",
   "not_applicable",
-  "unknown",
-  "conflicted",
-  "expired",
-  "reVerificationDue"
+  "unknown"
 ] as const;
 
 export const ValidationStatusSchema = z.enum(ValidationStatusValues);
@@ -196,10 +192,9 @@ export const EvidenceDocumentSchema = z.object({
   document_key: DocumentKeySchema,
   document_name: z.string().min(1),
   status: ValidationStatusSchema.default("present"),
-  verification_events: z.array(EvidenceVerificationEventSchema).default([]),
+  verification_events: z.array(EvidenceVerificationEventSchemaLegacy).default([]),
   last_verified_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  source_url: z.string().url().optional(),
-  ttl_days: z.number().int().positive().optional()
+  source_url: z.string().url().optional()
 });
 export type EvidenceDocument = z.infer<typeof EvidenceDocumentSchema>;
 
@@ -235,9 +230,7 @@ export const RuleEvaluationSchema = z.object({
   message: z.string().min(1),
   requirement_type: RequirementTypeSchema,
   source_type: SourceTypeSchema,
-  confidence: ConfidenceLevelSchema,
-  reVerificationDueDate: z.string().datetime().optional(),
-  auditTrail: z.array(EvidenceVerificationEventSchema).optional()
+  confidence: ConfidenceLevelSchema
 });
 
 export type RuleEvaluation = z.infer<typeof RuleEvaluationSchema>;
@@ -251,10 +244,7 @@ export const ListingEvaluationSummarySchema = z.object({
   warnings: z.number().int().nonnegative(),
   unknown: z.number().int().nonnegative(),
   not_applicable: z.number().int().nonnegative(),
-  present: z.number().int().nonnegative(),
-  conflicted: z.number().int().nonnegative(),
-  expired: z.number().int().nonnegative(),
-  reVerificationDue: z.number().int().nonnegative()
+  present: z.number().int().nonnegative()
 });
 
 export type ListingEvaluationSummary = z.infer<typeof ListingEvaluationSummarySchema>;
@@ -345,7 +335,6 @@ export {
   type SerializedEvidence,
   type SerializedEvidenceVerificationEvent,
   EvidenceSchema,
-  EvidenceVerificationEventSchema,
   EvidenceVerificationDecisionSchema,
   type EvidenceVerificationDecision
 } from "./evidence.js";
