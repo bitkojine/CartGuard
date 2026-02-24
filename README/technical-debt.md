@@ -84,6 +84,8 @@ This document tracks known technical debt in the CartGuard repository, with focu
   - Add `repository` field for extension package.
   - Ensure extension package includes license file path.
   - Add `.vscodeignore` or `files` whitelist.
+- Status:
+  - Paid down on 2026-02-24 by adding `repository`, extension-local `LICENSE`, and package `files` whitelist.
 
 ## Existing Mitigations
 
@@ -101,6 +103,5 @@ This document tracks known technical debt in the CartGuard repository, with focu
 1. Stabilize command contracts and document reopen semantics.
 2. Extract slideshow state transitions into a dedicated module.
 3. Add schema checks for `slideshow.json`, `exec-slideshow.json`, `champion-slideshow.json`, and `workflow-batch.json`.
-4. Clean packaging metadata and include rules.
+4. Keep packaging metadata/whitelist in sync as files change.
 5. Keep demo feature work paused until the above is complete.
-

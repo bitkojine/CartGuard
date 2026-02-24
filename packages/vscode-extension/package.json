@@ -6,6 +6,20 @@
   "private": true,
   "description": "CartGuard VSCode extension for compliance rule demos and validation",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitkojine/CartGuard.git",
+    "directory": "packages/vscode-extension"
+  },
+  "files": [
+    "dist/**",
+    "media/**",
+    "demo/**/*.json",
+    "demo/DEMO_FILES.md",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
   "main": "./dist/src/extension.js",
   "engines": {
     "vscode": "^1.96.0"
