@@ -110,7 +110,12 @@ Manual click mode (optional):
 ```
 
 2. Open browser desktop:
-- `http://localhost:6080`
+- Preferred: `https://localhost:8443`
+- Fallback: `http://localhost:6080`
+
+Note:
+- `https://localhost:8443` is encrypted via a local Caddy reverse proxy.
+- You may see a browser trust warning the first time because Caddy uses a local internal CA for localhost certificates.
 
 3. In the Extension Development Host window:
 - Auto mode: watch it advance all slides and close at the finish line.

@@ -9,3 +9,18 @@ services:
     shm_size: "2gb"
     volumes:
       - ../..:/workspace
+  novnc-https:
+    image: caddy:2-alpine
+    container_name: cartguard-novnc-https
+    depends_on:
+      - cartguard-ubuntu-click
+    ports:
+      - "8443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

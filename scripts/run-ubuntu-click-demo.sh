@@ -132,7 +132,8 @@ fi
 echo "VS Code window detected."
 
 echo
-echo "Open in browser: http://localhost:6080"
+echo "Open in browser (HTTPS): https://localhost:8443"
+echo "Fallback (HTTP): http://localhost:6080"
 echo "Check demo logs: docker exec $CONTAINER_NAME bash -lc 'tail -f /tmp/cartguard-slow-demo.log'"
 echo "Check maximizer logs: docker exec $CONTAINER_NAME bash -lc 'tail -f /tmp/cartguard-window-maximizer.log'"
 echo "Check startup-prep logs: docker exec $CONTAINER_NAME bash -lc 'tail -f /tmp/cartguard-vscode-startup-prep.log'"
