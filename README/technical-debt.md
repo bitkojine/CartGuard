@@ -2,14 +2,14 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 7
+- **Total Open Debt Count**: 6
 - **Severity Breakdown**:
   - Critical: 0
-  - High: 3
+  - High: 2
   - Medium: 3
   - Low: 1
 - **Category Breakdown**:
-  - Architecture: 4
+  - Architecture: 3
   - Static Site: 1
   - DX: 1
   - Testing: 1
@@ -21,10 +21,10 @@
 ### Top 5 Highest Impact Issues
 
 1. `ARCH-001`: Monolithic extension file (1500+ lines).
-2. `ARCH-002`: Global state management for demo lifecycle.
-3. `ARCH-003`: Unabstracted VS Code API usage.
-4. `ARCH-005`: High cyclomatic complexity in rendering/activation.
-5. `SITE-001`: Manual HTML duplication in static site.
+2. `ARCH-003`: Unabstracted VS Code API usage.
+3. `ARCH-005`: High cyclomatic complexity in rendering/activation.
+4. `SITE-001`: Manual HTML duplication in static site.
+5. `TEST-002`: Thin unit test coverage for extension.
 
 ---
 
@@ -33,7 +33,6 @@
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
 | `ARCH-001` | Monolithic extension entry point | Architecture | `packages/vscode-extension/src/extension.ts` | High | L | Open | 2026-02-23 |
-| `ARCH-002` | Global state for demo lifecycle | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-23 |
 | `ARCH-003` | Unabstracted VS Code API usage | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-24 |
 | `ARCH-005` | High function complexity | Architecture | `extension.ts` (`renderDemoHtml`, `activate`) | Medium | M | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Static Site | `docs/**/*.html` | Medium | L | Open | 2026-02-24 |
@@ -49,10 +48,6 @@
 - **Impact**: Increased regression risk, slow reviews, and circular dependency potential.
 - **Last Reviewed**: 2026-02-24
 
-### `ARCH-002`: Global state for demo lifecycle
-- **Description**: `demoPanel`, `demoState`, and `workflowData` are tracked as top-level `let` variables.
-- **Impact**: Difficult to test, risk of state leaks between demo runs.
-- **Last Reviewed**: 2026-02-24
 
 ### `ARCH-003`: Unabstracted VS Code API usage
 - **Description**: Direct calls to `vscode.commands`, `vscode.window`, and `vscode.workspace` throughout the business logic.
@@ -85,6 +80,7 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `ARCH-002` | Global state for demo lifecycle | 2026-02-24 | Encapsulated in `DemoManager` class. |
 | `TYPE-001` | Weak input typing in generators | 2026-02-24 | Replaced casting with `GeneratorSeedSchema`. |
 | `ARCH-004` | Hardcoded rule logic tokens | 2026-02-24 | Centralized tokens in `@cartguard/spec`. |
 | `META-001` | Missing extension metadata | 2026-02-24 | Added `repository`, `LICENSE`, and `files` whitelist. |

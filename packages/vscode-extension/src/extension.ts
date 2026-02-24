@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as vscode from "vscode";
 import { z } from "zod";
+import { DemoManager } from "./demo-manager";
 
 const readJsonFile = async (path: string): Promise<unknown> => {
   const raw = await readFile(path, "utf8");
@@ -67,7 +68,7 @@ interface ValidationCommandArgs {
   demoMode?: "default" | "exec" | "champion";
 }
 
-type DemoMode = "default" | "exec" | "champion";
+export type DemoMode = "default" | "exec" | "champion";
 
 interface ActionNode {
   id: string;
@@ -82,7 +83,7 @@ interface DemoPaths {
   applicabilityPath: string;
 }
 
-interface DemoControlState {
+export interface DemoControlState {
   stepIndex: number;
   done: boolean;
   title: string;
@@ -109,7 +110,7 @@ const demoSlideSchema = z.object({
   inputArtifact: z.string().min(1),
   scenarioId: z.string().min(1).optional()
 });
-type DemoSlide = z.infer<typeof demoSlideSchema>;
+export type DemoSlide = z.infer<typeof demoSlideSchema>;
 
 const workflowProductSchema = z.object({
   id: z.string().min(1),
@@ -156,7 +157,7 @@ const workflowDataSchema = z.object({
   roleOutputs: z.array(workflowRoleOutputSchema).optional(),
   pilotMetrics: workflowPilotMetricsSchema.optional()
 });
-type WorkflowData = z.infer<typeof workflowDataSchema>;
+export type WorkflowData = z.infer<typeof workflowDataSchema>;
 
 const decisionGateSchema = z
   .object({
@@ -171,13 +172,13 @@ const decisionGateSchema = z
     message: "recommended must exist in options",
     path: ["recommended"]
   });
-type DecisionGate = z.infer<typeof decisionGateSchema>;
+export type DecisionGate = z.infer<typeof decisionGateSchema>;
 
 const slideshowDataSchema = z.object({
   slides: z.array(demoSlideSchema).min(1),
   decisionGates: z.array(decisionGateSchema)
 });
-type SlideshowData = z.infer<typeof slideshowDataSchema>;
+export type SlideshowData = z.infer<typeof slideshowDataSchema>;
 
 
 interface RuleEvaluationRow {
@@ -202,7 +203,7 @@ interface EvaluationSummary {
   present: number;
 }
 
-interface EvaluationPayload {
+export interface EvaluationPayload {
   valid: boolean;
   errors: Array<{ code: string; message: string; path?: string }>;
   warnings: Array<{ code: string; message: string; path?: string }>;
@@ -213,7 +214,7 @@ interface EvaluationPayload {
   };
 }
 
-interface EvaluationBundle {
+export interface EvaluationBundle {
   evaluation: EvaluationPayload;
   listing: unknown;
   rules: unknown;
@@ -286,7 +287,7 @@ const resolveDemoPaths = (
   };
 };
 
-const runEvaluation = async (
+export const runEvaluation = async (
   listingPath: string,
   rulesPath: string,
   applicabilityPath: string,
@@ -415,7 +416,7 @@ const evidenceTypeClass = (evidenceType: DemoSlide["evidenceType"]): string => {
   return "ok";
 };
 
-const fallbackSlideshowData: SlideshowData = {
+export const fallbackSlideshowData: SlideshowData = {
   decisionGates: [],
   slides: [
     {
@@ -497,7 +498,7 @@ class CartGuardActionsProvider implements vscode.TreeDataProvider<ActionNode> {
   }
 }
 
-const renderDemoHtml = (
+export const renderDemoHtml = (
   state: DemoControlState,
   slides: DemoSlide[],
   decisionGatesByCheckId: Map<string, DecisionGate>,
@@ -1132,101 +1133,19 @@ export const activate = (context: vscode.ExtensionContext): void => {
   const autoplayStepMs = toPositiveInt(process.env.CARTGUARD_DEMO_AUTOPLAY_STEP_MS, 1500);
   const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
   const actionsProvider = new CartGuardActionsProvider();
-  let demoPanel: vscode.WebviewPanel | undefined;
-  let demoState: DemoControlState | undefined;
-  let demoRun: EvaluationBundle | undefined;
-  let workflowData: WorkflowData | undefined;
-  let currentDemoMode: DemoMode = "default";
-  let lastOpenedDemoMode: DemoMode = "default";
-  let slideshowSlides: DemoSlide[] = fallbackSlideshowData.slides;
-  let decisionGatesByCheckId = new Map<string, DecisionGate>();
-
-  const updateDemoPanel = (
-    listingPath: string,
-    rulesPath: string,
-    applicabilityPath: string
-  ): void => {
-    if (!demoPanel || !demoState) {
-      return;
-    }
-
-    demoPanel.webview.html = renderDemoHtml(
-      demoState,
-      slideshowSlides,
-      decisionGatesByCheckId,
-      listingPath,
-      rulesPath,
-      applicabilityPath,
-      demoRun,
-      workflowData,
-      currentDemoMode,
-      autoplayEnabled,
-      autoplayStepMs
-    );
-  };
+  const demoManager = new DemoManager(context, output, autoplayEnabled, autoplayStepMs);
 
   const closeDemoIfDone = async (): Promise<void> => {
-    if (!demoState?.done || !shouldCloseWindowOnDone) {
+    const state = demoManager.getState();
+    if (!state?.done || !shouldCloseWindowOnDone) {
       return;
     }
 
-    if (demoPanel) {
-      demoPanel.dispose();
+    const panel = demoManager.getPanel();
+    if (panel) {
+      panel.dispose();
     }
     await vscode.commands.executeCommand("workbench.action.closeWindow");
-  };
-
-  const advanceDemo = async (
-    listingPath: string,
-    rulesPath: string,
-    applicabilityPath: string,
-    autoDecideGate: boolean
-  ): Promise<DemoControlState> => {
-    const activeSlides = slideshowSlides.length > 0 ? slideshowSlides : fallbackSlideshowData.slides;
-    if (!demoState) {
-      demoState = {
-        stepIndex: 0,
-        done: false,
-        title: activeSlides[0]?.title ?? "Step 1",
-        decisions: {}
-      };
-      return demoState;
-    }
-
-    if (demoState.done) {
-      return demoState;
-    }
-
-    const currentSlide = activeSlides[demoState.stepIndex] ?? activeSlides[0];
-    if (currentSlide) {
-      const gate = decisionGatesByCheckId.get(currentSlide.checkId);
-      if (gate && !demoState.decisions[gate.gateId]) {
-        if (!autoDecideGate) {
-          return demoState;
-        }
-        demoState = {
-          ...demoState,
-          decisions: {
-            ...demoState.decisions,
-            [gate.gateId]: gate.recommended
-          }
-        };
-      }
-    }
-
-    const nextIndex = Math.min(demoState.stepIndex + 1, activeSlides.length - 1);
-    demoState = {
-      stepIndex: nextIndex,
-      done: nextIndex === activeSlides.length - 1,
-      title: activeSlides[nextIndex]?.title ?? "Step",
-      decisions: demoState.decisions
-    };
-
-    if (nextIndex >= 2 && !demoRun) {
-      demoRun = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
-    }
-
-    return demoState;
   };
 
   const runDemo = vscode.commands.registerCommand("cartguard.runDemo", async () => {
@@ -1354,30 +1273,30 @@ export const activate = (context: vscode.ExtensionContext): void => {
         const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
         const requestedMode = args?.demoMode ?? "default";
 
-        if (demoPanel) {
-          demoPanel.dispose();
+        const existingPanel = demoManager.getPanel();
+        if (existingPanel) {
+          existingPanel.dispose();
         }
-        currentDemoMode = requestedMode;
-        lastOpenedDemoMode = requestedMode;
+        demoManager.setMode(requestedMode);
 
-        demoRun = undefined;
-        workflowData = undefined;
-        slideshowSlides = fallbackSlideshowData.slides;
-        decisionGatesByCheckId = new Map();
+        let currentSlides = fallbackSlideshowData.slides;
+        let currentGates = new Map<string, DecisionGate>();
+        let currentWorkflowData: WorkflowData | undefined;
+
         const workflowPath = resolveWorkflowPath(context, args);
         const slideshowPath = resolveSlideshowPath(context, args);
         const defaultSlideshowPath = resolveDefaultSlideshowPath(context);
         try {
           const parsed = parseWorkflowData(await readJsonFile(workflowPath));
-          workflowData = parsed.data;
+          currentWorkflowData = parsed.data;
         } catch {
-          workflowData = undefined;
+          currentWorkflowData = undefined;
         }
         try {
           const parsed = parseSlideshowData(await readJsonFile(slideshowPath));
           if (parsed.data) {
-            slideshowSlides = parsed.data.slides;
-            decisionGatesByCheckId = new Map(
+            currentSlides = parsed.data.slides;
+            currentGates = new Map(
               parsed.data.decisionGates.map((gate: DecisionGate) => [gate.checkId, gate])
             );
           }
@@ -1386,26 +1305,26 @@ export const activate = (context: vscode.ExtensionContext): void => {
             if (slideshowPath !== defaultSlideshowPath) {
               const parsed = parseSlideshowData(await readJsonFile(defaultSlideshowPath));
               if (parsed.data) {
-                slideshowSlides = parsed.data.slides;
-                decisionGatesByCheckId = new Map(
+                currentSlides = parsed.data.slides;
+                currentGates = new Map(
                   parsed.data.decisionGates.map((gate: DecisionGate) => [gate.checkId, gate])
                 );
               }
-            } else {
-              slideshowSlides = fallbackSlideshowData.slides;
-              decisionGatesByCheckId = new Map();
             }
           } catch {
-            slideshowSlides = fallbackSlideshowData.slides;
-            decisionGatesByCheckId = new Map();
+            // keep defaults
           }
         }
-        demoState = {
+
+        demoManager.setWorkflowData(currentWorkflowData);
+        demoManager.setSlideshow(currentSlides, currentGates);
+        demoManager.setRun(undefined);
+        demoManager.setState({
           stepIndex: 0,
           done: false,
-          title: slideshowSlides[0]?.title ?? "Step 1",
+          title: currentSlides[0]?.title ?? "Step 1",
           decisions: {}
-        };
+        });
 
         const panel = vscode.window.createWebviewPanel(
           "cartguardDemoSlideshow",
@@ -1415,20 +1334,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
             enableScripts: true
           }
         );
-        demoPanel = panel;
-
-        panel.onDidDispose(() => {
-          if (demoPanel !== panel) {
-            return;
-          }
-          demoPanel = undefined;
-          demoState = undefined;
-          demoRun = undefined;
-          workflowData = undefined;
-          currentDemoMode = "default";
-          slideshowSlides = fallbackSlideshowData.slides;
-          decisionGatesByCheckId = new Map();
-        });
+        demoManager.setPanel(panel);
 
         panel.webview.onDidReceiveMessage(async (message: unknown) => {
           if (
@@ -1436,36 +1342,32 @@ export const activate = (context: vscode.ExtensionContext): void => {
             message !== null &&
             "type" in message
           ) {
-            const typedMessage = message as { type?: unknown; decision?: unknown };
+            const typedMessage = message as { type?: unknown; decision?: unknown; gateId?: unknown };
             if (typedMessage.type === "gateDecision" && typeof typedMessage.decision === "string") {
-              const currentSlide = demoState
-                ? slideshowSlides[demoState.stepIndex] ?? slideshowSlides[0]
-                : undefined;
-              const gate = currentSlide
-                ? decisionGatesByCheckId.get(currentSlide.checkId)
-                : undefined;
-              if (gate && demoState) {
-                demoState = {
-                  ...demoState,
+              const state = demoManager.getState();
+              if (state) {
+                const newState = {
+                  ...state,
                   decisions: {
-                    ...demoState.decisions,
-                    [gate.gateId]: typedMessage.decision
+                    ...state.decisions,
+                    [typedMessage.gateId as string]: typedMessage.decision
                   }
                 };
-                updateDemoPanel(listingPath, rulesPath, applicabilityPath);
+                demoManager.setState(newState);
+                demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
               }
               return;
             }
             if (typedMessage.type === "continue") {
-              await advanceDemo(listingPath, rulesPath, applicabilityPath, false);
-              updateDemoPanel(listingPath, rulesPath, applicabilityPath);
+              await demoManager.advance(listingPath, rulesPath, applicabilityPath, false, runEvaluation);
+              demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
               await closeDemoIfDone();
             }
           }
         });
 
-        updateDemoPanel(listingPath, rulesPath, applicabilityPath);
-        return demoState;
+        demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
+        return demoManager.getState();
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         output.appendLine(`[CartGuard] Slideshow error: ${message}`);
@@ -1480,12 +1382,12 @@ export const activate = (context: vscode.ExtensionContext): void => {
     async (args?: ValidationCommandArgs) => {
       const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
 
-      if (!demoPanel || !demoState) {
+      if (!demoManager.getPanel() || !demoManager.getState()) {
         await vscode.commands.executeCommand("cartguard.openDemoSlideshow", args);
       }
 
-      const state = await advanceDemo(listingPath, rulesPath, applicabilityPath, true);
-      updateDemoPanel(listingPath, rulesPath, applicabilityPath);
+      const state = await demoManager.advance(listingPath, rulesPath, applicabilityPath, true, runEvaluation);
+      demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
       await closeDemoIfDone();
       return state;
     }
@@ -1493,12 +1395,12 @@ export const activate = (context: vscode.ExtensionContext): void => {
 
   const getDemoState = vscode.commands.registerCommand(
     "cartguard.getDemoState",
-    () => demoState ?? null
+    () => demoManager.getState() ?? null
   );
 
   const getDemoMode = vscode.commands.registerCommand(
     "cartguard.getDemoMode",
-    () => currentDemoMode
+    () => demoManager.getMode()
   );
 
   const openExecDemoSlideshow = vscode.commands.registerCommand(
@@ -1523,7 +1425,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
     "cartguard.reopenDemoSlideshow",
     async () => {
       await vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
-        demoMode: lastOpenedDemoMode
+        demoMode: demoManager.getMode()
       });
       return true;
     }
