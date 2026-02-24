@@ -2,32 +2,32 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 6
+- **Total Open Debt Count**: 5
 - **Severity Breakdown**:
-  - Critical: 1
+  - Critical: 0
   - High: 0
   - Medium: 3
   - Low: 2
 - **Category Breakdown**:
-  - Architecture: 3
+  - Architecture: 2
   - Static Site: 1
   - Testing: 1
   - DX: 1
 - **Status Trends**:
   - **Issues Found This Pass**: 0
-  - **Issues Resolved Since Last Pass**: 5 (ARCH-006, ARCH-010, ARCH-015, ARCH-014, ARCH-008)
-  - **Critical Violations**: 1 (`ARCH-003`)
+  - **Issues Resolved Since Last Pass**: 6 (ARCH-006, ARCH-010, ARCH-015, ARCH-014, ARCH-008, ARCH-003)
+  - **Critical Violations**: 0
   - **Circular Dependencies**: 0
   - **Domain Purity Violations**: 0
-  - **Trend**: Improving. Extension entry point simplified.
+  - **Trend**: Improving. Extension logic decoupled from VS Code API, unblocking unit testing.
 
 ### Top 5 Highest Impact Issues
 
-1. `ARCH-003`: Unabstracted VS Code API usage (Dependency Rule Violation).
-2. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
-3. `TEST-002`: Thin unit test coverage for extension (Blocked by ARCH-003).
-4. `ARCH-007`: Large function: renderDemoHtml (High Cognitive Load).
-5. `ARCH-013`: Dead view contribution (UI Clutter).
+1. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
+2. `TEST-002`: Thin unit test coverage for extension (Unblocked by ARCH-003).
+3. `ARCH-007`: Large function: renderDemoHtml (High Cognitive Load).
+4. `ARCH-013`: Dead view contribution (UI Clutter).
+5. `DX-001`: Inconsistent tsconfig management (Maintenance).
 
 ---
 
@@ -35,7 +35,6 @@
 
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
-| `ARCH-003` | Unabstracted VS Code API usage | Architecture | `vscode-extension` | Critical | L | Open | 2026-02-24 |
 | `ARCH-007` | Large function: renderDemoHtml | Architecture | `demo-renderer.ts` | Medium | M | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Architecture | `docs/` | Medium | L | Open | 2026-02-24 |
 | `TEST-002` | Thin unit test coverage for extension | Testing | `vscode-extension/test` | Medium | M | Open | 2026-02-24 |
@@ -46,11 +45,6 @@
 
 ## Debt Details
 
-### `ARCH-003`: Unabstracted VS Code API usage
-- **Principle**: Dependency Rule. Outer layer (Infrastructure/VSCode) is mixed with application orchestration. Logic is untestable.
-- **Impact**: Domain logic (evaluation orchestration) is coupled to `vscode` types.
-- **Risk**: Cannot run unit tests on extension logic without mocks/electron environment.
-
 ### `ARCH-007`: Large function: renderDemoHtml (326 lines)
 - **Principle**: High Cognitive Load. Mixed template/logic.
 - **Last Reviewed**: 2026-02-24
@@ -60,7 +54,7 @@
 - **Last Reviewed**: 2026-02-24
 
 ### `TEST-002`: Thin unit test coverage for extension
-- **Description**: Tests are mostly E2E.
+- **Description**: Tests are mostly E2E. Unblocked by ARCH-003 abstraction.
 - **Last Reviewed**: 2026-02-24
 
 ---
@@ -69,6 +63,7 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `ARCH-003` | Unabstracted VS Code API usage | 2026-02-24 | Abstracted Logger and path resolution in extension-logic.ts. |
 | `ARCH-008` | Large function: activate | 2026-02-24 | Extracted command registration to separate module. |
 | `ARCH-014` | Demo state machine coupled to UI | 2026-02-24 | Extracted pure state machine logic to `DemoLogic`. |
 | `ARCH-015` | Impure domain (Date.now) | 2026-02-24 | Side-effect removed; added timestamp support to GeneratorSeed. |

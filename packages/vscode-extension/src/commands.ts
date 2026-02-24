@@ -21,14 +21,17 @@ export const registerCommands = (
         shouldCloseWindowOnDone: boolean;
     }
 ): vscode.Disposable[] => {
+    const extensionPath = context.extensionPath;
+    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+
     return [
         vscode.commands.registerCommand(
             "cartguard.runDemo",
             async (args?: ValidationCommandArgs): Promise<boolean> => {
                 try {
-                    const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
+                    const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(extensionPath, args);
                     const payload = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
-                    await openResult("Demo Evaluation Result", payload, output, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath);
+                    await openResult("Demo Evaluation Result", payload, output, workspaceRoot);
                     return true;
                 } catch (err) {
                     output.appendLine(`[CartGuard] Error running demo: ${String(err)}`);
@@ -58,7 +61,7 @@ export const registerCommands = (
                     }
 
                     const payload = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
-                    await openResult("Manual Evaluation Result", payload, output, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath);
+                    await openResult("Manual Evaluation Result", payload, output, workspaceRoot);
                     return true;
                 } catch (err) {
                     output.appendLine(`[CartGuard] Error validating files: ${String(err)}`);
@@ -70,7 +73,7 @@ export const registerCommands = (
             "cartguard.openProcessView",
             async (args?: ValidationCommandArgs): Promise<boolean> => {
                 try {
-                    const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
+                    const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(extensionPath, args);
                     const payload = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
 
                     const panel = vscode.window.createWebviewPanel("cartguardProcess", "CartGuard Process Results", vscode.ViewColumn.One, {});
@@ -92,9 +95,9 @@ export const registerCommands = (
         vscode.commands.registerCommand(
             "cartguard.openDemoSlideshow",
             async (args?: ValidationCommandArgs): Promise<DemoControlState | null> => {
-                const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
-                const workflowPath = resolveWorkflowPath(context, args);
-                const slideshowPath = resolveSlideshowPath(context, args);
+                const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(extensionPath, args);
+                const workflowPath = resolveWorkflowPath(extensionPath, workspaceRoot, args);
+                const slideshowPath = resolveSlideshowPath(extensionPath, workspaceRoot, args);
                 const requestedMode = args?.demoMode ?? "default";
 
                 try {
@@ -154,7 +157,7 @@ export const registerCommands = (
                                 return;
                             }
                             if (typedMessage.type === "continue") {
-                                await demoManager.advance(listingPath, rulesPath, applicabilityPath, false, (l, r, a, o) => runEvaluation(l, r, a, o));
+                                await demoManager.advance(listingPath, rulesPath, applicabilityPath, false, (l, r, a, logger) => runEvaluation(l, r, a, logger));
                                 demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
                                 const newState = demoManager.getState();
                                 if (newState?.done && settings.shouldCloseWindowOnDone) {
@@ -176,8 +179,8 @@ export const registerCommands = (
         vscode.commands.registerCommand(
             "cartguard.demoNextStep",
             async (args?: ValidationCommandArgs): Promise<DemoControlState | null> => {
-                const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
-                const state = await demoManager.advance(listingPath, rulesPath, applicabilityPath, true, (l, r, a, o) => runEvaluation(l, r, a, o));
+                const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(extensionPath, args);
+                const state = await demoManager.advance(listingPath, rulesPath, applicabilityPath, true, (l, r, a, logger) => runEvaluation(l, r, a, logger));
                 demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
                 return state;
             }

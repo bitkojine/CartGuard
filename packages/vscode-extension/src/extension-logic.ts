@@ -1,5 +1,4 @@
 import { join } from "node:path";
-import * as vscode from "vscode";
 import type { z } from "zod";
 import {
     type EvaluationBundle,
@@ -10,6 +9,10 @@ import {
 } from "./types";
 import type { WorkflowData } from "./types";
 import { readJsonFile } from "./utils";
+
+export interface Logger {
+    appendLine(value: string): void;
+}
 
 export interface ValidationCommandArgs {
     listingPath?: string;
@@ -43,7 +46,7 @@ export const importEngine = async (): Promise<EngineModule> => {
 };
 
 export const resolveDemoPaths = (
-    context: vscode.ExtensionContext,
+    extensionPath: string,
     args?: ValidationCommandArgs
 ): DemoPaths => {
     if (
@@ -62,15 +65,15 @@ export const resolveDemoPaths = (
         listingPath:
             typeof args?.listingPath === "string"
                 ? args.listingPath
-                : join(context.extensionPath, "demo", "sample-listing.json"),
+                : join(extensionPath, "demo", "sample-listing.json"),
         rulesPath:
             typeof args?.rulesPath === "string"
                 ? args.rulesPath
-                : join(context.extensionPath, "demo", "rules.json"),
+                : join(extensionPath, "demo", "rules.json"),
         applicabilityPath:
             typeof args?.applicabilityPath === "string"
                 ? args.applicabilityPath
-                : join(context.extensionPath, "demo", "applicability.json")
+                : join(extensionPath, "demo", "applicability.json")
     };
 };
 
@@ -78,7 +81,7 @@ export const runEvaluation = async (
     listingPath: string,
     rulesPath: string,
     applicabilityPath: string,
-    output: vscode.OutputChannel
+    logger: Logger
 ): Promise<EvaluationBundle> => {
     const { evaluateListingAgainstRuleCatalog } = await importEngine();
     const [listing, rules, applicability] = await Promise.all([
@@ -88,32 +91,32 @@ export const runEvaluation = async (
     ]);
 
     const evaluation = evaluateListingAgainstRuleCatalog(listing, rules, applicability);
-    output.appendLine("[CartGuard] Evaluation executed.");
+    logger.appendLine("[CartGuard] Evaluation executed.");
     return { evaluation, listing, rules, applicability };
 };
 
 export const resolveWorkflowPath = (
-    context: vscode.ExtensionContext,
+    extensionPath: string,
+    workspaceRoot?: string,
     args?: ValidationCommandArgs
 ): string => {
     if (typeof args?.workflowPath === "string") {
         return args.workflowPath;
     }
-    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
     if (workspaceRoot) {
         return join(workspaceRoot, "workflow-batch.json");
     }
-    return join(context.extensionPath, "demo", "workflow-batch.json");
+    return join(extensionPath, "demo", "workflow-batch.json");
 };
 
 export const resolveSlideshowPath = (
-    context: vscode.ExtensionContext,
+    extensionPath: string,
+    workspaceRoot?: string,
     args?: ValidationCommandArgs
 ): string => {
     if (typeof args?.slideshowPath === "string") {
         return args.slideshowPath;
     }
-    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
     const demoMode = args?.demoMode ?? "default";
     const fileName =
         demoMode === "exec"
@@ -124,7 +127,7 @@ export const resolveSlideshowPath = (
     if (workspaceRoot) {
         return join(workspaceRoot, fileName);
     }
-    return join(context.extensionPath, "demo", fileName);
+    return join(extensionPath, "demo", fileName);
 };
 
 export interface ParseResult<T> {
