@@ -22,7 +22,7 @@ You're selling electronics on Amazon EU, eBay Germany, or other regulated channe
 - ❌ When compliance documents expire, how do you track re-verification?
 - ❌ How do you manage this across 5 marketplaces, 3 jurisdictions, 50 product SKUs?
 
-**Result:** Sellers spend weeks in back-and-office work, miss time-to-market windows, or get listings suspended post-launch.
+**Result:** Sellers spend weeks in back-and-forth work, miss time-to-market windows, or get listings suspended post-launch.
 
 ## The Solution
 
