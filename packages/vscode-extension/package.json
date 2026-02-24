@@ -72,7 +72,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "release:local": "npm version patch --no-git-tag-version && pnpm run build && pnpm exec vsce package --no-dependencies -o cartguard.vsix && code --install-extension cartguard.vsix --force && code --list-extensions --show-versions | rg -i \"cartguard.cartguard-vscode-extension\"",
-    "test": "pnpm run test:unit && pnpm run test:e2e",
+    "test": "pnpm run test:unit",
     "test:unit": "pnpm run build && node --test dist/test/unit/*.test.js",
     "test:e2e": "pnpm run build && node ./dist/test/runTest.js",
     "test:e2e:slow": "CARTGUARD_E2E_STEP_MS=2000 CARTGUARD_E2E_HOLD_OPEN_MS=0 CARTGUARD_E2E_MANUAL_CONTINUE=1 CARTGUARD_E2E_MANUAL_MAX_WAIT_MS=2147483647 CARTGUARD_E2E_CLOSE_ON_DONE=1 CARTGUARD_DEMO_WRITE_TO_DISK=1 CARTGUARD_DEMO_CLOSE_WINDOW=0 pnpm run test:e2e",

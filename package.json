@@ -12,6 +12,7 @@
     "build": "pnpm -r build",
     "vscode:release-local": "pnpm --filter cartguard-vscode-extension release:local",
     "test": "pnpm -r test",
+    "test:e2e": "pnpm --filter cartguard-vscode-extension test:e2e",
     "clean": "pnpm -r clean",
     "prepare": "husky",
     "lint": "eslint \"packages/**/*.{ts,mts}\" \"scripts/**/*.{ts,mts}\" --max-warnings=0",
