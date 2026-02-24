@@ -120,7 +120,7 @@ const resolveDemoPaths = (
     listingPath:
       typeof args?.listingPath === "string"
         ? args.listingPath
-        : join(context.extensionPath, "demo", "listing.json"),
+        : join(context.extensionPath, "demo", "sample-listing.json"),
     rulesPath:
       typeof args?.rulesPath === "string"
         ? args.rulesPath
@@ -248,54 +248,82 @@ export const activate = (context: vscode.ExtensionContext): void => {
 
   const runDemo = vscode.commands.registerCommand(
     "cartguard.runDemo",
-    async (args?: ValidationCommandArgs) => {
-      const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
-      const payload = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
-      await openResult("Demo Evaluation Result", payload, output, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath);
+    async (args?: ValidationCommandArgs): Promise<boolean> => {
+      try {
+        const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
+        const payload = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
+        await openResult("Demo Evaluation Result", payload, output, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath);
+        return true;
+      } catch (err) {
+        output.appendLine(`[CartGuard] Error running demo: ${String(err)}`);
+        return false;
+      }
     }
   );
 
   const validateJsonFiles = vscode.commands.registerCommand(
     "cartguard.validateJsonFiles",
-    async () => {
-      const listingPath = await pickJsonFile("Select Listing JSON");
-      if (!listingPath) return;
-      const rulesPath = await pickJsonFile("Select Rules JSON");
-      if (!rulesPath) return;
-      const applicabilityPath = await pickJsonFile("Select Applicability JSON");
-      if (!applicabilityPath) return;
+    async (args?: ValidationCommandArgs): Promise<boolean> => {
+      try {
+        let listingPath: string | undefined;
+        let rulesPath: string | undefined;
+        let applicabilityPath: string | undefined;
 
-      const payload = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
-      await openResult("Manual Evaluation Result", payload, output, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath);
+        if (args?.listingPath && args?.rulesPath && args?.applicabilityPath) {
+          listingPath = args.listingPath;
+          rulesPath = args.rulesPath;
+          applicabilityPath = args.applicabilityPath;
+        } else {
+          listingPath = await pickJsonFile("Select Listing JSON");
+          if (!listingPath) return false;
+          rulesPath = await pickJsonFile("Select Rules JSON");
+          if (!rulesPath) return false;
+          applicabilityPath = await pickJsonFile("Select Applicability JSON");
+          if (!applicabilityPath) return false;
+        }
+
+        const payload = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
+        await openResult("Manual Evaluation Result", payload, output, vscode.workspace.workspaceFolders?.[0]?.uri.fsPath);
+        return true;
+      } catch (err) {
+        output.appendLine(`[CartGuard] Error validating files: ${String(err)}`);
+        return false;
+      }
     }
   );
 
   const openProcessView = vscode.commands.registerCommand(
     "cartguard.openProcessView",
-    async (args?: ValidationCommandArgs) => {
-      const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
-      const payload = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
+    async (args?: ValidationCommandArgs): Promise<boolean> => {
+      try {
+        const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
+        const payload = await runEvaluation(listingPath, rulesPath, applicabilityPath, output);
 
-      const panel = vscode.window.createWebviewPanel(
-        "cartguardProcess",
-        "CartGuard Process Results",
-        vscode.ViewColumn.One,
-        {}
-      );
+        const panel = vscode.window.createWebviewPanel(
+          "cartguardProcess",
+          "CartGuard Process Results",
+          vscode.ViewColumn.One,
+          {}
+        );
 
-      panel.webview.html = renderProcessHtml(
-        "CartGuard Verification Process",
-        listingPath,
-        rulesPath,
-        applicabilityPath,
-        payload.evaluation
-      );
+        panel.webview.html = renderProcessHtml(
+          "CartGuard Verification Process",
+          listingPath,
+          rulesPath,
+          applicabilityPath,
+          payload.evaluation
+        );
+        return true;
+      } catch (err) {
+        output.appendLine(`[CartGuard] Error opening process view: ${String(err)}`);
+        return false;
+      }
     }
   );
 
   const openDemoSlideshow = vscode.commands.registerCommand(
     "cartguard.openDemoSlideshow",
-    async (args?: ValidationCommandArgs) => {
+    async (args?: ValidationCommandArgs): Promise<DemoControlState | null> => {
       const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
       const workflowPath = resolveWorkflowPath(context, args);
       const slideshowPath = resolveSlideshowPath(context, args);
@@ -312,7 +340,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
 
         if (workflowResult.error || slideshowResult.error) {
           vscode.window.showErrorMessage(`Data Error: ${workflowResult.error || slideshowResult.error}`);
-          return;
+          return null;
         }
 
         demoManager.setMode(requestedMode);
@@ -379,18 +407,21 @@ export const activate = (context: vscode.ExtensionContext): void => {
             }
           }
         });
+        return state;
       } catch (err) {
         vscode.window.showErrorMessage(`Failed to start demo: ${err instanceof Error ? err.message : String(err)}`);
+        return null;
       }
     }
   );
 
   const demoNextStep = vscode.commands.registerCommand(
     "cartguard.demoNextStep",
-    async (args?: ValidationCommandArgs) => {
+    async (args?: ValidationCommandArgs): Promise<DemoControlState | null> => {
       const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
-      await demoManager.advance(listingPath, rulesPath, applicabilityPath, true, (l, r, a, o) => runEvaluation(l, r, a, o));
+      const state = await demoManager.advance(listingPath, rulesPath, applicabilityPath, true, (l, r, a, o) => runEvaluation(l, r, a, o));
       demoManager.updatePanel(listingPath, rulesPath, applicabilityPath);
+      return state;
     }
   );
 
@@ -407,7 +438,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
   const openExecDemoSlideshow = vscode.commands.registerCommand(
     "cartguard.openExecDemoSlideshow",
     async () => {
-      await vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
+      return vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
         demoMode: "exec"
       });
     }
@@ -416,7 +447,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
   const openChampionDemoSlideshow = vscode.commands.registerCommand(
     "cartguard.openChampionDemoSlideshow",
     async () => {
-      await vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
+      return vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
         demoMode: "champion"
       });
     }
@@ -424,9 +455,29 @@ export const activate = (context: vscode.ExtensionContext): void => {
 
   const reopenDemoSlideshow = vscode.commands.registerCommand(
     "cartguard.reopenDemoSlideshow",
-    async () => {
+    async (): Promise<boolean> => {
       await vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
         demoMode: demoManager.getMode()
+      });
+      return true;
+    }
+  );
+
+  const reopenExecDemoSlideshow = vscode.commands.registerCommand(
+    "cartguard.reopenExecDemoSlideshow",
+    async (): Promise<boolean> => {
+      await vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
+        demoMode: "exec"
+      });
+      return true;
+    }
+  );
+
+  const reopenChampionDemoSlideshow = vscode.commands.registerCommand(
+    "cartguard.reopenChampionDemoSlideshow",
+    async (): Promise<boolean> => {
+      await vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
+        demoMode: "champion"
       });
       return true;
     }
@@ -442,6 +493,8 @@ export const activate = (context: vscode.ExtensionContext): void => {
     getDemoMode,
     openExecDemoSlideshow,
     openChampionDemoSlideshow,
-    reopenDemoSlideshow
+    reopenDemoSlideshow,
+    reopenExecDemoSlideshow,
+    reopenChampionDemoSlideshow
   );
 };
