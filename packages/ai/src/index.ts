@@ -1,4 +1,9 @@
-import { ProductContentSchema, type ProductContent } from "@cartguard/spec";
+import {
+  GeneratorSeedSchema,
+  ProductContentSchema,
+  type GeneratorSeed,
+  type ProductContent
+} from "@cartguard/spec";
 
 export interface ContentGenerator {
   generate(input: unknown): Promise<ProductContent>;
@@ -18,20 +23,13 @@ const assertProductContent = (data: unknown): ProductContent => {
 
 export class MockContentGenerator implements ContentGenerator {
   generate(input: unknown): Promise<ProductContent> {
-    const seed = input as {
-      productId?: string;
-      title?: string;
-      description?: string;
-      sourceUrl?: string;
-      category?: "sustainability" | "health" | "pricing" | "general";
-    };
+    const seedResult = GeneratorSeedSchema.safeParse(input);
+    const seed: GeneratorSeed = seedResult.success ? seedResult.data : {};
 
     const generated = {
       productId: seed.productId ?? "generated-sku-001",
       title: seed.title ?? "Generated Product Title",
-      description:
-        seed.description ??
-        "AI-assisted product content with source-linked claims.",
+      description: seed.description ?? "AI-assisted product content with source-linked claims.",
       claims: [
         {
           id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",

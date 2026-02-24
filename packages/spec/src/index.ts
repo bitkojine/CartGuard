@@ -288,3 +288,13 @@ export const ResearchPilotCatalogSchema = z.object({
 });
 
 export type ResearchPilotCatalog = z.infer<typeof ResearchPilotCatalogSchema>;
+
+export const GeneratorSeedSchema = z.object({
+  productId: z.string().optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  sourceUrl: z.string().url().optional(),
+  category: ClaimCategorySchema.optional()
+});
+
+export type GeneratorSeed = z.infer<typeof GeneratorSeedSchema>;

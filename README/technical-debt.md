@@ -2,15 +2,15 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 6
+- **Total Open Debt Count**: 5
 - **Severity Breakdown**:
   - Critical: 0
   - High: 3
   - Medium: 1
-  - Low: 2
+  - Low: 1
 - **Category Breakdown**:
   - Architecture: 3
-  - Types: 1
+  - Types: 0
   - Static Site: 1
   - DX: 1
 - **Status Trends**:
@@ -24,7 +24,7 @@
 2. `ARCH-002`: Global state management for demo lifecycle.
 3. `ARCH-003`: Unabstracted VS Code API usage.
 4. `SITE-001`: Manual HTML duplication in static site.
-5. `TYPE-001`: Weak input typing in generators.
+5. `DX-001`: Inconsistent tsconfig management.
 
 ---
 
@@ -36,7 +36,6 @@
 | `ARCH-002` | Global state for demo lifecycle | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-23 |
 | `ARCH-003` | Unabstracted VS Code API usage | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Static Site | `docs/**/*.html` | Medium | L | Open | 2026-02-24 |
-| `TYPE-001` | Weak input typing in generators | Types | `packages/ai/src/index.ts` | Low | S | Open | 2026-02-24 |
 | `DX-001` | Inconsistent tsconfig management | DX | `packages/*/tsconfig.json` | Low | S | Open | 2026-02-24 |
 
 ---
@@ -64,10 +63,6 @@
 - **Impact**: Maintenance burden; relies on brittle `guard-nav-links.mts` script to prevent drift.
 - **Last Reviewed**: 2026-02-24
 
-### `TYPE-001`: Weak input typing in generators
-- **Description**: `MockContentGenerator` uses `input as { ... }` instead of runtime validation or strict interface implementation.
-- **Impact**: Runtime errors if invalid seeds are passed to the generator.
-- **Last Reviewed**: 2026-02-24
 
 ### `DX-001`: Inconsistent tsconfig management
 - **Description**: Shared configuration exists but package-level `tsconfig.json` files overlap and vary slightly in strictness.
@@ -80,6 +75,7 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `TYPE-001` | Weak input typing in generators | 2026-02-24 | Replaced casting with `GeneratorSeedSchema`. |
 | `ARCH-004` | Hardcoded rule logic tokens | 2026-02-24 | Centralized tokens in `@cartguard/spec`. |
 | `META-001` | Missing extension metadata | 2026-02-24 | Added `repository`, `LICENSE`, and `files` whitelist. |
 | `VAL-001` | Manual data validation | 2026-02-24 | Migrated research/extension data to Zod schemas in `@cartguard/spec`. |
