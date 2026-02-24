@@ -139,3 +139,26 @@ export interface EvaluationBundle {
     rules: unknown;
     applicability: unknown;
 }
+
+export const fallbackSlideshowData: SlideshowData = {
+    decisionGates: [],
+    slides: [
+        {
+            title: "Step 1 of 1: Slideshow Data Missing",
+            now: "Load slideshow data from demo/slideshow.json.",
+            next: "Complete setup.",
+            customerImpact: "Ensures valid demonstration sequence.",
+            whatUserSees: "This fallback step.",
+            whatUserClicks: "Next or Continue.",
+            cartGuardChecks: "None (System Level).",
+            legalBasis: "Operational integrity.",
+            marketplacePolicy: "Content clarity.",
+            cartguardRecommendation: "Verify file presence.",
+            ownerRole: "Ops",
+            fixAction: "Restore valid slideshow.json file.",
+            evidenceType: "unknown",
+            checkId: "fallback_slideshow",
+            inputArtifact: "slideshow.json"
+        }
+    ]
+};

@@ -2,29 +2,29 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 11
+- **Total Open Debt Count**: 9
 - **Severity Breakdown**:
   - Critical: 0
   - High: 1
-  - Medium: 9
+  - Medium: 7
   - Low: 1
 - **Category Breakdown**:
-  - Architecture: 8
+  - Architecture: 6
   - Static Site: 1
   - Testing: 1
   - DX: 1
 - **Status Trends**:
-  - **Issues Found This Pass**: 7 (ARCH-006, ARCH-007, ARCH-008, ARCH-009, ARCH-010, ARCH-011, ARCH-012)
-  - **Issues Resolved Since Last Pass**: 2 (ARCH-001, ARCH-005)
-  - **Trend**: Mixed. Significant progress on modularization, but granular analysis reveals secondary architectural smells and remaining complexity.
+  - **Issues Found This Pass**: 0
+  - **Issues Resolved Since Last Pass**: 1 (ARCH-012)
+  - **Trend**: Improving. Resource management issue resolved.
 
 ### Top 5 Highest Impact Issues
 
 1. `ARCH-003`: Unabstracted VS Code API usage.
-2. `ARCH-011`: Circular dependencies between extension entry and core manager.
-3. `SITE-001`: Manual HTML duplication in static site.
-4. `TEST-002`: Thin unit test coverage for extension.
-5. `ARCH-007`: Extremely long rendering function (> 300 lines).
+2. `SITE-001`: Manual HTML duplication in static site.
+3. `TEST-002`: Thin unit test coverage for extension.
+4. `ARCH-007`: Extremely long rendering function (> 300 lines).
+5. `ARCH-006`: Large function: evaluateRule.
 
 ---
 
@@ -38,8 +38,6 @@
 | `ARCH-008` | Large function: activate | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | S | Open | 2026-02-24 |
 | `ARCH-009` | Large file: extension.ts (> 500 lines) | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | S | Open | 2026-02-24 |
 | `ARCH-010` | Large file: engine index.ts (> 400 lines) | Architecture | `packages/engine/src/index.ts` | Medium | S | Open | 2026-02-24 |
-| `ARCH-011` | Circular dependencies | Architecture | `extension.ts` <-> `demo-manager.ts` | Medium | S | Open | 2026-02-24 |
-| `ARCH-012` | Missing resource disposal (OutputChannel) | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | XS | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Static Site | `docs/**/*.html` | Medium | L | Open | 2026-02-24 |
 | `TEST-002` | Thin unit test coverage for extension | Testing | `packages/vscode-extension/test` | Medium | M | Open | 2026-02-24 |
 | `DX-001` | Inconsistent tsconfig management | DX | `packages/*/tsconfig.json` | Low | S | Open | 2026-02-24 |
@@ -78,16 +76,6 @@
 - **Impact**: Over-coupling of validation, applicability, and token resolution logic.
 - **Last Reviewed**: 2026-02-24
 
-### `ARCH-011`: Circular dependencies
-- **Description**: `extension.ts` -> `demo-manager.ts` -> `extension.ts` (via `fallbackSlideshowData`).
-- **Impact**: Static analysis issues; potential for runtime initialization bugs in the extension host.
-- **Last Reviewed**: 2026-02-24
-
-### `ARCH-012`: Missing resource disposal (OutputChannel)
-- **Description**: `vscode.OutputChannel` is created in `activate` but not added to `context.subscriptions`.
-- **Impact**: Minor resource leak; channel persists until VS Code is closed, even if extension is deactivated.
-- **Last Reviewed**: 2026-02-24
-
 ### `SITE-001`: Manual HTML duplication
 - **Description**: Static pages in `docs/` replicate identical `<nav>` and layout structures manually.
 - **Impact**: Maintenance burden; relies on brittle `guard-nav-links.mts` script to prevent drift.
@@ -109,6 +97,8 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `ARCH-012` | Missing resource disposal (OutputChannel) | 2026-02-24 | Added `OutputChannel` to `context.subscriptions`. |
+| `ARCH-011` | Circular dependencies | 2026-02-24 | Moved `fallbackSlideshowData` to `types.ts` to break `extension` <-> `demo-manager` cycle. |
 | `ARCH-001` | Monolithic extension entry point | 2026-02-24 | Reduced from 1500+ lines to ~500 lines. Major complexity removed. |
 | `ARCH-005` | High function complexity | 2026-02-24 | Extracted renderers and manager. (N.B. Function size remains a secondary debt). |
 | `ARCH-002` | Global state for demo lifecycle | 2026-02-24 | Encapsulated in `DemoManager` class. |

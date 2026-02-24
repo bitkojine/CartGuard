@@ -1,71 +1,71 @@
 import type { DemoControlState, DemoSlide, DecisionGate, EvaluationBundle, WorkflowData, DemoMode, Product, Scenario, EvaluationResultRow, RoleOutput } from "../types";
-import { fallbackSlideshowData } from "../extension";
+import { fallbackSlideshowData } from "../types";
 import { escapeHtml, statusClass, evidenceTypeClass } from "./webview-utils";
 
 export const renderDemoHtml = (
-    state: DemoControlState,
-    slides: DemoSlide[],
-    decisionGatesByCheckId: Map<string, DecisionGate>,
-    listingPath: string,
-    rulesPath: string,
-    applicabilityPath: string,
-    run: EvaluationBundle | undefined,
-    workflowData: WorkflowData | undefined,
-    demoMode: DemoMode,
-    autoplayEnabled: boolean,
-    autoplayStepMs: number
+  state: DemoControlState,
+  slides: DemoSlide[],
+  decisionGatesByCheckId: Map<string, DecisionGate>,
+  listingPath: string,
+  rulesPath: string,
+  applicabilityPath: string,
+  run: EvaluationBundle | undefined,
+  workflowData: WorkflowData | undefined,
+  demoMode: DemoMode,
+  autoplayEnabled: boolean,
+  autoplayStepMs: number
 ): string => {
-    const fallbackSlide: DemoSlide = {
-        title: "Step",
-        now: "",
-        next: "",
-        customerImpact: "",
-        whatUserSees: "",
-        whatUserClicks: "",
-        cartGuardChecks: "",
-        legalBasis: "",
-        marketplacePolicy: "",
-        cartguardRecommendation: "",
-        ownerRole: "Ops",
-        fixAction: "",
-        evidenceType: "best_practice",
-        checkId: "unknown",
-        inputArtifact: "unknown"
-    };
-    const activeSlides = slides.length > 0 ? slides : fallbackSlideshowData.slides;
-    const slide = activeSlides[state.stepIndex] ?? activeSlides[0] ?? fallbackSlide;
-    const isExecMode = demoMode === "exec";
-    const isChampionMode = demoMode === "champion";
-    const gate = decisionGatesByCheckId.get(slide.checkId);
-    const currentDecision = gate ? state.decisions[gate.gateId] : undefined;
-    const decisionRequired = Boolean(gate && !currentDecision && !state.done);
-    const nextSlide =
-        state.stepIndex < activeSlides.length - 1 ? activeSlides[state.stepIndex + 1] : undefined;
-    const summary = run?.evaluation.result?.summary;
-    const totalProducts = workflowData?.products.length ?? 0;
-    const blockedProducts = workflowData?.products.filter((product: Product) => product.status === "Blocked").length ?? 0;
-    const atRiskProducts = workflowData?.products.filter((product: Product) => product.status === "At Risk").length ?? 0;
-    const readyProducts = workflowData?.products.filter((product: Product) => product.status === "Ready").length ?? 0;
-    const inferredBaselineMissingPct =
-        totalProducts > 0 ? Math.round(((blockedProducts + atRiskProducts) / totalProducts) * 100) : 0;
-    const inferredCurrentMissingPct =
-        summary && summary.total_rules > 0 ? Math.round((summary.missing / summary.total_rules) * 100) : undefined;
-    const baselineMissingPct =
-        workflowData?.pilotMetrics?.baselineMissingDocRatePct ?? inferredBaselineMissingPct;
-    const currentMissingPct =
-        workflowData?.pilotMetrics?.currentMissingDocRatePct ??
-        inferredCurrentMissingPct ??
-        Math.max(baselineMissingPct - 8, 0);
-    const baselineReviewCycleDays = workflowData?.pilotMetrics?.baselineReviewCycleDays;
-    const currentReviewCycleDays = workflowData?.pilotMetrics?.currentReviewCycleDays;
-    const baselineReworkLoopsPerListing = workflowData?.pilotMetrics?.baselineReworkLoopsPerListing;
-    const currentReworkLoopsPerListing = workflowData?.pilotMetrics?.currentReworkLoopsPerListing;
-    const scenario = slide.scenarioId
-        ? workflowData?.scenarios.find((entry: Scenario) => entry.id === slide.scenarioId)
-        : undefined;
+  const fallbackSlide: DemoSlide = {
+    title: "Step",
+    now: "",
+    next: "",
+    customerImpact: "",
+    whatUserSees: "",
+    whatUserClicks: "",
+    cartGuardChecks: "",
+    legalBasis: "",
+    marketplacePolicy: "",
+    cartguardRecommendation: "",
+    ownerRole: "Ops",
+    fixAction: "",
+    evidenceType: "best_practice",
+    checkId: "unknown",
+    inputArtifact: "unknown"
+  };
+  const activeSlides = slides.length > 0 ? slides : fallbackSlideshowData.slides;
+  const slide = activeSlides[state.stepIndex] ?? activeSlides[0] ?? fallbackSlide;
+  const isExecMode = demoMode === "exec";
+  const isChampionMode = demoMode === "champion";
+  const gate = decisionGatesByCheckId.get(slide.checkId);
+  const currentDecision = gate ? state.decisions[gate.gateId] : undefined;
+  const decisionRequired = Boolean(gate && !currentDecision && !state.done);
+  const nextSlide =
+    state.stepIndex < activeSlides.length - 1 ? activeSlides[state.stepIndex + 1] : undefined;
+  const summary = run?.evaluation.result?.summary;
+  const totalProducts = workflowData?.products.length ?? 0;
+  const blockedProducts = workflowData?.products.filter((product: Product) => product.status === "Blocked").length ?? 0;
+  const atRiskProducts = workflowData?.products.filter((product: Product) => product.status === "At Risk").length ?? 0;
+  const readyProducts = workflowData?.products.filter((product: Product) => product.status === "Ready").length ?? 0;
+  const inferredBaselineMissingPct =
+    totalProducts > 0 ? Math.round(((blockedProducts + atRiskProducts) / totalProducts) * 100) : 0;
+  const inferredCurrentMissingPct =
+    summary && summary.total_rules > 0 ? Math.round((summary.missing / summary.total_rules) * 100) : undefined;
+  const baselineMissingPct =
+    workflowData?.pilotMetrics?.baselineMissingDocRatePct ?? inferredBaselineMissingPct;
+  const currentMissingPct =
+    workflowData?.pilotMetrics?.currentMissingDocRatePct ??
+    inferredCurrentMissingPct ??
+    Math.max(baselineMissingPct - 8, 0);
+  const baselineReviewCycleDays = workflowData?.pilotMetrics?.baselineReviewCycleDays;
+  const currentReviewCycleDays = workflowData?.pilotMetrics?.currentReviewCycleDays;
+  const baselineReworkLoopsPerListing = workflowData?.pilotMetrics?.baselineReworkLoopsPerListing;
+  const currentReworkLoopsPerListing = workflowData?.pilotMetrics?.currentReworkLoopsPerListing;
+  const scenario = slide.scenarioId
+    ? workflowData?.scenarios.find((entry: Scenario) => entry.id === slide.scenarioId)
+    : undefined;
 
-    const productRows = workflowData?.products
-        .map((product: Product) => `
+  const productRows = workflowData?.products
+    .map((product: Product) => `
       <tr>
         <td><code>${escapeHtml(product.id)}</code></td>
         <td>${escapeHtml(product.name)}</td>
@@ -74,9 +74,9 @@ export const renderDemoHtml = (
       </tr>
     `).join("") ?? "";
 
-    const rows = run?.evaluation.result?.evaluations
-        .slice(0, 10)
-        .map((row: EvaluationResultRow) => `
+  const rows = run?.evaluation.result?.evaluations
+    .slice(0, 10)
+    .map((row: EvaluationResultRow) => `
       <tr>
         <td><code>${escapeHtml(row.rule_id)}</code></td>
         <td><span class="pill ${statusClass(row.status)}">${escapeHtml(row.status)}</span></td>
@@ -85,8 +85,8 @@ export const renderDemoHtml = (
       </tr>
     `).join("") ?? "";
 
-    const roleCards = workflowData?.roleOutputs
-        ?.map((roleOutput: RoleOutput) => `
+  const roleCards = workflowData?.roleOutputs
+    ?.map((roleOutput: RoleOutput) => `
       <div class="card">
         <h3>${escapeHtml(roleOutput.role)} Output</h3>
         <div class="value">${escapeHtml(roleOutput.summary)}</div>
@@ -97,20 +97,20 @@ export const renderDemoHtml = (
       </div>
     `).join("") ?? "";
 
-    const decisionRows = Object.entries(state.decisions)
-        .map(([gateId, decision]) => `
+  const decisionRows = Object.entries(state.decisions)
+    .map(([gateId, decision]) => `
       <tr>
         <td><code>${escapeHtml(gateId)}</code></td>
         <td>${escapeHtml(decision)}</td>
       </tr>
     `).join("");
 
-    const nextText = nextSlide ? nextSlide.title : "Demo completed.";
-    const isFinalClick = !state.done && state.stepIndex === activeSlides.length - 2;
-    const buttonLabel = state.done ? "Done" : isFinalClick ? "Continue (closes VSCode)" : "Continue";
-    const buttonDisabled = state.done || decisionRequired ? "disabled" : "";
+  const nextText = nextSlide ? nextSlide.title : "Demo completed.";
+  const isFinalClick = !state.done && state.stepIndex === activeSlides.length - 2;
+  const buttonLabel = state.done ? "Done" : isFinalClick ? "Continue (closes VSCode)" : "Continue";
+  const buttonDisabled = state.done || decisionRequired ? "disabled" : "";
 
-    return `
+  return `
   <!doctype html>
   <html>
     <head>

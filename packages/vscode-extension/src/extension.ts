@@ -215,29 +215,6 @@ const parseSlideshowData = (input: unknown): ParseResult<SlideshowData> => {
     : { error: zodErrorMessage(result.error) };
 };
 
-export const fallbackSlideshowData: SlideshowData = {
-  decisionGates: [],
-  slides: [
-    {
-      title: "Step 1 of 1: Slideshow Data Missing",
-      now: "Load slideshow data from demo/slideshow.json.",
-      next: "Complete setup.",
-      customerImpact: "Ensures valid demonstration sequence.",
-      whatUserSees: "This fallback step.",
-      whatUserClicks: "Next or Continue.",
-      cartGuardChecks: "None (System Level).",
-      legalBasis: "Operational integrity.",
-      marketplacePolicy: "Content clarity.",
-      cartguardRecommendation: "Verify file presence.",
-      ownerRole: "Ops",
-      fixAction: "Restore valid slideshow.json file.",
-      evidenceType: "unknown",
-      checkId: "fallback_slideshow",
-      inputArtifact: "slideshow.json"
-    }
-  ]
-};
-
 export const activate = (context: vscode.ExtensionContext): void => {
   const output = vscode.window.createOutputChannel("CartGuard");
   const shouldCloseWindowOnDone = process.env.CARTGUARD_DEMO_CLOSE_WINDOW !== "0";
@@ -365,7 +342,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
         const panel = vscode.window.createWebviewPanel(
           "cartguardDemo",
           `CartGuard Demo: ${requestedMode.toUpperCase()}`,
-          vscode.ViewColumn.Beside,
+          vscode.ViewColumn.One,
           { enableScripts: true, retainContextWhenHidden: true }
         );
 
@@ -484,6 +461,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
   );
 
   context.subscriptions.push(
+    output,
     runDemo,
     validateJsonFiles,
     openProcessView,
