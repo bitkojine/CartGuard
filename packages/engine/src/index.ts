@@ -12,7 +12,13 @@ import {
   type ProductContent,
   type RuleCatalog,
   type RuleRecord,
-  type ValidationPolicy
+  type ValidationPolicy,
+  Evidence,
+  EvidenceVerificationEvent,
+  deserializeEvidence,
+  serializeEvidence,
+  type EvidenceDocument,
+  type SerializedEvidence
 } from "@cartguard/spec";
 
 export interface ValidationIssue {
@@ -25,6 +31,109 @@ export interface ValidationResult {
   valid: boolean;
   errors: ValidationIssue[];
   warnings: ValidationIssue[];
+}
+
+export {
+  Evidence,
+  EvidenceVerificationEvent,
+  deserializeEvidence,
+  serializeEvidence,
+  type SerializedEvidence,
+  type SerializedEvidenceVerificationEvent,
+  EvidenceSchema,
+  EvidenceVerificationEventSchema,
+  EvidenceVerificationDecisionSchema,
+  type EvidenceVerificationDecision
+} from "@cartguard/spec";
+
+export interface EvidenceRepository {
+  loadEvidence(documentKey: string, listing: ListingInput): Evidence | null;
+  saveEvidence(evidence: Evidence, listing: ListingInput): void;
+}
+
+const DEFAULT_TTL_DAYS: Record<string, number> = {
+  "eu_doc_lvd": 1095,
+  "eu_doc_emc": 1095,
+  "eu_doc_red": 1095,
+  "default": 365
+};
+
+function getTtlDays(documentKey: string): number {
+  const value = DEFAULT_TTL_DAYS[documentKey];
+  return value ?? 365;
+}
+
+function migrateEvidenceDocument(doc: EvidenceDocument): Evidence {
+  if ("ttl_days" in doc && doc.verification_events.length > 0) {
+    try {
+      const serialized = doc as unknown as SerializedEvidence;
+      return deserializeEvidence({
+        document_key: serialized.document_key,
+        document_name: serialized.document_name,
+        ttl_days: serialized.ttl_days,
+        verification_events: serialized.verification_events
+      });
+    } catch (error) {
+      console.warn(`Failed to deserialize new format evidence for ${doc.document_key}:`, error);
+    }
+  }
+
+  const ttlDays = getTtlDays(doc.document_key);
+  const events: EvidenceVerificationEvent[] = [];
+
+  if (doc.last_verified_at) {
+    let decision: "verified" | "rejected" | "conflicted" = "verified";
+    if (doc.status === "stale" || doc.status === "mismatched") {
+      decision = "rejected";
+    } else if (doc.status === "conflicted") {
+      decision = "conflicted";
+    }
+    
+    events.push(EvidenceVerificationEvent.create({
+      decision,
+      verifier: "system",
+      reason: "migrated_from_legacy",
+      confidence: "high",
+      timestamp: new Date(doc.last_verified_at)
+    }));
+  } else {
+    events.push(EvidenceVerificationEvent.create({
+      decision: "verified",
+      verifier: "system", 
+      reason: "legacy_no_verification_date",
+      confidence: "low",
+      timestamp: new Date("2000-01-01")
+    }));
+  }
+
+  return new Evidence({
+    documentKey: doc.document_key,
+    documentName: doc.document_name,
+    ttlDays,
+    events
+  });
+}
+
+class DefaultEvidenceRepository implements EvidenceRepository {
+  loadEvidence(documentKey: string, listing: ListingInput): Evidence | null {
+    const doc = listing.product.evidence_documents.find(d => 
+      d.document_key.toLowerCase() === documentKey.toLowerCase()
+    );
+    
+    if (!doc) return null;
+    
+    try {
+      return migrateEvidenceDocument(doc);
+    } catch (error) {
+      console.warn(`Failed to load evidence for ${documentKey}:`, error);
+      return null;
+    }
+  }
+
+  saveEvidence(_evidence: Evidence, _listing: ListingInput): void {
+    const serialized = serializeEvidence(_evidence);
+    console.debug(`Evidence saved for ${_evidence.documentKey}:`, serialized);
+  }
 }
 
 const toPath = (path: (string | number)[]): string | undefined =>
@@ -118,29 +227,125 @@ const getApplicabilityState = (ruleId: string, l: ListingInput, a: Applicability
 const blockable = (r: RuleRecord): boolean =>
   r.requirement_type === "legal" && r.confidence !== "low" && ["eurlex", "eu_official", "national_authority"].includes(r.source_type);
 
-const normalize = (v: string): string => v.trim().toLowerCase();
-
-const evaluateRule = (listing: ListingInput, rule: RuleRecord, applicability: ApplicabilityCatalog): ListingEvaluationResult["evaluations"][number] => {
+const evaluateRule = (listing: ListingInput, rule: RuleRecord, applicability: ApplicabilityCatalog, repository: EvidenceRepository = new DefaultEvidenceRepository()): ListingEvaluationResult["evaluations"][number] => {
   const state = getApplicabilityState(rule.rule_id, listing, applicability);
   const base = { rule_id: rule.rule_id, requirement_type: rule.requirement_type, source_type: rule.source_type, confidence: rule.confidence };
   if (state === "not_applicable") return { ...base, status: "not_applicable", blocking: false, message: "Not applicable." };
   if (state === "unknown") return { ...base, status: "unknown", blocking: false, message: "Applicability unknown." };
 
   if (rule.required_evidence_keys.length === 0) return { ...base, status: "unknown", blocking: false, message: "No evidence keys." };
-  const byKey = new Map(listing.product.evidence_documents.map((doc) => [normalize(doc.document_key), doc]));
-  const missing = rule.required_evidence_keys.filter((key) => !byKey.has(normalize(key)));
+  
+  const evidences: Evidence[] = [];
+  const missing: string[] = [];
+  
+  for (const key of rule.required_evidence_keys) {
+    const evidence = repository.loadEvidence(key, listing);
+    if (evidence) {
+      evidences.push(evidence);
+    } else {
+      missing.push(key);
+    }
+  }
+  
   if (missing.length > 0) return { ...base, status: "missing", blocking: blockable(rule), message: `Missing keys: ${missing.join(", ")}` };
 
-  const docs = rule.required_evidence_keys.map((k) => byKey.get(normalize(k))!).filter(Boolean);
-  if (docs.some((d) => d.status === "stale")) return { ...base, status: "stale", blocking: blockable(rule), message: "Stale." };
-  if (docs.some((d) => d.status === "mismatched")) return { ...base, status: "mismatched", blocking: blockable(rule), message: "Mismatched." };
-  if (docs.some((d) => typeof d.last_verified_at !== "string")) return { ...base, status: "unknown", blocking: false, message: "No verification date." };
+  const today = new Date();
+  
+  const conflictedEvidence = evidences.find(ev => ev.status(today) === "conflicted");
+  if (conflictedEvidence) {
+    return { 
+      ...base, 
+      status: "conflicted", 
+      blocking: blockable(rule), 
+      message: `Evidence conflicted: ${conflictedEvidence.documentKey}`,
+      auditTrail: conflictedEvidence.auditTrail().map(event => ({
+        id: event.id,
+        timestamp: event.timestamp.toISOString(),
+        decision: event.decision,
+        verifier: event.verifier,
+        reason: event.reason,
+        confidence: event.confidence
+      }))
+    };
+  }
 
-  return { ...base, status: "present", blocking: false, message: "OK." };
+  const rejectedEvidence = evidences.find(ev => ev.status(today) === "stale");
+  if (rejectedEvidence) {
+    return {
+      ...base,
+      status: "stale",
+      blocking: blockable(rule),
+      message: `Evidence rejected: ${rejectedEvidence.documentKey}`,
+      auditTrail: rejectedEvidence.auditTrail().map(event => ({
+        id: event.id,
+        timestamp: event.timestamp.toISOString(),
+        decision: event.decision,
+        verifier: event.verifier,
+        reason: event.reason,
+        confidence: event.confidence
+      }))
+    };
+  }
+
+  const expiredEvidence = evidences.find(ev => ev.status(today) === "expired");
+  if (expiredEvidence) {
+    return {
+      ...base,
+      status: "expired",
+      blocking: blockable(rule),
+      message: `Evidence expired: ${expiredEvidence.documentKey}`,
+      auditTrail: expiredEvidence.auditTrail().map(event => ({
+        id: event.id,
+        timestamp: event.timestamp.toISOString(),
+        decision: event.decision,
+        verifier: event.verifier,
+        reason: event.reason,
+        confidence: event.confidence
+      }))
+    };
+  }
+
+  const reVerificationDueEvidence = evidences.find(ev => ev.isReVerificationDue(today));
+  if (reVerificationDueEvidence) {
+    const daysUntilExpiry = Math.ceil(reVerificationDueEvidence.expiryDate().getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    return {
+      ...base,
+      status: "reVerificationDue",
+      blocking: false,
+      message: `Re-verification due: ${reVerificationDueEvidence.documentKey} (expires in ${Math.floor(daysUntilExpiry)} days)`,
+      reVerificationDueDate: reVerificationDueEvidence.reVerificationDueDate().toISOString(),
+      auditTrail: reVerificationDueEvidence.auditTrail().map(event => ({
+        id: event.id,
+        timestamp: event.timestamp.toISOString(),
+        decision: event.decision,
+        verifier: event.verifier,
+        reason: event.reason,
+        confidence: event.confidence
+      }))
+    };
+  }
+
+  return {
+    ...base, 
+    status: "present", 
+    blocking: false, 
+    message: "OK.",
+    auditTrail: evidences.flatMap(ev => ev.auditTrail().map(event => ({
+      id: event.id,
+      timestamp: event.timestamp.toISOString(),
+      decision: event.decision,
+      verifier: event.verifier,
+      reason: event.reason,
+      confidence: event.confidence
+    })))
+  };
 };
 
 export const evaluateListingAgainstRuleCatalog = (
-  li: unknown, ri: unknown, ai: unknown
+  li: unknown, 
+  ri: unknown, 
+  ai: unknown,
+  repository: EvidenceRepository = new DefaultEvidenceRepository()
 ): ValidationResult & { result?: ListingEvaluationResult } => {
   const l = ListingInputSchema.safeParse(li);
   if (!l.success) return { valid: false, errors: fromZodError(l.error, "SCHEMA_PRODUCT"), warnings: [] };
@@ -149,7 +354,7 @@ export const evaluateListingAgainstRuleCatalog = (
   const a = ApplicabilityCatalogSchema.safeParse(ai);
   if (!a.success) return { valid: false, errors: fromZodError(a.error, "SCHEMA_POLICY"), warnings: [] };
 
-  const evals = r.data.rules.map((rule) => evaluateRule(l.data, rule, a.data));
+  const evals = r.data.rules.map((rule) => evaluateRule(l.data, rule, a.data, repository));
   const blocking = evals.filter((row) => row.blocking);
   const warnRows = evals.filter((row) => row.status === "unknown" || (row.status !== "present" && !row.blocking));
 
@@ -162,7 +367,10 @@ export const evaluateListingAgainstRuleCatalog = (
       mismatched: evals.filter((r) => r.status === "mismatched").length,
       warnings: warnRows.length, unknown: evals.filter((r) => r.status === "unknown").length,
       not_applicable: evals.filter((r) => r.status === "not_applicable").length,
-      present: evals.filter((r) => r.status === "present").length
+      present: evals.filter((r) => r.status === "present").length,
+      conflicted: evals.filter((r) => r.status === "conflicted").length,
+      expired: evals.filter((r) => r.status === "expired").length,
+      reVerificationDue: evals.filter((r) => r.status === "reVerificationDue").length
     }
   };
 

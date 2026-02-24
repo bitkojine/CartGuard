@@ -1,0 +1,56 @@
+{
+  "listing_id": "amz-de-100",
+  "jurisdiction": "EU",
+  "channel": "AmazonDE",
+  "product": {
+    "product_id": "sku-100",
+    "product_version": "v1",
+    "product_archetype": "non-radio mains electronics",
+    "is_radio_equipment": false,
+    "is_red_excluded": false,
+    "is_lvd_annex_ii_excluded": false,
+    "is_emc_equipment": true,
+    "is_emc_relevant": true,
+    "voltage_ac": 230,
+    "evidence_documents": [
+      {
+        "document_key": "eu_doc_lvd",
+        "document_name": "LVD EU declaration of conformity",
+        "ttl_days": 1095,
+        "verification_events": [
+          {
+            "id": "event-1",
+            "timestamp": "2024-02-23T00:00:00Z",
+            "decision": "verified",
+            "verifier": "auditor_jane",
+            "reason": "initial_verification",
+            "confidence": "high"
+          }
+        ]
+      },
+      {
+        "document_key": "eu_doc_emc",
+        "document_name": "EMC EU declaration of conformity",
+        "ttl_days": 1095,
+        "verification_events": [
+          {
+            "id": "event-2",
+            "timestamp": "2023-06-15T00:00:00Z",
+            "decision": "verified",
+            "verifier": "auditor_john",
+            "reason": "initial_verification",
+            "confidence": "high"
+          },
+          {
+            "id": "event-3",
+            "timestamp": "2024-02-23T00:00:00Z",
+            "decision": "verified",
+            "verifier": "auditor_jane",
+            "reason": "re_verification_after_update",
+            "confidence": "high"
+          }
+        ]
+      }
+    ]
+  }
+}
