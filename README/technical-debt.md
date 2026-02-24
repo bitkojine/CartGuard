@@ -2,21 +2,21 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 9
+- **Total Open Debt Count**: 7
 - **Severity Breakdown**:
   - Critical: 0
   - High: 1
-  - Medium: 7
+  - Medium: 5
   - Low: 1
 - **Category Breakdown**:
-  - Architecture: 6
+  - Architecture: 4
   - Static Site: 1
   - Testing: 1
   - DX: 1
 - **Status Trends**:
   - **Issues Found This Pass**: 0
-  - **Issues Resolved Since Last Pass**: 1 (ARCH-009)
-  - **Trend**: Improving. Extension entry point file size reduced by 45%.
+  - **Issues Resolved Since Last Pass**: 2 (ARCH-006, ARCH-010)
+  - **Trend**: Improving. Engine complexity significantly reduced. Entry point modularized.
 
 ### Top 5 Highest Impact Issues
 
@@ -24,7 +24,7 @@
 2. `SITE-001`: Manual HTML duplication in static site.
 3. `TEST-002`: Thin unit test coverage for extension.
 4. `ARCH-007`: Extremely long rendering function (> 300 lines).
-5. `ARCH-006`: Large function: evaluateRule.
+5. `ARCH-008`: Large function: activate.
 
 ---
 
@@ -33,10 +33,8 @@
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
 | `ARCH-003` | Unabstracted VS Code API usage | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-24 |
-| `ARCH-006` | Large function: evaluateRule | Architecture | `packages/engine/src/index.ts` | Medium | S | Open | 2026-02-24 |
 | `ARCH-007` | Large function: renderDemoHtml | Architecture | `packages/vscode-extension/src/renderers/demo-renderer.ts` | Medium | M | Open | 2026-02-24 |
 | `ARCH-008` | Large function: activate | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | S | Open | 2026-02-24 |
-| `ARCH-010` | Large file: engine index.ts (> 400 lines) | Architecture | `packages/engine/src/index.ts` | Medium | S | Open | 2026-02-24 |
 | `ARCH-013` | Dead view contribution | Architecture | `packages/vscode-extension/package.json` | Low | XS | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Static Site | `docs/**/*.html` | Medium | L | Open | 2026-02-24 |
 | `TEST-002` | Thin unit test coverage for extension | Testing | `packages/vscode-extension/test` | Medium | M | Open | 2026-02-24 |
@@ -51,11 +49,6 @@
 - **Impact**: Blocks unit testing of command logic; requires E2E environment for all validation tests.
 - **Last Reviewed**: 2026-02-24
 
-### `ARCH-006`: Large function: evaluateRule (110 lines)
-- **Description**: `evaluateRule` in the engine handles multiple rule types and applicability logic in a single block.
-- **Impact**: Increased risk of logic errors in compliance checks; hard to maintain.
-- **Last Reviewed**: 2026-02-24
-
 ### `ARCH-007`: Large function: renderDemoHtml (326 lines)
 - **Description**: `renderDemoHtml` contains massive template literals and inline mapping logic for the webview.
 - **Impact**: High cognitive load; extremely difficult to safely modify the UI structure.
@@ -64,11 +57,6 @@
 ### `ARCH-008`: Large function: activate (240 lines)
 - **Description**: The `activate` function registers 10+ commands and complex message listeners in one block.
 - **Impact**: Hard to trace command registration and extension lifecycle; high cyclomatic complexity.
-- **Last Reviewed**: 2026-02-24
-
-### `ARCH-010`: Large file: engine index.ts (432 lines)
-- **Description**: Core engine logic is centralized in a single file exceeding the 400-line threshold.
-- **Impact**: Over-coupling of validation, applicability, and token resolution logic.
 - **Last Reviewed**: 2026-02-24
 
 ### `ARCH-013`: Dead view contribution
@@ -97,6 +85,8 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `ARCH-006` | Large function: evaluateRule | 2026-02-24 | Refactored into smaller helpers (checkPresence, checkStatus). |
+| `ARCH-010` | Large file: engine index.ts (> 400 lines) | 2026-02-24 | Reduced from 432 to ~175 lines via compression and sub-modules. |
 | `ARCH-009` | Large file: extension.ts (> 400 lines) | 2026-02-24 | Extracted utilities and business logic to `utils.ts` and `extension-logic.ts`. Reduced from 478 to 257 lines. |
 | `ARCH-012` | Missing resource disposal | 2026-02-24 | Added `OutputChannel` to `context.subscriptions`. |
 | `ARCH-011` | Circular dependencies | 2026-02-24 | Moved `fallbackSlideshowData` to `types.ts` to break `extension` <-> `demo-manager` cycle. |
