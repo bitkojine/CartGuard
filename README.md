@@ -1,6 +1,8 @@
-# CartGuard: Spec-Driven AI Compliance Infrastructure for Ecommerce
+# CartGuard: Product Conformity Management for Ecommerce Compliance
 
 ---
+
+**🎯 Strategic Focus:** Product Conformity Management System - ensuring ongoing compliance for products already on market. [See strategic options →](planning/strategic-direction-options.md)
 
 **⚠️ Domain Model Assessment: 3/10** — Spec-driven CRUD, not rich DDD. [Full assessment →](DOMAIN_MODEL_INDEX.md)
 
@@ -71,6 +73,7 @@ CartGuard is built as a **monorepo with spec-driven architecture:**
 
 ## Documentation
 
+- **[Strategic Direction Options](planning/strategic-direction-options.md)** — 10 potential bounded contexts and recommended focus
 - **[Domain Model & Ubiquitous Language](README/domain-model-ddd.md)** — Compliance concepts, entities, aggregates
 - **[VS Code Extension Setup](README/vscode-extension-local-setup.md)** — Local development environment
 - **[Docker Browser Demo](README/docker-browser-demo.md)** — Run CartGuard in a browser without local setup
