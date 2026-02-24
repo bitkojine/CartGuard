@@ -1,30 +1,32 @@
 {
   "listing_id": "amz-de-100",
-  "product_id": "sku-100",
-  "product_version": "v1",
-  "product_archetype": "non-radio mains electronics",
   "jurisdiction": "EU",
   "channel": "AmazonDE",
-  "is_radio_equipment": false,
-  "is_red_excluded": false,
-  "is_lvd_annex_ii_excluded": false,
-  "is_emc_equipment": true,
-  "is_emc_relevant": true,
-  "voltage_ac": 230,
-  "evidence_documents": [
-    {
-      "document_key": "eu_doc_lvd",
-      "document_name": "LVD EU declaration of conformity",
-      "status": "present",
-      "last_verified_at": "2026-02-23",
-      "source_url": "https://example.com/lvd-doc"
-    },
-    {
-      "document_key": "eu_doc_emc",
-      "document_name": "EMC EU declaration of conformity",
-      "status": "present",
-      "last_verified_at": "2026-02-23",
-      "source_url": "https://example.com/emc-doc"
-    }
-  ]
+  "product": {
+    "product_id": "sku-100",
+    "product_version": "v1",
+    "product_archetype": "non-radio mains electronics",
+    "is_radio_equipment": false,
+    "is_red_excluded": false,
+    "is_lvd_annex_ii_excluded": false,
+    "is_emc_equipment": true,
+    "is_emc_relevant": true,
+    "voltage_ac": 230,
+    "evidence_documents": [
+      {
+        "document_key": "eu_doc_lvd",
+        "document_name": "LVD EU declaration of conformity",
+        "status": "present",
+        "last_verified_at": "2026-02-23",
+        "source_url": "https://example.com/lvd-doc"
+      },
+      {
+        "document_key": "eu_doc_emc",
+        "document_name": "EMC EU declaration of conformity",
+        "status": "present",
+        "last_verified_at": "2026-02-23",
+        "source_url": "https://example.com/emc-doc"
+      }
+    ]
+  }
 }
