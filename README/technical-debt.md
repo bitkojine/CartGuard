@@ -2,29 +2,28 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 6
+- **Total Open Debt Count**: 4
 - **Severity Breakdown**:
   - Critical: 0
-  - High: 2
-  - Medium: 3
+  - High: 1
+  - Medium: 2
   - Low: 1
 - **Category Breakdown**:
-  - Architecture: 3
+  - Architecture: 1
   - Static Site: 1
   - DX: 1
   - Testing: 1
 - **Status Trends**:
-  - **Issues Found This Pass**: 2 (High function complexity, Thin unit test coverage)
-  - **Issues Resolved Since Last Pass**: 2 (ARCH-004, TYPE-001)
-  - **Trend**: Improving (Core contracts stabilized, focus shifting to architectural cleanup).
+  - **Issues Found This Pass**: 0
+  - **Issues Resolved Since Last Pass**: 2 (ARCH-001, ARCH-005)
+  - **Trend**: Significant Improvement. Monolithic extension file broken down into modular components.
 
 ### Top 5 Highest Impact Issues
 
-1. `ARCH-001`: Monolithic extension file (1500+ lines).
-2. `ARCH-003`: Unabstracted VS Code API usage.
-3. `ARCH-005`: High cyclomatic complexity in rendering/activation.
-4. `SITE-001`: Manual HTML duplication in static site.
-5. `TEST-002`: Thin unit test coverage for extension.
+1. `ARCH-003`: Unabstracted VS Code API usage.
+2. `SITE-001`: Manual HTML duplication in static site.
+3. `TEST-002`: Thin unit test coverage for extension.
+4. `DX-001`: Inconsistent tsconfig management.
 
 ---
 
@@ -32,9 +31,7 @@
 
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
-| `ARCH-001` | Monolithic extension entry point | Architecture | `packages/vscode-extension/src/extension.ts` | High | L | Open | 2026-02-23 |
 | `ARCH-003` | Unabstracted VS Code API usage | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-24 |
-| `ARCH-005` | High function complexity | Architecture | `extension.ts` (`renderDemoHtml`, `activate`) | Medium | M | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Static Site | `docs/**/*.html` | Medium | L | Open | 2026-02-24 |
 | `TEST-002` | Thin unit test coverage for extension | Testing | `packages/vscode-extension/test` | Medium | M | Open | 2026-02-24 |
 | `DX-001` | Inconsistent tsconfig management | DX | `packages/*/tsconfig.json` | Low | S | Open | 2026-02-24 |
@@ -43,20 +40,9 @@
 
 ## Debt Details
 
-### `ARCH-001`: Monolithic extension entry point
-- **Description**: `extension.ts` exceeds 1500 lines, combining webview rendering, command logic, and state management.
-- **Impact**: Increased regression risk, slow reviews, and circular dependency potential.
-- **Last Reviewed**: 2026-02-24
-
-
 ### `ARCH-003`: Unabstracted VS Code API usage
 - **Description**: Direct calls to `vscode.commands`, `vscode.window`, and `vscode.workspace` throughout the business logic.
 - **Impact**: Blocks unit testing of command logic; requires E2E environment for all validation tests.
-- **Last Reviewed**: 2026-02-24
-
-### `ARCH-005`: High function complexity
-- **Description**: `renderDemoHtml` (486 lines) and `activate` (438 lines) handle too many responsibilities (HTML gen, state orch, command setup).
-- **Impact**: Extremely difficult to modify without side effects; cognitive load is high.
 - **Last Reviewed**: 2026-02-24
 
 ### `SITE-001`: Manual HTML duplication
@@ -80,6 +66,8 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `ARCH-001` | Monolithic extension entry point | 2026-02-25 | Reduced `extension.ts` from 1500+ lines to ~450 lines by extracting renderers and types. |
+| `ARCH-005` | High function complexity | 2026-02-25 | Extracted `renderDemoHtml` and `renderProcessHtml` to separate modules. |
 | `ARCH-002` | Global state for demo lifecycle | 2026-02-24 | Encapsulated in `DemoManager` class. |
 | `TYPE-001` | Weak input typing in generators | 2026-02-24 | Replaced casting with `GeneratorSeedSchema`. |
 | `ARCH-004` | Hardcoded rule logic tokens | 2026-02-24 | Centralized tokens in `@cartguard/spec`. |

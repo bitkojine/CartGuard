@@ -1,6 +1,7 @@
 import type * as vscode from "vscode";
-import { fallbackSlideshowData, renderDemoHtml } from "./extension";
-import type { EvaluationBundle, DemoControlState, DemoSlide, DecisionGate, WorkflowData, DemoMode } from "./extension";
+import { renderDemoHtml } from "./renderers/demo-renderer";
+import { fallbackSlideshowData } from "./extension";
+import type { EvaluationBundle, DemoControlState, DemoSlide, DecisionGate, WorkflowData, DemoMode } from "./types";
 
 export class DemoManager {
     private demoPanel: vscode.WebviewPanel | undefined;
