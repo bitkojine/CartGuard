@@ -26,6 +26,28 @@ const cleanupShowcaseArtifacts = async (): Promise<void> => {
   await rm(legacyShowcaseDir, { recursive: true, force: true });
 };
 
+const removeWithRetries = async (path: string): Promise<void> => {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    try {
+      await rm(path, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      lastError = error;
+      await new Promise((resolvePromise) => setTimeout(resolvePromise, 300));
+    }
+  }
+  if (lastError) {
+    const message =
+      lastError instanceof Error
+        ? lastError.message
+        : typeof lastError === "string"
+          ? lastError
+          : "unknown error";
+    throw new Error(`Failed to remove test temp directory ${path}: ${message}`);
+  }
+};
+
 const main = async (): Promise<void> => {
   const tempRoot = mkdtempSync(resolve(tmpdir(), "cartguard-vscode-test-"));
   const userDataDir = resolve(tempRoot, "user-data");
@@ -36,17 +58,21 @@ const main = async (): Promise<void> => {
       extensionTestsPath,
       extensionTestsEnv: {
         ...process.env,
-        CARTGUARD_DEMO_CLOSE_WINDOW: process.env.CARTGUARD_DEMO_CLOSE_WINDOW ?? "0"
+        CARTGUARD_DEMO_CLOSE_WINDOW: process.env.CARTGUARD_DEMO_CLOSE_WINDOW ?? "0",
+        ELECTRON_DISABLE_GPU: process.env.ELECTRON_DISABLE_GPU ?? "1",
+        LIBGL_ALWAYS_SOFTWARE: process.env.LIBGL_ALWAYS_SOFTWARE ?? "1"
       },
       launchArgs: [
         demoWorkspacePath,
+        "--disable-gpu",
+        "--disable-dev-shm-usage",
         `--user-data-dir=${userDataDir}`,
         `--extensions-dir=${extensionsDir}`
       ]
     });
   } finally {
     await cleanupShowcaseArtifacts();
-    await rm(tempRoot, { recursive: true, force: true });
+    await removeWithRetries(tempRoot);
   }
 };
 

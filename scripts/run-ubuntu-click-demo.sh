@@ -6,6 +6,8 @@ COMPOSE_FILE="$ROOT_DIR/docker/ubuntu-click/docker-compose.yml"
 CONTAINER_NAME="cartguard-ubuntu-click"
 MODE="${1:-auto}"
 REBUILD="${CARTGUARD_UBUNTU_CLICK_REBUILD:-0}"
+READY_TIMEOUT_SECONDS="${CARTGUARD_VSCODE_READY_TIMEOUT_SECONDS:-180}"
+DEMO_RETRY_MAX_ATTEMPTS="${CARTGUARD_DEMO_RETRY_MAX_ATTEMPTS:-3}"
 
 cd "$ROOT_DIR"
 if [ "$REBUILD" = "1" ]; then
@@ -38,7 +40,24 @@ else
   else
     DEMO_CMD="pnpm --filter cartguard-vscode-extension test:e2e:slow:auto"
   fi
-  docker exec -e DISPLAY=:1 "$CONTAINER_NAME" bash -lc "nohup bash -lc 'cd /workspace; pnpm install --frozen-lockfile && pnpm build && $DEMO_CMD' > /tmp/cartguard-slow-demo.log 2>&1 < /dev/null & echo \$! > /tmp/cartguard-slow-demo.pid"
+  docker exec \
+    -e DISPLAY=:1 \
+    -e CARTGUARD_DEMO_RETRY_MAX_ATTEMPTS="$DEMO_RETRY_MAX_ATTEMPTS" \
+    "$CONTAINER_NAME" \
+    bash -lc "nohup bash -lc '
+      cd /workspace
+      attempt=1
+      max=\${CARTGUARD_DEMO_RETRY_MAX_ATTEMPTS:-3}
+      while [ \"\$attempt\" -le \"\$max\" ]; do
+        pnpm install --frozen-lockfile && pnpm build && $DEMO_CMD && exit 0
+        code=\$?
+        echo \"[demo-runner] attempt \$attempt failed with exit code \$code\"
+        attempt=\$((attempt + 1))
+        sleep 3
+      done
+      echo \"[demo-runner] all retry attempts failed\"
+      exit \$code
+    ' > /tmp/cartguard-slow-demo.log 2>&1 < /dev/null & echo \$! > /tmp/cartguard-slow-demo.pid"
 fi
 
 echo "Starting window maximizer helper..."
@@ -90,6 +109,27 @@ else
     exit 0
   ' > /tmp/cartguard-vscode-startup-prep.log 2>&1 < /dev/null & echo \$! > /tmp/cartguard-vscode-startup-prep.pid"
 fi
+
+echo "Waiting for VS Code window to be ready..."
+vscode_ready=0
+for _ in $(seq 1 "$READY_TIMEOUT_SECONDS"); do
+  if docker exec -e DISPLAY=:1 "$CONTAINER_NAME" bash -lc "wmctrl -l 2>/dev/null | grep -qE 'Extension Development Host|Visual Studio Code|Code - OSS'"; then
+    vscode_ready=1
+    break
+  fi
+  sleep 1
+done
+
+if [ "$vscode_ready" -ne 1 ]; then
+  echo "Error: VS Code window did not appear within ${READY_TIMEOUT_SECONDS}s."
+  echo "Recent slow demo log:"
+  docker exec "$CONTAINER_NAME" bash -lc "tail -n 80 /tmp/cartguard-slow-demo.log 2>/dev/null || true"
+  echo "Recent startup-prep log:"
+  docker exec "$CONTAINER_NAME" bash -lc "tail -n 80 /tmp/cartguard-vscode-startup-prep.log 2>/dev/null || true"
+  exit 1
+fi
+
+echo "VS Code window detected."
 
 echo
 echo "Open in browser: http://localhost:6080"
