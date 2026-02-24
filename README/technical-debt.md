@@ -2,28 +2,29 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 4
+- **Total Open Debt Count**: 11
 - **Severity Breakdown**:
   - Critical: 0
   - High: 1
-  - Medium: 2
+  - Medium: 9
   - Low: 1
 - **Category Breakdown**:
-  - Architecture: 1
+  - Architecture: 8
   - Static Site: 1
-  - DX: 1
   - Testing: 1
+  - DX: 1
 - **Status Trends**:
-  - **Issues Found This Pass**: 0
+  - **Issues Found This Pass**: 7 (ARCH-006, ARCH-007, ARCH-008, ARCH-009, ARCH-010, ARCH-011, ARCH-012)
   - **Issues Resolved Since Last Pass**: 2 (ARCH-001, ARCH-005)
-  - **Trend**: Significant Improvement. Monolithic extension file broken down into modular components.
+  - **Trend**: Mixed. Significant progress on modularization, but granular analysis reveals secondary architectural smells and remaining complexity.
 
 ### Top 5 Highest Impact Issues
 
 1. `ARCH-003`: Unabstracted VS Code API usage.
-2. `SITE-001`: Manual HTML duplication in static site.
-3. `TEST-002`: Thin unit test coverage for extension.
-4. `DX-001`: Inconsistent tsconfig management.
+2. `ARCH-011`: Circular dependencies between extension entry and core manager.
+3. `SITE-001`: Manual HTML duplication in static site.
+4. `TEST-002`: Thin unit test coverage for extension.
+5. `ARCH-007`: Extremely long rendering function (> 300 lines).
 
 ---
 
@@ -32,6 +33,13 @@
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
 | `ARCH-003` | Unabstracted VS Code API usage | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-24 |
+| `ARCH-006` | Large function: evaluateRule | Architecture | `packages/engine/src/index.ts` | Medium | S | Open | 2026-02-24 |
+| `ARCH-007` | Large function: renderDemoHtml | Architecture | `packages/vscode-extension/src/renderers/demo-renderer.ts` | Medium | M | Open | 2026-02-24 |
+| `ARCH-008` | Large function: activate | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | S | Open | 2026-02-24 |
+| `ARCH-009` | Large file: extension.ts (> 500 lines) | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | S | Open | 2026-02-24 |
+| `ARCH-010` | Large file: engine index.ts (> 400 lines) | Architecture | `packages/engine/src/index.ts` | Medium | S | Open | 2026-02-24 |
+| `ARCH-011` | Circular dependencies | Architecture | `extension.ts` <-> `demo-manager.ts` | Medium | S | Open | 2026-02-24 |
+| `ARCH-012` | Missing resource disposal (OutputChannel) | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | XS | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Static Site | `docs/**/*.html` | Medium | L | Open | 2026-02-24 |
 | `TEST-002` | Thin unit test coverage for extension | Testing | `packages/vscode-extension/test` | Medium | M | Open | 2026-02-24 |
 | `DX-001` | Inconsistent tsconfig management | DX | `packages/*/tsconfig.json` | Low | S | Open | 2026-02-24 |
@@ -45,6 +53,41 @@
 - **Impact**: Blocks unit testing of command logic; requires E2E environment for all validation tests.
 - **Last Reviewed**: 2026-02-24
 
+### `ARCH-006`: Large function: evaluateRule (110 lines)
+- **Description**: `evaluateRule` in the engine handles multiple rule types and applicability logic in a single block.
+- **Impact**: Increased risk of logic errors in compliance checks; hard to maintain.
+- **Last Reviewed**: 2026-02-24
+
+### `ARCH-007`: Large function: renderDemoHtml (326 lines)
+- **Description**: `renderDemoHtml` contains massive template literals and inline mapping logic for the webview.
+- **Impact**: High cognitive load; extremely difficult to safely modify the UI structure.
+- **Last Reviewed**: 2026-02-24
+
+### `ARCH-008`: Large function: activate (260 lines)
+- **Description**: The `activate` function registers 10+ commands and complex message listeners in one block.
+- **Impact**: Hard to trace command registration and extension lifecycle; high cyclomatic complexity.
+- **Last Reviewed**: 2026-02-24
+
+### `ARCH-009`: Large file: extension.ts (501 lines)
+- **Description**: Entry point exceeds the 400-line threshold even after modularization.
+- **Impact**: Still acts as a "gravity well" for miscellaneous logic and helper functions.
+- **Last Reviewed**: 2026-02-24
+
+### `ARCH-010`: Large file: engine index.ts (432 lines)
+- **Description**: Core engine logic is centralized in a single file exceeding the 400-line threshold.
+- **Impact**: Over-coupling of validation, applicability, and token resolution logic.
+- **Last Reviewed**: 2026-02-24
+
+### `ARCH-011`: Circular dependencies
+- **Description**: `extension.ts` -> `demo-manager.ts` -> `extension.ts` (via `fallbackSlideshowData`).
+- **Impact**: Static analysis issues; potential for runtime initialization bugs in the extension host.
+- **Last Reviewed**: 2026-02-24
+
+### `ARCH-012`: Missing resource disposal (OutputChannel)
+- **Description**: `vscode.OutputChannel` is created in `activate` but not added to `context.subscriptions`.
+- **Impact**: Minor resource leak; channel persists until VS Code is closed, even if extension is deactivated.
+- **Last Reviewed**: 2026-02-24
+
 ### `SITE-001`: Manual HTML duplication
 - **Description**: Static pages in `docs/` replicate identical `<nav>` and layout structures manually.
 - **Impact**: Maintenance burden; relies on brittle `guard-nav-links.mts` script to prevent drift.
@@ -52,11 +95,11 @@
 
 ### `TEST-002`: Thin unit test coverage for extension
 - **Description**: Most extension tests are E2E; internal parsing and state transitions lack isolated unit tests.
-- **Impact**: Refactoring `extension.ts` is risky without a fast feedback loop from unit tests.
+- **Impact**: Refactoring logic is risky without a fast feedback loop from unit tests.
 - **Last Reviewed**: 2026-02-24
 
 ### `DX-001`: Inconsistent tsconfig management
-- **Description**: Shared configuration exists but package-level `tsconfig.json` files overlap and vary slightly in strictness.
+- **Description**: Shared configuration exists but package-level `tsconfig.json` files vary in `module` and `moduleResolution` (CommonJS vs NodeNext).
 - **Impact**: Slight inconsistencies in build behavior across monorepo packages.
 - **Last Reviewed**: 2026-02-24
 
@@ -66,8 +109,8 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
-| `ARCH-001` | Monolithic extension entry point | 2026-02-25 | Reduced `extension.ts` from 1500+ lines to ~450 lines by extracting renderers and types. |
-| `ARCH-005` | High function complexity | 2026-02-25 | Extracted `renderDemoHtml` and `renderProcessHtml` to separate modules. |
+| `ARCH-001` | Monolithic extension entry point | 2026-02-24 | Reduced from 1500+ lines to ~500 lines. Major complexity removed. |
+| `ARCH-005` | High function complexity | 2026-02-24 | Extracted renderers and manager. (N.B. Function size remains a secondary debt). |
 | `ARCH-002` | Global state for demo lifecycle | 2026-02-24 | Encapsulated in `DemoManager` class. |
 | `TYPE-001` | Weak input typing in generators | 2026-02-24 | Replaced casting with `GeneratorSeedSchema`. |
 | `ARCH-004` | Hardcoded rule logic tokens | 2026-02-24 | Centralized tokens in `@cartguard/spec`. |
