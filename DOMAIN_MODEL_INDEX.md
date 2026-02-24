@@ -1,5 +1,7 @@
 # Domain Model Index & DDD Evaluation
 
+> **🎯 Strategic Context:** CartGuard is focused on **Product Conformity Management System** as our primary bounded context. See [Strategic Direction Options](planning/strategic-direction-options.md) for the full analysis of 10 potential directions.
+
 ## Problem Space
 
 CartGuard operates in the e-commerce product compliance and listing verification domain.
