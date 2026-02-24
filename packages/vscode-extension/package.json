@@ -26,23 +26,6 @@
   },
   "activationEvents": [],
   "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "cartguardSidebar",
-          "title": "CartGuard",
-          "icon": "media/cartguard.svg"
-        }
-      ]
-    },
-    "views": {
-      "cartguardSidebar": [
-        {
-          "id": "cartguardActionsView",
-          "name": "Demo Controls"
-        }
-      ]
-    },
     "commands": [
       {
         "command": "cartguard.runDemo",
