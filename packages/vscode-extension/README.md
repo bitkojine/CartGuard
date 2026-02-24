@@ -26,6 +26,15 @@
   - Opens the champion workflow deep-dive flow.
   - Focuses on triage, decision gates, and role handoffs.
 
+- `CartGuard: Reopen Slideshow Demo`
+  - Reopens from step 1 using the last selected mode.
+
+- `CartGuard: Reopen Exec Demo`
+  - Reopens the executive flow from step 1.
+
+- `CartGuard: Reopen Champion Demo`
+  - Reopens the champion flow from step 1.
+
 ## Local development
 
 From repo root:

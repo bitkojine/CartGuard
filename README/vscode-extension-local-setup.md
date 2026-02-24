@@ -98,6 +98,8 @@ How to finish:
 - `CartGuard: Open Champion Demo`
 - `CartGuard: Demo Next Step`
 - `CartGuard: Reopen Slideshow Demo`
+- `CartGuard: Reopen Exec Demo`
+- `CartGuard: Reopen Champion Demo`
 
 ## Command Behavior
 
@@ -130,6 +132,12 @@ How to finish:
 
 8. `CartGuard: Reopen Slideshow Demo`
 - Reopens slideshow from step 1 using the last selected mode (`default`, `exec`, or `champion`).
+
+9. `CartGuard: Reopen Exec Demo`
+- Reopens the executive flow from step 1.
+
+10. `CartGuard: Reopen Champion Demo`
+- Reopens the champion flow from step 1.
 
 ## Runtime Demo Files
 

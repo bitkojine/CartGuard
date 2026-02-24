@@ -33,7 +33,9 @@
     "onCommand:cartguard.openExecDemoSlideshow",
     "onCommand:cartguard.openChampionDemoSlideshow",
     "onCommand:cartguard.demoNextStep",
-    "onCommand:cartguard.reopenDemoSlideshow"
+    "onCommand:cartguard.reopenDemoSlideshow",
+    "onCommand:cartguard.reopenExecDemoSlideshow",
+    "onCommand:cartguard.reopenChampionDemoSlideshow"
   ],
   "contributes": {
     "viewsContainers": {
@@ -85,6 +87,14 @@
       {
         "command": "cartguard.reopenDemoSlideshow",
         "title": "CartGuard: Reopen Slideshow Demo"
+      },
+      {
+        "command": "cartguard.reopenExecDemoSlideshow",
+        "title": "CartGuard: Reopen Exec Demo"
+      },
+      {
+        "command": "cartguard.reopenChampionDemoSlideshow",
+        "title": "CartGuard: Reopen Champion Demo"
       }
     ]
   },

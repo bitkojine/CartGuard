@@ -611,8 +611,20 @@ const actionNodes: ActionNode[] = [
   {
     id: "reopen-slideshow",
     label: "Reopen Slideshow Demo",
-    description: "Open the Continue flow again",
+    description: "Reopen the last selected demo mode",
     commandId: "cartguard.reopenDemoSlideshow"
+  },
+  {
+    id: "reopen-exec-slideshow",
+    label: "Reopen Exec Demo",
+    description: "Reopen the executive flow from step 1",
+    commandId: "cartguard.reopenExecDemoSlideshow"
+  },
+  {
+    id: "reopen-champion-slideshow",
+    label: "Reopen Champion Demo",
+    description: "Reopen the champion flow from step 1",
+    commandId: "cartguard.reopenChampionDemoSlideshow"
   },
   {
     id: "continue-slideshow",
@@ -1688,6 +1700,24 @@ export const activate = (context: vscode.ExtensionContext): void => {
     }
   );
 
+  const reopenExecDemoSlideshow = vscode.commands.registerCommand(
+    "cartguard.reopenExecDemoSlideshow",
+    async () => {
+      await vscode.commands.executeCommand("cartguard.openDemoSlideshow", { demoMode: "exec" });
+      return true;
+    }
+  );
+
+  const reopenChampionDemoSlideshow = vscode.commands.registerCommand(
+    "cartguard.reopenChampionDemoSlideshow",
+    async () => {
+      await vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
+        demoMode: "champion"
+      });
+      return true;
+    }
+  );
+
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider("cartguardActionsView", actionsProvider),
     runDemo,
@@ -1700,6 +1730,8 @@ export const activate = (context: vscode.ExtensionContext): void => {
     getDemoState,
     getDemoMode,
     reopenDemoSlideshow,
+    reopenExecDemoSlideshow,
+    reopenChampionDemoSlideshow,
     output
   );
 };

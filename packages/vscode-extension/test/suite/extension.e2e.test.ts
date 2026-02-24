@@ -219,4 +219,38 @@ suite("CartGuard Extension E2E", () => {
     mode = (await vscode.commands.executeCommand("cartguard.getDemoMode")) as string;
     assert.equal(mode, "champion");
   });
+
+  test("explicit reopen commands force target mode", async () => {
+    await vscode.commands.executeCommand("cartguard.openDemoSlideshow");
+    let mode = (await vscode.commands.executeCommand("cartguard.getDemoMode")) as string;
+    assert.equal(mode, "default");
+
+    await vscode.commands.executeCommand("cartguard.reopenExecDemoSlideshow");
+    mode = (await vscode.commands.executeCommand("cartguard.getDemoMode")) as string;
+    assert.equal(mode, "exec");
+    let state = (await vscode.commands.executeCommand("cartguard.getDemoState")) as
+      | { title?: string; stepIndex: number; done: boolean }
+      | null;
+    assert.ok(state);
+    assert.match(state.title ?? "", /Step 1 of 5/);
+
+    await vscode.commands.executeCommand("cartguard.reopenChampionDemoSlideshow");
+    mode = (await vscode.commands.executeCommand("cartguard.getDemoMode")) as string;
+    assert.equal(mode, "champion");
+    state = (await vscode.commands.executeCommand("cartguard.getDemoState")) as
+      | { title?: string; stepIndex: number; done: boolean }
+      | null;
+    assert.ok(state);
+    assert.match(state.title ?? "", /Step 1 of 8/);
+  });
+
+  test("explicit reopen commands are available and return success", async () => {
+    const reopenExec = await vscode.commands.executeCommand("cartguard.reopenExecDemoSlideshow");
+    assert.equal(reopenExec, true);
+
+    const reopenChampion = await vscode.commands.executeCommand(
+      "cartguard.reopenChampionDemoSlideshow"
+    );
+    assert.equal(reopenChampion, true);
+  });
 });
