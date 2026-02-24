@@ -1,18 +1,7 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as vscode from "vscode";
-
-export const readJsonFile = async (path: string): Promise<unknown> => {
-    const raw = await readFile(path, "utf8");
-    return JSON.parse(raw) as unknown;
-};
-
-export const slugify = (value: string): string =>
-    value
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "")
-        .slice(0, 48);
+import { slugify } from "./pure";
 
 const showcaseWriteToDisk = process.env.CARTGUARD_DEMO_WRITE_TO_DISK === "1";
 const showcaseResultsDirName = "_cartguard_in_memory_showcase";

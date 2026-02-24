@@ -11,7 +11,8 @@ import {
     parseWorkflowData,
     parseSlideshowData,
 } from "./extension-logic";
-import { readJsonFile, openResult, pickJsonFile } from "./utils";
+import { openResult, pickJsonFile } from "./utils";
+import { readJsonFile } from "./pure";
 
 export const registerCommands = (
     context: vscode.ExtensionContext,

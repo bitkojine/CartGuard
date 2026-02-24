@@ -8,7 +8,7 @@ import {
     slideshowDataSchema,
 } from "./types";
 import type { WorkflowData } from "./types";
-import { readJsonFile } from "./utils";
+import { readJsonFile } from "./pure";
 
 export interface Logger {
     appendLine(value: string): void;
