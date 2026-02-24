@@ -36,6 +36,13 @@ suite("CartGuard Extension E2E", () => {
     this.timeout(0);
   });
 
+  suiteSetup(async () => {
+    await vscode.commands.executeCommand("workbench.action.closeAuxiliaryBar");
+    await vscode.commands.executeCommand("workbench.action.closePanel");
+    await vscode.commands.executeCommand("workbench.view.explorer");
+    await pause(400);
+  });
+
   setup(async () => {
     await pause(stepMs);
   });

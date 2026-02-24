@@ -5,9 +5,14 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMPOSE_FILE="$ROOT_DIR/docker/ubuntu-click/docker-compose.yml"
 CONTAINER_NAME="cartguard-ubuntu-click"
 MODE="${1:-auto}"
+REBUILD="${CARTGUARD_UBUNTU_CLICK_REBUILD:-0}"
 
 cd "$ROOT_DIR"
-docker compose -f "$COMPOSE_FILE" up --build -d
+if [ "$REBUILD" = "1" ]; then
+  docker compose -f "$COMPOSE_FILE" up --build -d
+else
+  docker compose -f "$COMPOSE_FILE" up -d
+fi
 
 echo "Waiting for container to start..."
 for _ in $(seq 1 120); do
@@ -22,18 +27,7 @@ if ! docker inspect -f '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null | grep
   exit 1
 fi
 
-echo "Waiting for GUI display (:1) to be ready..."
-for _ in $(seq 1 120); do
-  if docker exec "$CONTAINER_NAME" bash -lc "test -S /tmp/.X11-unix/X1"; then
-    break
-  fi
-  sleep 1
-done
-
-if ! docker exec "$CONTAINER_NAME" bash -lc "test -S /tmp/.X11-unix/X1"; then
-  echo "Display socket /tmp/.X11-unix/X1 was not ready in time."
-  exit 1
-fi
+echo "Skipping explicit GUI socket wait; starting demo workers immediately."
 
 echo "Starting slow slideshow demo inside container..."
 if docker exec "$CONTAINER_NAME" bash -lc "test -f /tmp/cartguard-slow-demo.pid && kill -0 \$(cat /tmp/cartguard-slow-demo.pid) 2>/dev/null"; then
@@ -63,8 +57,51 @@ else
   ' > /tmp/cartguard-window-maximizer.log 2>&1 < /dev/null & echo \$! > /tmp/cartguard-window-maximizer.pid"
 fi
 
+echo "Starting VS Code startup prep helper (reload + close panels)..."
+if docker exec "$CONTAINER_NAME" bash -lc "test -f /tmp/cartguard-vscode-startup-prep.pid && kill -0 \$(cat /tmp/cartguard-vscode-startup-prep.pid) 2>/dev/null"; then
+  echo "VS Code startup prep helper is already running."
+else
+  docker exec -e DISPLAY=:1 "$CONTAINER_NAME" bash -lc "nohup bash -lc '
+    set -euo pipefail
+    echo \"[startup-prep] helper started\"
+    find_code_window() {
+      wmctrl -l 2>/dev/null | grep -E \"Extension Development Host|Visual Studio Code|Code - OSS\" | head -n1 || true
+    }
+    run_vscode_command() {
+      local cmd_id=\"\$1\"
+      echo \"[startup-prep] run command: \$cmd_id\"
+      code --command \"\$cmd_id\" >/dev/null 2>&1 || true
+    }
+    for _ in \$(seq 1 180); do
+      win_line=\"\$(find_code_window)\"
+      if [ -n \"\$win_line\" ]; then
+        echo \"[startup-prep] detected VS Code window: \$win_line\"
+        run_vscode_command \"workbench.action.closeAuxiliaryBar\"
+        sleep 1
+        run_vscode_command \"workbench.action.closePanel\"
+        sleep 1
+        run_vscode_command \"workbench.view.explorer\"
+        sleep 2
+        run_vscode_command \"workbench.action.reloadWindow\"
+        sleep 8
+        run_vscode_command \"workbench.action.closeAuxiliaryBar\"
+        sleep 1
+        run_vscode_command \"workbench.action.closePanel\"
+        sleep 1
+        run_vscode_command \"workbench.view.explorer\"
+        echo \"[startup-prep] completed\"
+        exit 0
+      fi
+      sleep 1
+    done
+    echo \"[startup-prep] timeout waiting for VS Code window\"
+    exit 0
+  ' > /tmp/cartguard-vscode-startup-prep.log 2>&1 < /dev/null & echo \$! > /tmp/cartguard-vscode-startup-prep.pid"
+fi
+
 echo
 echo "Open in browser: http://localhost:6080"
 echo "Check demo logs: docker exec $CONTAINER_NAME bash -lc 'tail -f /tmp/cartguard-slow-demo.log'"
 echo "Check maximizer logs: docker exec $CONTAINER_NAME bash -lc 'tail -f /tmp/cartguard-window-maximizer.log'"
+echo "Check startup-prep logs: docker exec $CONTAINER_NAME bash -lc 'tail -f /tmp/cartguard-vscode-startup-prep.log'"
 echo "Mode: $MODE (use './scripts/run-ubuntu-click-demo.sh manual' for click-to-continue mode)"
