@@ -1,6 +1,7 @@
 import type { ZodError } from "zod";
 import {
   ApplicabilityCatalogSchema,
+  ComplianceTokens,
   ListingInputSchema,
   ProductContentSchema,
   RuleCatalogSchema,
@@ -37,14 +38,14 @@ const fromZodError = (
     const path = toPath(issue.path);
     return path
       ? {
-          code: `${codePrefix}_${issue.code.toUpperCase()}`,
-          message: issue.message,
-          path
-        }
+        code: `${codePrefix}_${issue.code.toUpperCase()}`,
+        message: issue.message,
+        path
+      }
       : {
-          code: `${codePrefix}_${issue.code.toUpperCase()}`,
-          message: issue.message
-        };
+        code: `${codePrefix}_${issue.code.toUpperCase()}`,
+        message: issue.message
+      };
   });
 
 const enforcePolicy = (
@@ -146,37 +147,39 @@ type ApplicabilityState = "applicable" | "not_applicable" | "unknown";
 const normalize = (value: string): string => value.trim().toLowerCase();
 
 const tokenValue = (listing: ListingInput, token: string): boolean | undefined => {
-  if (token === "equipment_intentionally_emits_or_receives_radio_waves_for_radio_communication_or_radiodetermination") {
+  if (token === ComplianceTokens.RED_RADIO_INTENTIONAL) {
     return listing.is_radio_equipment;
   }
 
-  if (token === "equipment_not_excluded_under_RED_Article1_or_Annex") {
+  if (token === ComplianceTokens.RED_NOT_EXCLUDED) {
     return !listing.is_red_excluded;
   }
 
-  if (token === "equipment_not_radio_equipment_under_RED") {
+  if (token === ComplianceTokens.RED_NOT_RADIO) {
     return !listing.is_radio_equipment;
   }
 
-  if (token === "equipment_designed_voltage_between_50_and_1000_V_AC_or_between_75_and_1500_V_DC") {
-    const ac = typeof listing.voltage_ac === "number" && listing.voltage_ac >= 50 && listing.voltage_ac <= 1000;
-    const dc = typeof listing.voltage_dc === "number" && listing.voltage_dc >= 75 && listing.voltage_dc <= 1500;
+  if (token === ComplianceTokens.LVD_VOLTAGE_MATCH) {
+    const ac =
+      typeof listing.voltage_ac === "number" && listing.voltage_ac >= 50 && listing.voltage_ac <= 1000;
+    const dc =
+      typeof listing.voltage_dc === "number" && listing.voltage_dc >= 75 && listing.voltage_dc <= 1500;
     return ac || dc;
   }
 
-  if (token === "equipment_not_listed_in_LVD_Annex_II_exclusions") {
+  if (token === ComplianceTokens.LVD_NOT_EXCLUDED) {
     return !listing.is_lvd_annex_ii_excluded;
   }
 
-  if (token === "equipment_meets_definition_of_equipment_in_EMC_Article2") {
+  if (token === ComplianceTokens.EMC_MEETS_DEF) {
     return listing.is_emc_equipment;
   }
 
-  if (token === "equipment_liable_to_generate_electromagnetic_disturbance_or_performance_liable_to_be_affected") {
+  if (token === ComplianceTokens.EMC_LIABLE_DISTURBANCE) {
     return listing.is_emc_relevant;
   }
 
-  if (token === "equipment_radio_equipment_under_RED") {
+  if (token === ComplianceTokens.RED_RADIO_EQUIPMENT) {
     return listing.is_radio_equipment;
   }
 

@@ -1,5 +1,21 @@
 import { z } from "zod";
 
+export const ComplianceTokens = {
+  RED_RADIO_INTENTIONAL:
+    "equipment_intentionally_emits_or_receives_radio_waves_for_radio_communication_or_radiodetermination",
+  RED_NOT_EXCLUDED: "equipment_not_excluded_under_RED_Article1_or_Annex",
+  RED_NOT_RADIO: "equipment_not_radio_equipment_under_RED",
+  LVD_VOLTAGE_MATCH:
+    "equipment_designed_voltage_between_50_and_1000_V_AC_or_between_75_and_1500_V_DC",
+  LVD_NOT_EXCLUDED: "equipment_not_listed_in_LVD_Annex_II_exclusions",
+  EMC_MEETS_DEF: "equipment_meets_definition_of_equipment_in_EMC_Article2",
+  EMC_LIABLE_DISTURBANCE:
+    "equipment_liable_to_generate_electromagnetic_disturbance_or_performance_liable_to_be_affected",
+  RED_RADIO_EQUIPMENT: "equipment_radio_equipment_under_RED"
+} as const;
+
+export type ComplianceToken = (typeof ComplianceTokens)[keyof typeof ComplianceTokens];
+
 export const ClaimCategoryValues = [
   "sustainability",
   "health",
