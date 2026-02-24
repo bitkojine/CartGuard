@@ -187,7 +187,7 @@ suite("CartGuard Extension E2E", () => {
     assert.match(finalState.title ?? "", /Step 8 of 8/);
   });
 
-  test("reopen slideshow command resets to default flow", async () => {
+  test("reopen slideshow command reopens last selected mode", async () => {
     await openAndAdvanceSlideshow("cartguard.openExecDemoSlideshow", 10);
 
     await vscode.commands.executeCommand("cartguard.reopenDemoSlideshow");
@@ -199,7 +199,7 @@ suite("CartGuard Extension E2E", () => {
     assert.ok(state);
     assert.equal(state.stepIndex, 0);
     assert.equal(state.done, false);
-    assert.match(state.title ?? "", /Step 1 of 14/);
+    assert.match(state.title ?? "", /Step 1 of 5/);
   });
 
   test("slideshow commands switch demo mode as expected", async () => {
@@ -217,6 +217,6 @@ suite("CartGuard Extension E2E", () => {
 
     await vscode.commands.executeCommand("cartguard.reopenDemoSlideshow");
     mode = (await vscode.commands.executeCommand("cartguard.getDemoMode")) as string;
-    assert.equal(mode, "default");
+    assert.equal(mode, "champion");
   });
 });

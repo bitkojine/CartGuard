@@ -129,7 +129,7 @@ How to finish:
 - Uses `champion-slideshow.json` when present.
 
 8. `CartGuard: Reopen Slideshow Demo`
-- Resets and reopens slideshow from step 1.
+- Reopens slideshow from step 1 using the last selected mode (`default`, `exec`, or `champion`).
 
 ## Runtime Demo Files
 

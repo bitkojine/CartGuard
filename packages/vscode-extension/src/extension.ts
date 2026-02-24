@@ -1296,6 +1296,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
   let demoRun: EvaluationBundle | undefined;
   let workflowData: WorkflowData | undefined;
   let currentDemoMode: DemoMode = "default";
+  let lastOpenedDemoMode: DemoMode = "default";
   let slideshowSlides: DemoSlide[] = fallbackSlideshowData.slides;
   let decisionGatesByCheckId = new Map<string, DecisionGate>();
 
@@ -1510,11 +1511,13 @@ export const activate = (context: vscode.ExtensionContext): void => {
     async (args?: ValidationCommandArgs) => {
       try {
         const { listingPath, rulesPath, applicabilityPath } = resolveDemoPaths(context, args);
+        const requestedMode = args?.demoMode ?? "default";
 
         if (demoPanel) {
           demoPanel.dispose();
         }
-        currentDemoMode = args?.demoMode ?? "default";
+        currentDemoMode = requestedMode;
+        lastOpenedDemoMode = requestedMode;
 
         demoRun = undefined;
         workflowData = undefined;
@@ -1678,7 +1681,9 @@ export const activate = (context: vscode.ExtensionContext): void => {
   const reopenDemoSlideshow = vscode.commands.registerCommand(
     "cartguard.reopenDemoSlideshow",
     async () => {
-      await vscode.commands.executeCommand("cartguard.openDemoSlideshow");
+      await vscode.commands.executeCommand("cartguard.openDemoSlideshow", {
+        demoMode: lastOpenedDemoMode
+      });
       return true;
     }
   );
