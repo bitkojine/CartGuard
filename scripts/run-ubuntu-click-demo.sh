@@ -81,14 +81,6 @@ else
         run_vscode_command \"workbench.action.closePanel\"
         sleep 1
         run_vscode_command \"workbench.view.explorer\"
-        sleep 2
-        run_vscode_command \"workbench.action.reloadWindow\"
-        sleep 8
-        run_vscode_command \"workbench.action.closeAuxiliaryBar\"
-        sleep 1
-        run_vscode_command \"workbench.action.closePanel\"
-        sleep 1
-        run_vscode_command \"workbench.view.explorer\"
         echo \"[startup-prep] completed\"
         exit 0
       fi

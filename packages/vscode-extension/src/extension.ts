@@ -26,7 +26,6 @@ const openResult = async (
   const text = JSON.stringify(payload, null, 2);
   output.appendLine(`[CartGuard] ${title}`);
   output.appendLine(text);
-  output.show(true);
 
   if (showcaseWriteToDisk && workspaceRoot) {
     const dirPath = join(workspaceRoot, showcaseResultsDirName);

@@ -40,7 +40,6 @@ const main = async (): Promise<void> => {
       },
       launchArgs: [
         demoWorkspacePath,
-        "--disable-extensions",
         `--user-data-dir=${userDataDir}`,
         `--extensions-dir=${extensionsDir}`
       ]
