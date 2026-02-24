@@ -89,12 +89,19 @@ Use this when you want to simulate a fresh Ubuntu machine and physically click e
 ```
 
 What this script now does automatically:
-- Builds/starts the Ubuntu desktop container
+- Starts the Ubuntu desktop container (no rebuild by default)
 - Runs:
   - `pnpm install --frozen-lockfile`
   - `pnpm build`
   - `pnpm --filter cartguard-vscode-extension test:e2e:slow:auto`
+- Waits for a real VS Code window before reporting ready
 - Auto-clicks through decision gates and `Continue` until the final close step
+
+If you need to force a fresh image rebuild:
+
+```bash
+CARTGUARD_UBUNTU_CLICK_REBUILD=1 ./scripts/run-ubuntu-click-demo.sh
+```
 
 Manual click mode (optional):
 
@@ -114,6 +121,18 @@ Manual click mode (optional):
 ```bash
 docker exec cartguard-ubuntu-click bash -lc 'tail -f /tmp/cartguard-slow-demo.log'
 ```
+
+Additional useful logs:
+
+```bash
+docker exec cartguard-ubuntu-click bash -lc 'tail -f /tmp/cartguard-vscode-startup-prep.log'
+docker exec cartguard-ubuntu-click bash -lc 'tail -f /tmp/cartguard-window-maximizer.log'
+```
+
+Stability controls (optional environment variables):
+
+- `CARTGUARD_VSCODE_READY_TIMEOUT_SECONDS` (default `180`): max wait for VS Code window readiness.
+- `CARTGUARD_DEMO_RETRY_MAX_ATTEMPTS` (default `3`): retries the slow demo command if Electron/X crashes.
 
 5. Stop container when done:
 
