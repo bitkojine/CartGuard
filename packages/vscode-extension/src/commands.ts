@@ -35,7 +35,9 @@ export const registerCommands = (
                     await openResult("Demo Evaluation Result", payload, output, workspaceRoot);
                     return true;
                 } catch (err) {
-                    output.appendLine(`[CartGuard] Error running demo: ${String(err)}`);
+                    const message = err instanceof Error ? err.message : String(err);
+                    output.appendLine(`[CartGuard] Error running demo: ${message}`);
+                    await vscode.window.showErrorMessage(`CartGuard: Failed to run demo. ${message}`);
                     return false;
                 }
             }
@@ -65,7 +67,9 @@ export const registerCommands = (
                     await openResult("Manual Evaluation Result", payload, output, workspaceRoot);
                     return true;
                 } catch (err) {
-                    output.appendLine(`[CartGuard] Error validating files: ${String(err)}`);
+                    const message = err instanceof Error ? err.message : String(err);
+                    output.appendLine(`[CartGuard] Error validating files: ${message}`);
+                    await vscode.window.showErrorMessage(`CartGuard: Failed to validate files. ${message}`);
                     return false;
                 }
             }
@@ -88,7 +92,9 @@ export const registerCommands = (
                     );
                     return true;
                 } catch (err) {
-                    output.appendLine(`[CartGuard] Error opening process view: ${String(err)}`);
+                    const message = err instanceof Error ? err.message : String(err);
+                    output.appendLine(`[CartGuard] Error opening process view: ${message}`);
+                    await vscode.window.showErrorMessage(`CartGuard: Failed to open process view. ${message}`);
                     return false;
                 }
             }

@@ -2,18 +2,18 @@
 
 ## Debt Summary
 
-- **Total Open Debt Count**: 8
+- **Total Open Debt Count**: 7
 - **Critical**: 0
-- **High**: 1
+- **High**: 0
 - **Medium**: 4
 - **Low**: 3
 - **Category Breakdown**:
   - Architecture: 2
   - Maintainability: 4
-  - Reliability: 2
+  - Reliability: 1
 - **Status Trends**:
   - **Issues Found This Pass**: 7
-  - **Issues Resolved Since Last Pass**: 0
+  - **Issues Resolved Since Last Pass**: 1 (REL-001)
   - **Critical dependency violations**: 0
   - **Circular dependency count**: 0
   - **Domain purity violations**: 0
@@ -22,9 +22,9 @@
 ### Top 5 Highest Impact Issues
 
 1. `SITE-001`: Manual HTML duplication in static site (Adapter Drift).
-2. `REL-001`: Error swallowing in command handlers (Reliability).
-3. `ARCH-016`: Dynamic Function() for imports in extension-logic (Anti-pattern).
-4. `MAIN-001`: Duplicate CSS styles in renderer components (DRY violation).
+2. `ARCH-016`: Dynamic Function() for imports in extension-logic (Anti-pattern).
+3. `MAIN-001`: Duplicate CSS styles in renderer components (DRY violation).
+4. `REL-002`: Type coercion in webview message handling (Reliability).
 5. `MAIN-002`: Long parameter list in renderDemoHtml (Maintainability).
 
 ---
@@ -34,7 +34,6 @@
 | ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
 |---|---|---|---|---|---|---|---|
 | `SITE-001` | Manual HTML duplication | Architecture | `docs/` | Medium | L | Open | 2026-02-24 |
-| `REL-001` | Error swallowing in command handlers | Reliability | `packages/vscode-extension/src/commands.ts` | High | M | Open | 2026-02-24 |
 | `ARCH-016` | Dynamic Function() for imports | Architecture | `packages/vscode-extension/src/extension-logic.ts` | Medium | M | Open | 2026-02-24 |
 | `MAIN-001` | Duplicate CSS styles in renderers | Maintainability | `packages/vscode-extension/src/renderers/` | Medium | M | Open | 2026-02-24 |
 | `MAIN-002` | Long parameter list in renderDemoHtml | Maintainability | `packages/vscode-extension/src/renderers/demo-renderer.ts` | Low | S | Open | 2026-02-24 |
@@ -52,16 +51,6 @@
 - **Impact**: Maintenance burden. Updating nav links requires changing 17 files. Risk of inconsistency.
 - **Why it matters**: Manual duplication increases defect risk and slows feature updates across the static site.
 - **Last Reviewed**: 2026-02-24
-
----
-
-### `REL-001`: Error swallowing in command handlers
-- **Description**: Multiple command handlers in [commands.ts](packages/vscode-extension/src/commands.ts#L37) catch exceptions (lines 37, 67, 90, 174) but only log to output channel without re-throwing or recovery actions. Errors are silently swallowed from user perspective if panel is not visible.
-- **Impact**: Silent failures. Users may not see errors if output panel is closed. No way to propagate failures to caller.
-- **Why it matters**: Unpredictable error recovery and difficult debugging for users. VSCode commands should fail visibly.
-- **Last Reviewed**: 2026-02-24
-- **Effort**: M
-- **Estimated Fix**: Add error dialog display for critical errors; preserve user-facing notifications.
 
 ---
 
@@ -127,6 +116,7 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
+| `REL-001` | Error swallowing in command handlers | 2026-02-24 | Added vscode.window.showErrorMessage() dialogs to 3 handlers (runDemo, validateJsonFiles, openProcessView) while preserving output channel logging. |
 | `DX-001` | Inconsistent tsconfig management | 2026-02-24 | Added `rootDir`, `outDir`, and `include` using `${configDir}` to `tsconfig.base.json`. |
 | `TEST-002` | Thin unit test coverage for extension | 2026-02-24 | Added comprehensive `node:test` unit test suite for extension utility and logical layers. |
 | `ARCH-013` | Dead view contribution | 2026-02-24 | Removed unused `cartguardActionsView` and its container from VS Code package.json contributes section. |
