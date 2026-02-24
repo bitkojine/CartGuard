@@ -13,8 +13,8 @@ export type EvidenceVerificationDecision =
 export class VerificationTimestamp {
   readonly utcDate: Date;
 
-  constructor(date: Date) {
-    if (date > new Date()) {
+  constructor(date: Date, skipFutureCheck = false) {
+    if (!skipFutureCheck && date > new Date()) {
       throw new Error("Cannot verify in future");
     }
     this.utcDate = new Date(date);
@@ -52,7 +52,7 @@ export class VerificationTimestamp {
   }
 
   static fromISOString(iso: string): VerificationTimestamp {
-    return new VerificationTimestamp(new Date(iso));
+    return new VerificationTimestamp(new Date(iso), true);
   }
 }
 
