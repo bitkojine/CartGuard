@@ -117,6 +117,28 @@ Note:
 - `https://localhost:8443` is encrypted via a local Caddy reverse proxy.
 - You may see a browser trust warning the first time because Caddy uses a local internal CA for localhost certificates.
 
+#### Localhost HTTPS setup (how it works)
+
+We intentionally terminate TLS even for localhost so demo traffic in browser is encrypted.
+
+- `cartguard-ubuntu-click` serves noVNC over plain HTTP on container port `80` (mapped to host `6080`).
+- `cartguard-novnc-https` (Caddy) terminates HTTPS on host `8443` and reverse proxies to `cartguard-ubuntu-click:80`.
+- Caddy config is in:
+  - `docker/ubuntu-click/Caddyfile`
+- Compose wiring is in:
+  - `docker/ubuntu-click/docker-compose.yml`
+
+Quick verification:
+
+```bash
+docker compose -f docker/ubuntu-click/docker-compose.yml ps
+curl -k -I https://localhost:8443
+```
+
+Expected:
+- Both services are running (`cartguard-ubuntu-click` and `cartguard-novnc-https`).
+- HTTPS endpoint returns an HTTP success response (for example `HTTP/2 200`).
+
 3. In the Extension Development Host window:
 - Auto mode: watch it advance all slides and close at the finish line.
 - Manual mode: click `Continue` manually for every step.
