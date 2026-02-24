@@ -3,23 +3,23 @@
 ## Debt Summary
 
 - **Total Open Debt Count**: 4
+- **Total Architecture Debt Count**: 2
 - **Severity Breakdown**:
   - Critical: 0
   - High: 0
   - Medium: 2
   - Low: 2
 - **Category Breakdown**:
-  - Architecture: 1
-  - Static Site: 1
+  - Architecture: 2
   - Testing: 1
   - DX: 1
 - **Status Trends**:
   - **Issues Found This Pass**: 0
-  - **Issues Resolved Since Last Pass**: 7 (ARCH-007, ARCH-006, ARCH-010, ARCH-015, ARCH-014, ARCH-008, ARCH-003)
-  - **Critical Violations**: 0
-  - **Circular Dependencies**: 0
-  - **Domain Purity Violations**: 0
-  - **Trend**: Improving. Extension logic decoupled from VS Code API, and complex demo rendering logic decomposed into maintainable components.
+  - **Issues Resolved Since Last Pass**: 0
+  - **Critical dependency violations**: 0
+  - **Circular dependency count**: 0
+  - **Domain purity violations**: 0
+  - **Trend**: Stable. The codebase adheres strictly to Clean Architecture principles. Minimal adapter drift and UI clutter remain.
 
 ### Top 5 Highest Impact Issues
 
@@ -50,6 +50,10 @@
 
 ### `TEST-002`: Thin unit test coverage for extension
 - **Description**: Tests are mostly E2E. Unblocked by ARCH-003 abstraction.
+- **Last Reviewed**: 2026-02-24
+
+### `ARCH-013`: Dead view contribution
+- **Description**: package.json declares 'cartguardActionsView' that is never implemented or registered in extension logic, polluting the VS Code API boundary.
 - **Last Reviewed**: 2026-02-24
 
 ---
