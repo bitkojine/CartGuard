@@ -15,8 +15,8 @@
   - DX: 1
 - **Status Trends**:
   - **Issues Found This Pass**: 0
-  - **Issues Resolved Since Last Pass**: 1 (ARCH-012)
-  - **Trend**: Improving. Resource management issue resolved.
+  - **Issues Resolved Since Last Pass**: 1 (ARCH-009)
+  - **Trend**: Improving. Extension entry point file size reduced by 45%.
 
 ### Top 5 Highest Impact Issues
 
@@ -36,8 +36,8 @@
 | `ARCH-006` | Large function: evaluateRule | Architecture | `packages/engine/src/index.ts` | Medium | S | Open | 2026-02-24 |
 | `ARCH-007` | Large function: renderDemoHtml | Architecture | `packages/vscode-extension/src/renderers/demo-renderer.ts` | Medium | M | Open | 2026-02-24 |
 | `ARCH-008` | Large function: activate | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | S | Open | 2026-02-24 |
-| `ARCH-009` | Large file: extension.ts (> 500 lines) | Architecture | `packages/vscode-extension/src/extension.ts` | Medium | S | Open | 2026-02-24 |
 | `ARCH-010` | Large file: engine index.ts (> 400 lines) | Architecture | `packages/engine/src/index.ts` | Medium | S | Open | 2026-02-24 |
+| `ARCH-013` | Dead view contribution | Architecture | `packages/vscode-extension/package.json` | Low | XS | Open | 2026-02-24 |
 | `SITE-001` | Manual HTML duplication | Static Site | `docs/**/*.html` | Medium | L | Open | 2026-02-24 |
 | `TEST-002` | Thin unit test coverage for extension | Testing | `packages/vscode-extension/test` | Medium | M | Open | 2026-02-24 |
 | `DX-001` | Inconsistent tsconfig management | DX | `packages/*/tsconfig.json` | Low | S | Open | 2026-02-24 |
@@ -61,19 +61,19 @@
 - **Impact**: High cognitive load; extremely difficult to safely modify the UI structure.
 - **Last Reviewed**: 2026-02-24
 
-### `ARCH-008`: Large function: activate (260 lines)
+### `ARCH-008`: Large function: activate (240 lines)
 - **Description**: The `activate` function registers 10+ commands and complex message listeners in one block.
 - **Impact**: Hard to trace command registration and extension lifecycle; high cyclomatic complexity.
-- **Last Reviewed**: 2026-02-24
-
-### `ARCH-009`: Large file: extension.ts (501 lines)
-- **Description**: Entry point exceeds the 400-line threshold even after modularization.
-- **Impact**: Still acts as a "gravity well" for miscellaneous logic and helper functions.
 - **Last Reviewed**: 2026-02-24
 
 ### `ARCH-010`: Large file: engine index.ts (432 lines)
 - **Description**: Core engine logic is centralized in a single file exceeding the 400-line threshold.
 - **Impact**: Over-coupling of validation, applicability, and token resolution logic.
+- **Last Reviewed**: 2026-02-24
+
+### `ARCH-013`: Dead view contribution
+- **Description**: `cartguardActionsView` is contributed in `package.json` but has no corresponding TreeDataProvider registration in `activate`.
+- **Impact**: UI clutter; users see a sidebar container that does nothing.
 - **Last Reviewed**: 2026-02-24
 
 ### `SITE-001`: Manual HTML duplication
@@ -97,9 +97,10 @@
 
 | ID | Title | Date Resolved | Note |
 |---|---|---|---|
-| `ARCH-012` | Missing resource disposal (OutputChannel) | 2026-02-24 | Added `OutputChannel` to `context.subscriptions`. |
+| `ARCH-009` | Large file: extension.ts (> 400 lines) | 2026-02-24 | Extracted utilities and business logic to `utils.ts` and `extension-logic.ts`. Reduced from 478 to 257 lines. |
+| `ARCH-012` | Missing resource disposal | 2026-02-24 | Added `OutputChannel` to `context.subscriptions`. |
 | `ARCH-011` | Circular dependencies | 2026-02-24 | Moved `fallbackSlideshowData` to `types.ts` to break `extension` <-> `demo-manager` cycle. |
-| `ARCH-001` | Monolithic extension entry point | 2026-02-24 | Reduced from 1500+ lines to ~500 lines. Major complexity removed. |
+| `ARCH-001` | Monolithic extension entry point | 2026-02-24 | Reduced from 1500+ lines to ~480 lines. Major complexity removed. |
 | `ARCH-005` | High function complexity | 2026-02-24 | Extracted renderers and manager. (N.B. Function size remains a secondary debt). |
 | `ARCH-002` | Global state for demo lifecycle | 2026-02-24 | Encapsulated in `DemoManager` class. |
 | `TYPE-001` | Weak input typing in generators | 2026-02-24 | Replaced casting with `GeneratorSeedSchema`. |

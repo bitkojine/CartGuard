@@ -54,7 +54,8 @@
   "overrides": [
     {
       "files": [
-        "packages/vscode-extension/src/extension.ts"
+        "packages/vscode-extension/src/extension.ts",
+        "packages/vscode-extension/src/extension-logic.ts"
       ],
       "rules": {
         "no-implied-eval": "off",
