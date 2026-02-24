@@ -1,109 +1,91 @@
-# Technical Debt Register
+# Tech Debt Index
 
-This document tracks known technical debt in the CartGuard repository, with focus on the VS Code demo extension.
+## Debt Summary
 
-## Scope
+- **Total Open Debt Count**: 7
+- **Severity Breakdown**:
+  - Critical: 0
+  - High: 3
+  - Medium: 2
+  - Low: 2
+- **Category Breakdown**:
+  - Architecture: 4
+  - Types: 1
+  - Static Site: 1
+  - DX: 1
+- **Status Trends**:
+  - **Issues Found This Pass**: 3 (Hardcoded tokens, Manual HTML sync, Weak input typing)
+  - **Issues Resolved Since Last Pass**: 2 (Packaging metadata, Basic schema validation)
+  - **Trend**: Improving (Core validation logic stabilized via Zod migration).
 
-- Extension package: `packages/vscode-extension`
-- Demo data/workflow files in `packages/vscode-extension/demo`
-- Local release/install flow for the extension
+### Top 5 Highest Impact Issues
 
-## Current Debt
+1. `ARCH-001`: Monolithic extension file (1500+ lines).
+2. `ARCH-002`: Global state management for demo lifecycle.
+3. `ARCH-003`: Unabstracted VS Code API usage.
+4. `ARCH-004`: Hardcoded rule mapping tokens in engine.
+5. `SITE-001`: Manual HTML duplication in static site.
 
-### 1) Slideshow state and panel lifecycle coupling
+---
 
-- Area: `packages/vscode-extension/src/extension.ts`
-- Debt:
-  - Demo mode/state/panel lifecycle all live in one command handler block.
-  - Panel disposal callbacks can affect mode/state if not carefully guarded.
-- Impact:
-  - Higher risk of race conditions during mode switching (`default`, `exec`, `champion`).
-  - Harder to reason about command behavior over time.
-- Recommendation:
-  - Extract slideshow state into a small state manager module.
-  - Keep panel lifecycle and mode transitions as explicit state-machine events.
+## Active Tech Debt
 
-### 2) Large monolithic extension file
+| ID | Title | Category | Location | Severity | Effort | Status | Date Discovered |
+|---|---|---|---|---|---|---|---|
+| `ARCH-001` | Monolithic extension entry point | Architecture | `packages/vscode-extension/src/extension.ts` | High | L | Open | 2026-02-23 |
+| `ARCH-002` | Global state for demo lifecycle | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-23 |
+| `ARCH-003` | Unabstracted VS Code API usage | Architecture | `packages/vscode-extension/src/extension.ts` | High | M | Open | 2026-02-24 |
+| `ARCH-004` | Hardcoded rule logic tokens | Architecture | `packages/engine/src/index.ts` | Medium | M | Open | 2026-02-24 |
+| `SITE-001` | Manual HTML duplication | Static Site | `docs/**/*.html` | Medium | L | Open | 2026-02-24 |
+| `TYPE-001` | Weak input typing in generators | Types | `packages/ai/src/index.ts` | Low | S | Open | 2026-02-24 |
+| `DX-001` | Inconsistent tsconfig management | DX | `packages/*/tsconfig.json` | Low | S | Open | 2026-02-24 |
 
-- Area: `packages/vscode-extension/src/extension.ts`
-- Debt:
-  - Parsing, rendering, command wiring, and state management are in one file.
-- Impact:
-  - Slower code review.
-  - Increased regression risk when changing unrelated behavior.
-- Recommendation:
-  - Split into modules:
-    - `commands/*`
-    - `demo-state/*`
-    - `webview/*`
-    - `parsers/*`
+---
 
-### 3) Multiple slideshow entry points with implicit behavior
+## Debt Details
 
-- Area: commands and slideshow data resolution.
-- Debt:
-  - `Open Slideshow`, `Open Exec`, `Open Champion`, `Reopen` share code paths with mode-specific behavior.
-  - Reopen behavior intentionally resets to default, which can surprise users.
-- Impact:
-  - UX confusion if command semantics are not obvious.
-- Recommendation:
-  - Document explicit command contracts.
-  - Consider adding `Reopen Exec` and `Reopen Champion` or "reopen last mode" behavior.
+### `ARCH-001`: Monolithic extension entry point
+- **Description**: `extension.ts` exceeds 1500 lines, combining webview rendering, command logic, and state management.
+- **Impact**: Increased regression risk, slow reviews, and circular dependency potential.
+- **Last Reviewed**: 2026-02-24
 
-### 4) Demo UI complexity and divergence by mode
+### `ARCH-002`: Global state for demo lifecycle
+- **Description**: `demoPanel`, `demoState`, and `workflowData` are tracked as top-level `let` variables.
+- **Impact**: Difficult to test, risk of state leaks between demo runs.
+- **Last Reviewed**: 2026-02-24
 
-- Area: demo webview rendering.
-- Debt:
-  - Mode-specific rendering conditions are embedded inline in template strings.
-- Impact:
-  - UI drift risk and harder visual consistency checks.
-- Recommendation:
-  - Move each mode to a dedicated renderer function with shared primitives.
+### `ARCH-003`: Unabstracted VS Code API usage
+- **Description**: Direct calls to `vscode.commands`, `vscode.window`, and `vscode.workspace` throughout the business logic.
+- **Impact**: Blocks unit testing of command logic; requires E2E environment for all validation tests.
+- **Last Reviewed**: 2026-02-24
 
-### 5) Demo data as product behavior driver
+### `ARCH-004`: Hardcoded rule logic tokens
+- **Description**: `tokenValue` contains direct string mapping for domain tokens (e.g. `equipment_not_radio_equipment_under_RED`).
+- **Impact**: Brittleness if spec changes; engine logic is tightly coupled to specific spec version strings.
+- **Last Reviewed**: 2026-02-24
 
-- Area: `packages/vscode-extension/demo/*.json`
-- Debt:
-  - Story logic depends heavily on JSON shape and naming conventions.
-- Impact:
-  - Small data edits can break flows or gate wiring.
-- Recommendation:
-  - Add strict schema validation for slideshow/workflow files in tests.
-  - Fail fast with explicit error messaging when data is invalid.
-- Status:
-  - Partially paid down on 2026-02-24 with E2E schema checks for all slideshow files, gate/slide consistency checks, and scenario reference validation.
+### `SITE-001`: Manual HTML duplication
+- **Description**: Static pages in `docs/` replicate identical `<nav>` and layout structures manually.
+- **Impact**: Maintenance burden; relies on brittle `guard-nav-links.mts` script to prevent drift.
+- **Last Reviewed**: 2026-02-24
 
-### 6) Packaging warnings in local release flow
+### `TYPE-001`: Weak input typing in generators
+- **Description**: `MockContentGenerator` uses `input as { ... }` instead of runtime validation or strict interface implementation.
+- **Impact**: Runtime errors if invalid seeds are passed to the generator.
+- **Last Reviewed**: 2026-02-24
 
-- Area: `vsce package` output.
-- Debt:
-  - Missing `repository` metadata.
-  - Missing `LICENSE` file inside extension package.
-  - No `.vscodeignore` or restrictive `files` list.
-- Impact:
-  - Noisy release output and avoidable packaging risk.
-- Recommendation:
-  - Add `repository` field for extension package.
-  - Ensure extension package includes license file path.
-  - Add `.vscodeignore` or `files` whitelist.
-- Status:
-  - Paid down on 2026-02-24 by adding `repository`, extension-local `LICENSE`, and package `files` whitelist.
+### `DX-001`: Inconsistent tsconfig management
+- **Description**: Shared configuration exists but package-level `tsconfig.json` files overlap and vary slightly in strictness.
+- **Impact**: Slight inconsistencies in build behavior across monorepo packages.
+- **Last Reviewed**: 2026-02-24
 
-## Existing Mitigations
+---
 
-- E2E tests now cover:
-  - default slideshow flow
-  - exec flow
-  - champion flow
-  - reopen behavior
-  - mode transition assertions
-- Added one-command local release/install:
-  - `pnpm vscode:release-local`
+## Resolved Debt
 
-## Short-Term Debt Paydown Plan
-
-1. Stabilize command contracts and document reopen semantics.
-2. Extract slideshow state transitions into a dedicated module.
-3. Add schema checks for `slideshow.json`, `exec-slideshow.json`, `champion-slideshow.json`, and `workflow-batch.json`.
-4. Keep packaging metadata/whitelist in sync as files change.
-5. Keep demo feature work paused until the above is complete.
+| ID | Title | Date Resolved | Note |
+|---|---|---|---|
+| `META-001` | Missing extension metadata | 2026-02-24 | Added `repository`, `LICENSE`, and `files` whitelist. |
+| `VAL-001` | Manual data validation | 2026-02-24 | Migrated research/extension data to Zod schemas in `@cartguard/spec`. |
+| `VAL-002` | Implicit any in error formatting | 2026-02-24 | Added explicit types for Zod issue mapping. |
+| `TEST-001` | Missing demo relationship checks | 2026-02-24 | Added E2E tests for slideshow/workflow consistency. |
