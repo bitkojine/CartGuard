@@ -14,6 +14,7 @@ export const run = async (): Promise<void> => {
   });
 
   mocha.addFile(resolve(__dirname, "./extension.e2e.test.js"));
+  mocha.addFile(resolve(__dirname, "./demo-data.e2e.test.js"));
 
   await new Promise<void>((resolvePromise, rejectPromise) => {
     mocha.run((failures) => {
