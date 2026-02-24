@@ -123,7 +123,27 @@ const validateSlides = (input: unknown): { slides: DemoSlide[]; gates: DecisionG
     assert.ok(optionStrings.includes(recommended), "recommended must be in options");
   }
 
-  return { slides: slides as DemoSlide[], gates: gates as DecisionGate[] };
+  const typedSlides = slides as DemoSlide[];
+  const typedGates = gates as DecisionGate[];
+
+  const gateIds = new Set<string>();
+  const gateCheckIds = new Set<string>();
+  for (const gate of typedGates) {
+    assert.ok(!gateIds.has(gate.gateId), `duplicate gateId '${gate.gateId}'`);
+    gateIds.add(gate.gateId);
+    assert.ok(!gateCheckIds.has(gate.checkId), `duplicate gate checkId '${gate.checkId}'`);
+    gateCheckIds.add(gate.checkId);
+  }
+
+  const slideCheckIds = new Set(typedSlides.map((slide) => slide.checkId));
+  for (const gate of typedGates) {
+    assert.ok(
+      slideCheckIds.has(gate.checkId),
+      `gate checkId '${gate.checkId}' does not match any slide checkId`
+    );
+  }
+
+  return { slides: typedSlides, gates: typedGates };
 };
 
 const validateWorkflowData = (input: unknown): WorkflowData => {
@@ -189,6 +209,28 @@ suite("CartGuard Demo Data", () => {
       for (const key of expectedKeys) {
         if (key in workflow.pilotMetrics) {
           assert.equal(typeof workflow.pilotMetrics[key], "number");
+        }
+      }
+    }
+  });
+
+  test("all slideshow files reference valid workflow scenarios", async () => {
+    const extension = vscode.extensions.getExtension("cartguard.cartguard-vscode-extension");
+    assert.ok(extension);
+    const demoDir = resolve(extension.extensionPath, "demo");
+
+    const workflow = validateWorkflowData(await readJson(resolve(demoDir, "workflow-batch.json")));
+    const scenarioIds = new Set(workflow.scenarios.map((scenario) => scenario.id));
+
+    const files = ["slideshow.json", "exec-slideshow.json", "champion-slideshow.json"];
+    for (const file of files) {
+      const { slides } = validateSlides(await readJson(resolve(demoDir, file)));
+      for (const slide of slides) {
+        if (slide.scenarioId) {
+          assert.ok(
+            scenarioIds.has(slide.scenarioId),
+            `${file} scenarioId '${slide.scenarioId}' not found in workflow scenarios`
+          );
         }
       }
     }

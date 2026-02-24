@@ -214,3 +214,61 @@ export const ListingEvaluationResultSchema = z.object({
 });
 
 export type ListingEvaluationResult = z.infer<typeof ListingEvaluationResultSchema>;
+
+export const ResearchIndexEntrySchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1),
+  confidence: ConfidenceLevelSchema,
+  geography: z.array(z.string().min(1)).min(1),
+  sources: z.array(z.string().url()).min(1)
+});
+
+export type ResearchIndexEntry = z.infer<typeof ResearchIndexEntrySchema>;
+
+export const ResearchIndexSchema = z.object({
+  entries: z.array(ResearchIndexEntrySchema)
+});
+
+export type ResearchIndex = z.infer<typeof ResearchIndexSchema>;
+
+export const ResearchFactEntrySchema = z.object({
+  id: z.string().min(1),
+  date: z.string().regex(/^\d{4}(-\d{2}-\d{2})?$/),
+  geography: z.string().min(1),
+  confidence: ConfidenceLevelSchema,
+  source_url: z.string().url(),
+  claim: z.string().min(1),
+  is_modeled: z.boolean(),
+  research_entry_id: z.string().min(1),
+  signal: z.string().min(1),
+  value: z.string().min(1)
+});
+
+export type ResearchFactEntry = z.infer<typeof ResearchFactEntrySchema>;
+
+export const ResearchFactCatalogSchema = z.object({
+  facts: z.array(ResearchFactEntrySchema).min(1)
+});
+
+export type ResearchFactCatalog = z.infer<typeof ResearchFactCatalogSchema>;
+
+export const PilotMetricEntrySchema = z.object({
+  id: z.string().min(1),
+  pilot_label: z.string().min(1),
+  metric: z.string().min(1),
+  baseline: z.string().min(1),
+  current: z.string().min(1),
+  improvement: z.string().min(1),
+  confidence: ConfidenceLevelSchema,
+  status: z.enum(["in_progress", "completed"]),
+  is_anonymized: z.boolean(),
+  research_entry_id: z.string().min(1)
+});
+
+export type PilotMetricEntry = z.infer<typeof PilotMetricEntrySchema>;
+
+export const ResearchPilotCatalogSchema = z.object({
+  pilots: z.array(PilotMetricEntrySchema).min(1)
+});
+
+export type ResearchPilotCatalog = z.infer<typeof ResearchPilotCatalogSchema>;

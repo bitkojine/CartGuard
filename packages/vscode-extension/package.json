@@ -24,19 +24,7 @@
   "engines": {
     "vscode": "^1.96.0"
   },
-  "activationEvents": [
-    "onView:cartguardActionsView",
-    "onCommand:cartguard.runDemo",
-    "onCommand:cartguard.validateJsonFiles",
-    "onCommand:cartguard.openProcessView",
-    "onCommand:cartguard.openDemoSlideshow",
-    "onCommand:cartguard.openExecDemoSlideshow",
-    "onCommand:cartguard.openChampionDemoSlideshow",
-    "onCommand:cartguard.demoNextStep",
-    "onCommand:cartguard.reopenDemoSlideshow",
-    "onCommand:cartguard.reopenExecDemoSlideshow",
-    "onCommand:cartguard.reopenChampionDemoSlideshow"
-  ],
+  "activationEvents": [],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -108,7 +96,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@cartguard/engine": "workspace:*"
+    "@cartguard/engine": "workspace:*",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

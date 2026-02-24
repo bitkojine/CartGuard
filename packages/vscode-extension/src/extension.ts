@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as vscode from "vscode";
+import { z } from "zod";
 
 const readJsonFile = async (path: string): Promise<unknown> => {
   const raw = await readFile(path, "utf8");
@@ -88,77 +89,96 @@ interface DemoControlState {
   decisions: Record<string, string>;
 }
 
-interface DemoSlide {
-  title: string;
-  now: string;
-  next: string;
-  customerImpact: string;
-  whatUserSees: string;
-  whatUserClicks: string;
-  cartGuardChecks: string;
-  legalBasis: string;
-  marketplacePolicy: string;
-  cartguardRecommendation: string;
-  ownerRole: string;
-  fixAction: string;
-  evidenceType: "legal" | "marketplace" | "best_practice" | "unknown";
-  checkId: string;
-  inputArtifact: string;
-  scenarioId?: string;
-}
+const evidenceTypeSchema = z.enum(["legal", "marketplace", "best_practice", "unknown"]);
 
-interface WorkflowProduct {
-  id: string;
-  name: string;
-  archetype: string;
-  status: string;
-}
+const demoSlideSchema = z.object({
+  title: z.string().min(1),
+  now: z.string().min(1),
+  next: z.string().min(1),
+  customerImpact: z.string().min(1),
+  whatUserSees: z.string().min(1),
+  whatUserClicks: z.string().min(1),
+  cartGuardChecks: z.string().min(1),
+  legalBasis: z.string().min(1),
+  marketplacePolicy: z.string().min(1),
+  cartguardRecommendation: z.string().min(1),
+  ownerRole: z.string().min(1),
+  fixAction: z.string().min(1),
+  evidenceType: evidenceTypeSchema,
+  checkId: z.string().min(1),
+  inputArtifact: z.string().min(1),
+  scenarioId: z.string().min(1).optional()
+});
+type DemoSlide = z.infer<typeof demoSlideSchema>;
 
-interface WorkflowScenario {
-  id: string;
-  symptom: string;
-  rootCause: string;
-  firstOwner: string;
-  businessImpact: string;
-  missingEvidence: string[];
-}
+const workflowProductSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  archetype: z.string().min(1),
+  status: z.string().min(1)
+});
 
-interface WorkflowData {
-  products: WorkflowProduct[];
-  scenarios: WorkflowScenario[];
-  roleOutputs?: WorkflowRoleOutput[];
-  pilotMetrics?: WorkflowPilotMetrics;
-}
+const workflowScenarioSchema = z.object({
+  id: z.string().min(1),
+  symptom: z.string().min(1),
+  rootCause: z.string().min(1),
+  firstOwner: z.string().min(1),
+  businessImpact: z.string().min(1),
+  missingEvidence: z.array(z.string())
+});
 
-interface WorkflowRoleOutput {
-  role: "Ops" | "Compliance" | "Engineering" | "Responsible Person";
-  summary: string;
-  fields: string[];
-  actions: string[];
-}
+const workflowRoleOutputRoleSchema = z.enum([
+  "Ops",
+  "Compliance",
+  "Engineering",
+  "Responsible Person"
+]);
 
-interface WorkflowPilotMetrics {
-  baselineMissingDocRatePct?: number;
-  currentMissingDocRatePct?: number;
-  baselineReviewCycleDays?: number;
-  currentReviewCycleDays?: number;
-  baselineReworkLoopsPerListing?: number;
-  currentReworkLoopsPerListing?: number;
-}
+const workflowRoleOutputSchema = z.object({
+  role: workflowRoleOutputRoleSchema,
+  summary: z.string(),
+  fields: z.array(z.string()),
+  actions: z.array(z.string())
+});
 
-interface DecisionGate {
-  gateId: string;
-  checkId: string;
-  context: string;
-  businessTradeoff: string;
-  options: string[];
-  recommended: string;
-}
+const workflowPilotMetricsSchema = z.object({
+  baselineMissingDocRatePct: z.number().finite().optional(),
+  currentMissingDocRatePct: z.number().finite().optional(),
+  baselineReviewCycleDays: z.number().finite().optional(),
+  currentReviewCycleDays: z.number().finite().optional(),
+  baselineReworkLoopsPerListing: z.number().finite().optional(),
+  currentReworkLoopsPerListing: z.number().finite().optional()
+});
 
-interface SlideshowData {
-  slides: DemoSlide[];
-  decisionGates: DecisionGate[];
-}
+const workflowDataSchema = z.object({
+  products: z.array(workflowProductSchema),
+  scenarios: z.array(workflowScenarioSchema),
+  roleOutputs: z.array(workflowRoleOutputSchema).optional(),
+  pilotMetrics: workflowPilotMetricsSchema.optional()
+});
+type WorkflowData = z.infer<typeof workflowDataSchema>;
+
+const decisionGateSchema = z
+  .object({
+    gateId: z.string().min(1),
+    checkId: z.string().min(1),
+    context: z.string().min(1),
+    businessTradeoff: z.string().min(1),
+    options: z.array(z.string().min(1)).min(1),
+    recommended: z.string().min(1)
+  })
+  .refine((gate: { options: string[]; recommended: string }) => gate.options.includes(gate.recommended), {
+    message: "recommended must exist in options",
+    path: ["recommended"]
+  });
+type DecisionGate = z.infer<typeof decisionGateSchema>;
+
+const slideshowDataSchema = z.object({
+  slides: z.array(demoSlideSchema).min(1),
+  decisionGates: z.array(decisionGateSchema)
+});
+type SlideshowData = z.infer<typeof slideshowDataSchema>;
+
 
 interface RuleEvaluationRow {
   rule_id: string;
@@ -327,209 +347,32 @@ const resolveSlideshowPath = (
   return join(context.extensionPath, "demo", fileName);
 };
 
-const parseWorkflowData = (input: unknown): WorkflowData | undefined => {
-  if (typeof input !== "object" || input === null) {
-    return undefined;
+interface ParseResult<T> {
+  data?: T;
+  error?: string;
+}
+
+
+const zodErrorMessage = (error: z.ZodError): string =>
+  error.issues
+    .slice(0, 6)
+    .map((issue: z.ZodIssue) => `${issue.path.join(".") || "root"}: ${issue.message}`)
+    .join(" | ");
+
+const parseWorkflowData = (input: unknown): ParseResult<WorkflowData> => {
+  const parsed = workflowDataSchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: zodErrorMessage(parsed.error) };
   }
-
-  if (!("products" in input) || !("scenarios" in input)) {
-    return undefined;
-  }
-
-  const productsRaw = (input as { products: unknown }).products;
-  const scenariosRaw = (input as { scenarios: unknown }).scenarios;
-  if (!Array.isArray(productsRaw) || !Array.isArray(scenariosRaw)) {
-    return undefined;
-  }
-
-  const products: WorkflowProduct[] = productsRaw
-    .filter(
-      (entry): entry is { id: string; name: string; archetype: string; status: string } =>
-        typeof entry === "object" &&
-        entry !== null &&
-        typeof (entry as { id?: unknown }).id === "string" &&
-        typeof (entry as { name?: unknown }).name === "string" &&
-        typeof (entry as { archetype?: unknown }).archetype === "string" &&
-        typeof (entry as { status?: unknown }).status === "string"
-    )
-    .map((entry) => ({
-      id: entry.id,
-      name: entry.name,
-      archetype: entry.archetype,
-      status: entry.status
-    }));
-
-  const scenarios: WorkflowScenario[] = scenariosRaw
-    .filter(
-      (
-        entry
-      ): entry is {
-        id: string;
-        symptom: string;
-        rootCause: string;
-        firstOwner: string;
-        businessImpact: string;
-        missingEvidence: string[];
-      } =>
-        typeof entry === "object" &&
-        entry !== null &&
-        typeof (entry as { id?: unknown }).id === "string" &&
-        typeof (entry as { symptom?: unknown }).symptom === "string" &&
-        typeof (entry as { rootCause?: unknown }).rootCause === "string" &&
-        typeof (entry as { firstOwner?: unknown }).firstOwner === "string" &&
-        typeof (entry as { businessImpact?: unknown }).businessImpact === "string" &&
-        Array.isArray((entry as { missingEvidence?: unknown }).missingEvidence)
-    )
-    .map((entry) => ({
-      id: entry.id,
-      symptom: entry.symptom,
-      rootCause: entry.rootCause,
-      firstOwner: entry.firstOwner,
-      businessImpact: entry.businessImpact,
-      missingEvidence: entry.missingEvidence
-    }));
-
-  const roleOutputsRaw =
-    "roleOutputs" in input ? (input as { roleOutputs?: unknown }).roleOutputs : undefined;
-  const roleOutputs: WorkflowRoleOutput[] | undefined = Array.isArray(roleOutputsRaw)
-    ? roleOutputsRaw
-        .filter(
-          (entry): entry is WorkflowRoleOutput => {
-            if (typeof entry !== "object" || entry === null) {
-              return false;
-            }
-            const role = (entry as { role?: unknown }).role;
-            return (
-              role === "Ops" ||
-              role === "Compliance" ||
-              role === "Engineering" ||
-              role === "Responsible Person"
-            );
-          }
-        )
-        .map((entry) => {
-          const typed = entry as {
-            role: WorkflowRoleOutput["role"];
-            summary?: unknown;
-            fields?: unknown;
-            actions?: unknown;
-          };
-          return {
-            role: typed.role,
-            summary: typeof typed.summary === "string" ? typed.summary : "",
-            fields: Array.isArray(typed.fields) ? typed.fields.filter((v) => typeof v === "string") : [],
-            actions: Array.isArray(typed.actions)
-              ? typed.actions.filter((v) => typeof v === "string")
-              : []
-          };
-        })
-    : undefined;
-
-  const pilotMetricsRaw =
-    "pilotMetrics" in input ? (input as { pilotMetrics?: unknown }).pilotMetrics : undefined;
-  let pilotMetrics: WorkflowPilotMetrics | undefined;
-  if (typeof pilotMetricsRaw === "object" && pilotMetricsRaw !== null) {
-    const typed = pilotMetricsRaw as Record<string, unknown>;
-    const toNumber = (value: unknown): number | undefined =>
-      typeof value === "number" && Number.isFinite(value) ? value : undefined;
-    const maybeMetrics: WorkflowPilotMetrics = {};
-    const baselineMissingDocRatePct = toNumber(typed.baselineMissingDocRatePct);
-    const currentMissingDocRatePct = toNumber(typed.currentMissingDocRatePct);
-    const baselineReviewCycleDays = toNumber(typed.baselineReviewCycleDays);
-    const currentReviewCycleDays = toNumber(typed.currentReviewCycleDays);
-    const baselineReworkLoopsPerListing = toNumber(typed.baselineReworkLoopsPerListing);
-    const currentReworkLoopsPerListing = toNumber(typed.currentReworkLoopsPerListing);
-    if (baselineMissingDocRatePct !== undefined) {
-      maybeMetrics.baselineMissingDocRatePct = baselineMissingDocRatePct;
-    }
-    if (currentMissingDocRatePct !== undefined) {
-      maybeMetrics.currentMissingDocRatePct = currentMissingDocRatePct;
-    }
-    if (baselineReviewCycleDays !== undefined) {
-      maybeMetrics.baselineReviewCycleDays = baselineReviewCycleDays;
-    }
-    if (currentReviewCycleDays !== undefined) {
-      maybeMetrics.currentReviewCycleDays = currentReviewCycleDays;
-    }
-    if (baselineReworkLoopsPerListing !== undefined) {
-      maybeMetrics.baselineReworkLoopsPerListing = baselineReworkLoopsPerListing;
-    }
-    if (currentReworkLoopsPerListing !== undefined) {
-      maybeMetrics.currentReworkLoopsPerListing = currentReworkLoopsPerListing;
-    }
-    pilotMetrics = Object.keys(maybeMetrics).length > 0 ? maybeMetrics : undefined;
-  }
-
-  if (roleOutputs) {
-    if (pilotMetrics) {
-      return { products, scenarios, roleOutputs, pilotMetrics };
-    }
-    return { products, scenarios, roleOutputs };
-  }
-  if (pilotMetrics) {
-    return { products, scenarios, pilotMetrics };
-  }
-  return { products, scenarios };
+  return { data: parsed.data };
 };
 
-const parseSlideshowData = (input: unknown): SlideshowData | undefined => {
-  if (typeof input !== "object" || input === null) {
-    return undefined;
+const parseSlideshowData = (input: unknown): ParseResult<SlideshowData> => {
+  const parsed = slideshowDataSchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: zodErrorMessage(parsed.error) };
   }
-
-  if (!("slides" in input) || !("decisionGates" in input)) {
-    return undefined;
-  }
-
-  const slidesRaw = (input as { slides: unknown }).slides;
-  const decisionGatesRaw = (input as { decisionGates: unknown }).decisionGates;
-  if (!Array.isArray(slidesRaw) || !Array.isArray(decisionGatesRaw)) {
-    return undefined;
-  }
-
-  const slides = slidesRaw.filter(
-    (entry): entry is DemoSlide =>
-      typeof entry === "object" &&
-      entry !== null &&
-      typeof (entry as { title?: unknown }).title === "string" &&
-      typeof (entry as { now?: unknown }).now === "string" &&
-      typeof (entry as { next?: unknown }).next === "string" &&
-      typeof (entry as { customerImpact?: unknown }).customerImpact === "string" &&
-      typeof (entry as { whatUserSees?: unknown }).whatUserSees === "string" &&
-      typeof (entry as { whatUserClicks?: unknown }).whatUserClicks === "string" &&
-      typeof (entry as { cartGuardChecks?: unknown }).cartGuardChecks === "string" &&
-      typeof (entry as { legalBasis?: unknown }).legalBasis === "string" &&
-      typeof (entry as { marketplacePolicy?: unknown }).marketplacePolicy === "string" &&
-      typeof (entry as { cartguardRecommendation?: unknown }).cartguardRecommendation === "string" &&
-      typeof (entry as { ownerRole?: unknown }).ownerRole === "string" &&
-      typeof (entry as { fixAction?: unknown }).fixAction === "string" &&
-      ((entry as { evidenceType?: unknown }).evidenceType === "legal" ||
-        (entry as { evidenceType?: unknown }).evidenceType === "marketplace" ||
-        (entry as { evidenceType?: unknown }).evidenceType === "best_practice" ||
-        (entry as { evidenceType?: unknown }).evidenceType === "unknown") &&
-      typeof (entry as { checkId?: unknown }).checkId === "string" &&
-      typeof (entry as { inputArtifact?: unknown }).inputArtifact === "string" &&
-      ("scenarioId" in entry ? typeof (entry as { scenarioId?: unknown }).scenarioId === "string" : true)
-  );
-
-  const decisionGates = decisionGatesRaw.filter(
-    (entry): entry is DecisionGate =>
-      typeof entry === "object" &&
-      entry !== null &&
-      typeof (entry as { gateId?: unknown }).gateId === "string" &&
-      typeof (entry as { checkId?: unknown }).checkId === "string" &&
-      typeof (entry as { context?: unknown }).context === "string" &&
-      typeof (entry as { businessTradeoff?: unknown }).businessTradeoff === "string" &&
-      Array.isArray((entry as { options?: unknown }).options) &&
-      (entry as { options: unknown[] }).options.every((option) => typeof option === "string") &&
-      typeof (entry as { recommended?: unknown }).recommended === "string"
-  );
-
-  if (slides.length === 0) {
-    return undefined;
-  }
-
-  return { slides, decisionGates };
+  return { data: parsed.data };
 };
 
 const escapeHtml = (value: unknown): string =>
@@ -902,20 +745,18 @@ const renderDemoHtml = (
     <body>
       <h1>CartGuard Demo Slideshow</h1>
       <div class="card mode-banner ${escapeHtml(demoMode)}">
-        <h3>Mode: ${
-          isExecMode
-            ? "Executive Briefing"
-            : isChampionMode
-              ? "Champion Workflow"
-              : "Default Walkthrough"
-        }</h3>
-        <div class="value">${
-          isExecMode
-            ? "Outcome-first flow: blocker -> decision -> pilot close."
-            : isChampionMode
-              ? "Operational deep dive: triage -> gates -> handoff."
-              : "Full storyline walkthrough."
-        }</div>
+        <h3>Mode: ${isExecMode
+      ? "Executive Briefing"
+      : isChampionMode
+        ? "Champion Workflow"
+        : "Default Walkthrough"
+    }</h3>
+        <div class="value">${isExecMode
+      ? "Outcome-first flow: blocker -> decision -> pilot close."
+      : isChampionMode
+        ? "Operational deep dive: triage -> gates -> handoff."
+        : "Full storyline walkthrough."
+    }</div>
       </div>
       <div class="card">
         <h2>${escapeHtml(slide.title)}</h2>
@@ -925,10 +766,9 @@ const renderDemoHtml = (
         <div class="value">${escapeHtml(slide.now)}</div>
         <div class="label" style="margin-top:10px;">How this helps customers</div>
         <div class="value">${escapeHtml(slide.customerImpact)}</div>
-        ${
-          isExecMode
-            ? ""
-            : `
+        ${isExecMode
+      ? ""
+      : `
         <div class="label" style="margin-top:10px;">What we do next</div>
         <div class="value">${escapeHtml(slide.next)}</div>
         <div class="label" style="margin-top:10px;">What user sees</div>
@@ -942,7 +782,7 @@ const renderDemoHtml = (
         <div class="label" style="margin-top:10px;">Marketplace</div>
         <div class="value">${escapeHtml(slide.marketplacePolicy)}</div>
         `
-        }
+    }
         <div class="label" style="margin-top:10px;">CartGuard recommendation</div>
         <div class="value">${escapeHtml(slide.cartguardRecommendation)}</div>
         <div class="label" style="margin-top:10px;">Fix now</div>
@@ -956,15 +796,13 @@ const renderDemoHtml = (
           <div><strong>Evidence Type</strong><div><span class="pill ${evidenceTypeClass(slide.evidenceType)}">${escapeHtml(slide.evidenceType)}</span></div></div>
           <div><strong>Input Artifact</strong><div>${escapeHtml(slide.inputArtifact)}</div></div>
         </div>
-        ${
-          slide.evidenceType === "marketplace"
-            ? `<div class="value" style="margin-top:10px;">Marketplace risk is CartGuard heuristic guidance, not an Amazon decision.</div>`
-            : ""
-        }
+        ${slide.evidenceType === "marketplace"
+      ? `<div class="value" style="margin-top:10px;">Marketplace risk is CartGuard heuristic guidance, not an Amazon decision.</div>`
+      : ""
+    }
       </div>
-      ${
-        scenario && !isExecMode
-          ? `
+      ${scenario && !isExecMode
+      ? `
       <div class="card">
         <h3>Scenario Breakdown</h3>
         <div class="label">Root cause</div>
@@ -977,11 +815,10 @@ const renderDemoHtml = (
         <div class="value">${escapeHtml(scenario.missingEvidence.join(", "))}</div>
       </div>
       `
-          : ""
-      }
-      ${
-        productRows && !isExecMode
-          ? `
+      : ""
+    }
+      ${productRows && !isExecMode
+      ? `
       <div class="card">
         <h3>Batch Products</h3>
         <table>
@@ -997,18 +834,16 @@ const renderDemoHtml = (
         </table>
       </div>
       `
-          : ""
-      }
-      ${
-        roleCards && !isExecMode
-          ? `
+      : ""
+    }
+      ${roleCards && !isExecMode
+      ? `
       <div class="grid">${roleCards}</div>
       `
-          : ""
-      }
-      ${
-        gate
-          ? `
+      : ""
+    }
+      ${gate
+      ? `
       <div class="card">
         <h3>Decision Gate: ${escapeHtml(gate.gateId)}</h3>
         <div class="label">Context</div>
@@ -1019,25 +854,23 @@ const renderDemoHtml = (
         <div class="value">${escapeHtml(gate.recommended)}</div>
         <div class="controls" style="margin-top:10px;">
           ${gate.options
-            .map(
-              (option) =>
-                `<button class="decision" data-decision="${escapeHtml(option)}">${escapeHtml(option)}</button>`
-            )
-            .join("")}
+        .map(
+          (option) =>
+            `<button class="decision" data-decision="${escapeHtml(option)}">${escapeHtml(option)}</button>`
+        )
+        .join("")}
           <span>Selected: ${escapeHtml(currentDecision ?? "none")}</span>
         </div>
-        ${
-          decisionRequired
-            ? `<div class="value" style="margin-top:10px;">Select a decision before continuing.</div>`
-            : ""
-        }
+        ${decisionRequired
+        ? `<div class="value" style="margin-top:10px;">Select a decision before continuing.</div>`
+        : ""
+      }
       </div>
       `
-          : ""
-      }
-      ${
-        decisionRows && !isExecMode
-          ? `
+      : ""
+    }
+      ${decisionRows && !isExecMode
+      ? `
       <div class="card">
         <h3>Gate Decisions</h3>
         <table>
@@ -1051,8 +884,8 @@ const renderDemoHtml = (
         </table>
       </div>
       `
-          : ""
-      }
+      : ""
+    }
       <div class="card">
         <h3>Inputs in this demo</h3>
         <div class="path">Listing: ${escapeHtml(listingPath)}</div>
@@ -1063,32 +896,28 @@ const renderDemoHtml = (
         <button id="continue" ${buttonDisabled}>${escapeHtml(buttonLabel)}</button>
         <span>Next: ${escapeHtml(nextText)}</span>
       </div>
-      ${
-        workflowData
-          ? `
+      ${workflowData
+      ? `
       <div class="card">
         <h3>Pilot Metrics Snapshot</h3>
         <div class="grid">
           <div><strong>Missing-doc rate</strong><div>${baselineMissingPct}% -> ${currentMissingPct}%</div></div>
-          <div><strong>Review cycle (days)</strong><div>${
-            baselineReviewCycleDays !== undefined && currentReviewCycleDays !== undefined
-              ? `${baselineReviewCycleDays} -> ${currentReviewCycleDays}`
-              : "Track during pilot"
-          }</div></div>
-          <div><strong>Rework loops/listing</strong><div>${
-            baselineReworkLoopsPerListing !== undefined && currentReworkLoopsPerListing !== undefined
-              ? `${baselineReworkLoopsPerListing} -> ${currentReworkLoopsPerListing}`
-              : "Track during pilot"
-          }</div></div>
+          <div><strong>Review cycle (days)</strong><div>${baselineReviewCycleDays !== undefined && currentReviewCycleDays !== undefined
+        ? `${baselineReviewCycleDays} -> ${currentReviewCycleDays}`
+        : "Track during pilot"
+      }</div></div>
+          <div><strong>Rework loops/listing</strong><div>${baselineReworkLoopsPerListing !== undefined && currentReworkLoopsPerListing !== undefined
+        ? `${baselineReworkLoopsPerListing} -> ${currentReworkLoopsPerListing}`
+        : "Track during pilot"
+      }</div></div>
           <div><strong>Batch status mix</strong><div>Ready ${readyProducts} / At Risk ${atRiskProducts} / Blocked ${blockedProducts}</div></div>
         </div>
       </div>
       `
-          : ""
-      }
-      ${
-        summary
-          ? `
+      : ""
+    }
+      ${summary
+      ? `
       <div class="card">
         <h3>Current Evaluation Snapshot</h3>
         <div class="grid">
@@ -1112,8 +941,8 @@ const renderDemoHtml = (
         </table>
       </div>
       `
-          : ""
-      }
+      : ""
+    }
       <script>
         const vscode = acquireVsCodeApi();
         const button = document.getElementById("continue");
@@ -1540,26 +1369,26 @@ export const activate = (context: vscode.ExtensionContext): void => {
         const defaultSlideshowPath = resolveDefaultSlideshowPath(context);
         try {
           const parsed = parseWorkflowData(await readJsonFile(workflowPath));
-          workflowData = parsed;
+          workflowData = parsed.data;
         } catch {
           workflowData = undefined;
         }
         try {
           const parsed = parseSlideshowData(await readJsonFile(slideshowPath));
-          if (parsed) {
-            slideshowSlides = parsed.slides;
+          if (parsed.data) {
+            slideshowSlides = parsed.data.slides;
             decisionGatesByCheckId = new Map(
-              parsed.decisionGates.map((gate) => [gate.checkId, gate])
+              parsed.data.decisionGates.map((gate: DecisionGate) => [gate.checkId, gate])
             );
           }
         } catch {
           try {
             if (slideshowPath !== defaultSlideshowPath) {
               const parsed = parseSlideshowData(await readJsonFile(defaultSlideshowPath));
-              if (parsed) {
-                slideshowSlides = parsed.slides;
+              if (parsed.data) {
+                slideshowSlides = parsed.data.slides;
                 decisionGatesByCheckId = new Map(
-                  parsed.decisionGates.map((gate) => [gate.checkId, gate])
+                  parsed.data.decisionGates.map((gate: DecisionGate) => [gate.checkId, gate])
                 );
               }
             } else {
@@ -1736,4 +1565,4 @@ export const activate = (context: vscode.ExtensionContext): void => {
   );
 };
 
-export const deactivate = (): void => {};
+export const deactivate = (): void => { };

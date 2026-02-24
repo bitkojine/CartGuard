@@ -70,6 +70,8 @@ This document tracks known technical debt in the CartGuard repository, with focu
 - Recommendation:
   - Add strict schema validation for slideshow/workflow files in tests.
   - Fail fast with explicit error messaging when data is invalid.
+- Status:
+  - Partially paid down on 2026-02-24 with E2E schema checks for all slideshow files, gate/slide consistency checks, and scenario reference validation.
 
 ### 6) Packaging warnings in local release flow
 

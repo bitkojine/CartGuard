@@ -1,63 +1,75 @@
-export type SelectOptions = {
-  choices: string[];
-};
+import { z } from "zod";
 
-export type FieldSpec = {
-  name: string;
-  type:
-    | "singleLineText"
-    | "multilineText"
-    | "singleSelect"
-    | "number"
-    | "currency"
-    | "url"
-    | "date"
-    | "dateTime";
-  options?: SelectOptions;
-};
+export const SelectOptionsSchema = z.object({
+  choices: z.array(z.string())
+});
 
-export type TableSpec = {
-  name: string;
-  description?: string;
-  fields: FieldSpec[];
-};
+export type SelectOptions = z.infer<typeof SelectOptionsSchema>;
 
-export type CrmSchema = {
-  baseName: string;
-  tables: TableSpec[];
-};
+export const FieldTypeSchema = z.enum([
+  "singleLineText",
+  "multilineText",
+  "singleSelect",
+  "number",
+  "currency",
+  "url",
+  "date",
+  "dateTime"
+]);
 
-export type AirtableField = {
-  id: string;
-  name: string;
-  type: string;
-};
+export type FieldType = z.infer<typeof FieldTypeSchema>;
 
-export type AirtableTable = {
-  id: string;
-  name: string;
-  fields: AirtableField[];
-};
+export const FieldSpecSchema = z.object({
+  name: z.string().min(1),
+  type: FieldTypeSchema,
+  options: SelectOptionsSchema.optional()
+});
 
-export const mapFieldType = (type: FieldSpec["type"]): string => {
-  if (type === "dateTime") return "dateTime";
-  if (type === "date") return "date";
-  if (type === "multilineText") return "multilineText";
-  if (type === "singleLineText") return "singleLineText";
-  if (type === "singleSelect") return "singleSelect";
-  if (type === "number") return "number";
-  if (type === "currency") return "currency";
-  if (type === "url") return "url";
+export type FieldSpec = z.infer<typeof FieldSpecSchema>;
+
+export const TableSpecSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+  fields: z.array(FieldSpecSchema)
+});
+
+export type TableSpec = z.infer<typeof TableSpecSchema>;
+
+export const CrmSchemaSchema = z.object({
+  baseName: z.string().min(1),
+  tables: z.array(TableSpecSchema)
+});
+
+export type CrmSchema = z.infer<typeof CrmSchemaSchema>;
+
+export const AirtableFieldSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string()
+});
+
+export type AirtableField = z.infer<typeof AirtableFieldSchema>;
+
+export const AirtableTableSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  fields: z.array(AirtableFieldSchema)
+});
+
+export type AirtableTable = z.infer<typeof AirtableTableSchema>;
+
+export const mapFieldType = (type: FieldType): string => {
   return type;
 };
 
 export const loadSchema = async (path: string): Promise<CrmSchema> => {
   const { readFile } = await import("node:fs/promises");
   const raw = await readFile(path, "utf8");
-  return JSON.parse(raw) as CrmSchema;
+  const data = JSON.parse(raw) as unknown;
+  return CrmSchemaSchema.parse(data);
 };
 
 export const toChoiceObjects = (options?: SelectOptions): Array<{ name: string }> => {
   if (!options) return [];
-  return options.choices.map((name) => ({ name }));
+  return options.choices.map((name: string) => ({ name }));
 };
